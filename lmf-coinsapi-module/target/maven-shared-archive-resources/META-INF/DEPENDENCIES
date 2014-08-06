@@ -27,7 +27,11 @@ From: 'Aduna' (http://www.aduna-software.com/)
     License: Aduna BSD license  (http://repo.aduna-software.org/legal/aduna-bsd.txt)
   - OpenRDF Sesame: Query result IO - API (http://www.openrdf.org/sesame-core/sesame-queryresultio/sesame-queryresultio-api/) org.openrdf.sesame:sesame-queryresultio-api:jar:2.7.11
     License: Aduna BSD license  (http://repo.aduna-software.org/legal/aduna-bsd.txt)
+  - OpenRDF Sesame: Query result IO - SPARQL/JSON (http://www.openrdf.org/sesame-core/sesame-queryresultio/sesame-queryresultio-sparqljson/) org.openrdf.sesame:sesame-queryresultio-sparqljson:jar:2.7.11
+    License: Aduna BSD license  (http://repo.aduna-software.org/legal/aduna-bsd.txt)
   - OpenRDF Sesame: Query result IO - SPARQL/XML (http://www.openrdf.org/sesame-core/sesame-queryresultio/sesame-queryresultio-sparqlxml/) org.openrdf.sesame:sesame-queryresultio-sparqlxml:jar:2.7.11
+    License: Aduna BSD license  (http://repo.aduna-software.org/legal/aduna-bsd.txt)
+  - OpenRDF Sesame: Query result IO - plain text booleans (http://www.openrdf.org/sesame-core/sesame-queryresultio/sesame-queryresultio-text/) org.openrdf.sesame:sesame-queryresultio-text:jar:2.7.11
     License: Aduna BSD license  (http://repo.aduna-software.org/legal/aduna-bsd.txt)
   - OpenRDF Sesame: Repository - API (http://www.openrdf.org/sesame-core/sesame-repository/sesame-repository-api/) org.openrdf.sesame:sesame-repository-api:jar:2.7.11
     License: Aduna BSD license  (http://repo.aduna-software.org/legal/aduna-bsd.txt)
@@ -71,6 +75,8 @@ From: 'an unknown organization'
     License: Revised BSD License  (https://raw.github.com/jsonld-java/jsonld-java/master/LICENCE)
   - JSONLD Java :: Sesame Integration (http://github.com/jsonld-java/jsonld-java/jsonld-java-integration/jsonld-java-sesame/) com.github.jsonld-java:jsonld-java-sesame:jar:0.2
     License: Revised BSD License  (https://raw.github.com/jsonld-java/jsonld-java/master/LICENCE)
+  - squebi (https://github.com/tkurz/squebi) com.github.tkurz.webjars:squebi:jar:0.0.5
+    License: Apache Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
   - Guava: Google Core Libraries for Java (http://code.google.com/p/guava-libraries/guava) com.google.guava:guava:bundle:16.0.1
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
   - ICU4J (http://icu-project.org/) com.ibm.icu:icu4j:jar:51.2
@@ -87,6 +93,12 @@ From: 'an unknown organization'
     License: Apache License, Version 2.0  (license.txt)
   - "Java Concurrency in Practice" book annotations (http://jcip.net/) net.jcip:jcip-annotations:jar:1.0
 
+  - opencsv (http://opencsv.sf.net) net.sf.opencsv:opencsv:jar:2.0
+    License: Apache 2  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - tomcat-jdbc (http://tomcat.apache.org/) org.apache.tomcat:tomcat-jdbc:jar:7.0.50
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - tomcat-juli (http://tomcat.apache.org/) org.apache.tomcat:tomcat-juli:jar:7.0.50
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
   - Commons Compiler (http://docs.codehaus.org/display/JANINO/Home/commons-compiler) org.codehaus.janino:commons-compiler:jar:2.6.1
     License: New BSD License  (http://dist.codehaus.org/janino/new_bsd_license.txt)
   - Janino (http://docs.codehaus.org/display/JANINO/Home/janino) org.codehaus.janino:janino:jar:2.6.1
@@ -115,10 +127,14 @@ From: 'an unknown organization'
     License: Public Domain 
   - AngularJS (http://webjars.org) org.webjars:angularjs:jar:1.2.2
     License: MIT License  (https://github.com/angular/angular.js/blob/master/LICENSE)
+  - CodeMirror (http://webjars.org) org.webjars:codemirror:jar:3.16
+    License: MIT  (http://codemirror.net/LICENSE)
   - jquery (http://webjars.org) org.webjars:jquery:jar:1.8.2
     License: MIT License  (https://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt)
   - jQuery UI (http://webjars.org) org.webjars:jquery-ui:jar:1.10.3
     License: MIT License  (https://github.com/jquery/jquery-ui/blob/master/MIT-LICENSE.txt)
+  - sgvizler (http://webjars.org) org.webjars:sgvizler:jar:0.6
+    License: MIT like license  (http://dev.data2000.no/sgvizler/export/228/release/0.6/LICENSE)
   - XML Commons External Components XML APIs (http://xml.apache.org/commons/components/external/) xml-apis:xml-apis:jar:1.4.01
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)    License: The SAX License  (http://www.saxproject.org/copying.html)    License: The W3C License  (http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/java-binding.zip)
 
@@ -147,6 +163,10 @@ From: 'FasterXML' (http://fasterxml.com/)
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)    License: GNU Lesser General Public License, Version 2.1  (http://www.gnu.org/licenses/lgpl-2.1.html)
   - Jackson-module-JAXB-annotations (http://wiki.fasterxml.com/JacksonJAXBAnnotations) com.fasterxml.jackson.module:jackson-module-jaxb-annotations:jar:2.2.3
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)    License: GNU Lesser General Public License, Version 2.1  (http://www.gnu.org/licenses/lgpl-2.1.html)
+
+From: 'FasterXML.com' (http://fasterxml.com)
+  - Java UUID Generator (http://wiki.fasterxml.com/JugHome) com.fasterxml.uuid:java-uuid-generator:bundle:3.1.3
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 From: 'JBoss by Red Hat' (http://www.jboss.org)
   - JBoss Logging 3 (http://www.jboss.org) org.jboss.logging:jboss-logging:jar:3.1.3.GA
@@ -247,6 +267,10 @@ From: 'The Apache Software Foundation' (http://www.apache.org/)
     License: Apache License  (LICENSE.txt)
   - Apache HttpCore (http://hc.apache.org/httpcomponents-core-ga) org.apache.httpcomponents:httpcore:jar:4.3
     License: Apache License  (LICENSE.txt)
+  - KiWi Triplestore: SPARQL (http://marmotta.apache.org/kiwi/kiwi-sparql/) org.apache.marmotta:kiwi-sparql:jar:3.2.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - KiWi Triplestore: Core (http://marmotta.apache.org/kiwi/kiwi-triplestore/) org.apache.marmotta:kiwi-triplestore:jar:3.2.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
   - Marmotta Client Library for JavaScript (http://marmotta.apache.org/marmotta-client-js) org.apache.marmotta:marmotta-client-js:jar:3.2.1
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
   - Apache Marmotta: Common Utilities (http://marmotta.apache.org/marmotta-commons) org.apache.marmotta:marmotta-commons:bundle:3.2.1
@@ -264,6 +288,8 @@ From: 'The Apache Software Foundation' (http://www.apache.org/)
   - Marmotta Sesame I/O: VCard (http://marmotta.apache.org/marmotta-rio-vcard) org.apache.marmotta:marmotta-rio-vcard:jar:3.2.1
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
   - Marmotta Sesame Tools: Sail Transactions (http://marmotta.apache.org/marmotta-sail-transactions) org.apache.marmotta:marmotta-sail-transactions:jar:3.2.1
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Marmotta Platform: SPARQL Endpoint (http://marmotta.apache.org/marmotta-sparql) org.apache.marmotta:marmotta-sparql:jar:3.2.1
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
   - Marmotta Sesame Tools: Facading (http://marmotta.apache.org/marmotta-util-facading) org.apache.marmotta:marmotta-util-facading:jar:3.2.1
     License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)

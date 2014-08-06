@@ -1,1 +1,2 @@
-nl\tno\coinsapi\AppTest.class
+nl\tno\coinsapi\webservices\TestCoinsApiWebService.class
+nl\tno\coinsapi\webservices\TestDateConversion.class

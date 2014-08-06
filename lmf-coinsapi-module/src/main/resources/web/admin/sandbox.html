@@ -19,35 +19,39 @@
 -->
 <html>
 <head>
-<!--###BEGIN_HEAD###-->
-    <title>Importer</title>
-    <script type="text/javascript" src="../../webjars/jquery/1.8.2/jquery.min.js"></script>
-    <script type="text/javascript" src="../../webjars/marmotta.js"></script>
-    <script type="text/javascript" src="js/widgets/import.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function(){
-            var imp = new Importer("importer_div",_SERVER_URL);
-        })
-    </script>
-    <style>
-        .import_type {
-            padding: 2px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .importer_table {
-            background-color: #eeeeee;
-            padding: 10px;
-            border: 1px solid gray;
-            -webkit-border-radius: 3px;
-            border-radius: 3px;
-        }
-    </style>
-<!--###END_HEAD###-->
+    <!--###BEGIN_HEAD###-->
+    <title>Sandbox</title>
+    <!--###END_HEAD###-->
 </head>
 <body>
 <!--###BEGIN_CONTENT###-->
-<div id="importer_div"></div>
+<h1>Sandbox</h1>
+<h2>
+    This is a sandbox for testing api functions
+</h2>
+<form action="../requirementform" method="post">
+<h3>Create Requirement</h3>
+<div id="div_name">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name"/>
+</div>
+<div id="div_userid">
+  <label for="userID">User ID:</label>
+  <input type="text" id="userID" name="userID"/>
+</div>
+<div id="div_layerindex">
+  <label for="layerIndex">Layer index:</label>
+  <input type="text" id="layerIndex" name="layerIndex"/>
+</div>
+<div id="div_context">
+  <label for="context">Context:</label>
+  <input type="text" id="context" name="context"/>
+</div>
+<div id="div_submit">
+  <input type="submit" value="Submit"/>
+</div>
+</form>
 <!--###END_CONTENT###-->
 </body>
 </html>
+

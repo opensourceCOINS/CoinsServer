@@ -45,8 +45,8 @@ public class CoinsImporter implements Importer {
 	private TaskManagerService mTaskManagerService;
 
 	@Inject
-	private ImportService mImportService;
-
+	private ImportService mImportService;	
+	
 	private static long mTaskCounter = 0;
 
 	private List<String> mAcceptTypes;

@@ -86,14 +86,53 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>jquery-ui</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.marmotta</groupId>
+      <artifactId>marmotta-sparql</artifactId>
+      <version>3.2.1</version>
+    </dependency>      
+    <!-- TESTING -->
+    <dependency>
+      <groupId>org.apache.marmotta</groupId>
+      <artifactId>marmotta-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>  
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>${jetty.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>${jetty.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.el</groupId>
+      <artifactId>javax.el-api</artifactId>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.jboss.weld.se</groupId>
+      <artifactId>weld-se-core</artifactId>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>com.jayway.restassured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>  
   <url>www.coinsweb.nl</url>
   <organization>
   	<name>TNO</name>

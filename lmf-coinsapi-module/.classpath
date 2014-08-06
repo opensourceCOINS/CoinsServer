@@ -16,5 +16,13 @@
 	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-rio-api/2.7.11/sesame-rio-api-2.7.11.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.6/slf4j-api-1.7.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/inject/javax.inject/1/javax.inject-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.11/junit-4.11.jar"/>
+	<classpathentry kind="src" path="/marmotta-core"/>
+	<classpathentry kind="var" path="M2_REPO/com/jayway/restassured/rest-assured/1.7.1/rest-assured-1.7.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.2.3/jackson-databind-2.2.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.2.3/jackson-core-2.2.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/guava/guava/16.0.1/guava-16.0.1.jar"/>
+	<classpathentry kind="src" path="/marmotta-sparql"/>
+	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-query/2.7.11/sesame-query-2.7.11.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

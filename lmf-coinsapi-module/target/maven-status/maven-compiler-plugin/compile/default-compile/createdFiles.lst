@@ -1,3 +1,6 @@
-nl\tno\coinsapi\services\CoinsExporter.class
+nl\tno\coinsapi\services\ICoinsApiService.class
+nl\tno\coinsapi\services\ICoinsDateConversion.class
 nl\tno\coinsapi\services\CoinsImporter.class
+nl\tno\coinsapi\services\CoinsDateConverter.class
 nl\tno\coinsapi\webservices\CoinsApiWebService.class
+nl\tno\coinsapi\services\CoinsApiService.class

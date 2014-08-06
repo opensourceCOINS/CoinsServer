@@ -1,3 +1,6 @@
-E:\workspaces\coins\apache-marmotta-3.2.1\platform\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsExporter.java
-E:\workspaces\coins\apache-marmotta-3.2.1\platform\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\webservices\CoinsApiWebService.java
-E:\workspaces\coins\apache-marmotta-3.2.1\platform\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsImporter.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsApiService.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\webservices\CoinsApiWebService.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsImporter.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\ICoinsApiService.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsDateConverter.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\ICoinsDateConversion.java
