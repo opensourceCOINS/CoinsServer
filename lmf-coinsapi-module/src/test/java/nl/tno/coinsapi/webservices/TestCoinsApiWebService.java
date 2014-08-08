@@ -53,10 +53,16 @@ public class TestCoinsApiWebService {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
 				.queryParam("name", "requirement name")
 				.queryParam("layerIndex", 3)
-				.queryParam("creator", "http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
-				.queryParam("requirementOf", "http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c")
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam(
+						"requirementOf",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c")
 				.queryParam("userID", "B1.1")
 				.expect()
 				.statusCode(OK)
@@ -76,7 +82,6 @@ public class TestCoinsApiWebService {
 				.get(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_REQUIREMENT).body();
 		Map<String, String> result = toKeyValueMapping(body.asString());
-		System.out.println(result);
 		Assert.assertEquals("requirement name",
 				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
 		Assert.assertEquals("B1.1",
@@ -85,15 +90,73 @@ public class TestCoinsApiWebService {
 				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
 		Assert.assertEquals("3",
 				result.get("http://www.coinsweb.nl/c-bim.owl#layerIndex"));
-		Assert.assertEquals("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
 				result.get("http://www.coinsweb.nl/c-bim.owl#requirementOf"));
-		Assert.assertEquals("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
-				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));		
-		Assert.assertNotNull(result.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modificationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#description"));
+		// Set description
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("description", "This is a nice description!")
+				.queryParam(
+						"modifier",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_DESCRIPTION);
+		// Check it
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_REQUIREMENT).body();
+		result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("requirement name",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("B1.1",
+				result.get("http://www.coinsweb.nl/c-bim.owl#userID"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Requirement",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals("3",
+				result.get("http://www.coinsweb.nl/c-bim.owl#layerIndex"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
+				result.get("http://www.coinsweb.nl/c-bim.owl#requirementOf"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modificationDate"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
+		Assert.assertEquals("This is a nice description!",
+				result.get("http://www.coinsweb.nl/c-bim.owl#description"));
+
 		// DELETE requirement
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
-				.queryParam("id", id)				
+				.queryParam("id", id)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -101,15 +164,72 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_REQUIREMENT);
 		// GET requirement to check it has been removed
 		body = given()
-		.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-		.queryParam("context", context)
-		.queryParam("id", id)
-		.queryParam("output", "csv")
-		.expect()
-		.statusCode(OK)
-		.when()
-		.get(CoinsApiWebService.PATH
-				+ CoinsApiWebService.PATH_REQUIREMENT).body();
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_REQUIREMENT).body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+
+	@Test
+	public void testPersonOrOrganisation() throws JsonProcessingException {
+		// POST PersonOrOrganisation
+		String context = RestAssured.baseURI + ":" + RestAssured.port
+				+ RestAssured.basePath;
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "Leon van Berlo")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PERSON_OR_ORGANISATION)
+				.body();
+		// GET PersonOrOrganisation
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PERSON_OR_ORGANISATION)
+				.body();
+		Map<String, String> result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("Leon van Berlo",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		// DELETE PersonOrOrganisation
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PERSON_OR_ORGANISATION);
+		// GET PersonOrOrganisation to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PERSON_OR_ORGANISATION)
+				.body();
 		Assert.assertTrue(isEmpty(body.asString()));
 	}
 
@@ -122,8 +242,9 @@ public class TestCoinsApiWebService {
 		}
 		return result;
 	}
-	
+
 	private boolean isEmpty(String pCsvString) {
-		return (pCsvString.replace("name", "").replace(",","").replace("value", "").trim().length()==0);
+		return (pCsvString.replace("name", "").replace(",", "")
+				.replace("value", "").trim().length() == 0);
 	}
 }

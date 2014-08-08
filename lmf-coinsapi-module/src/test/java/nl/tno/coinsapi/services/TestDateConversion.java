@@ -1,4 +1,4 @@
-package nl.tno.coinsapi.webservices;
+package nl.tno.coinsapi.services;
 
 import java.util.Calendar;
 import java.util.Date;

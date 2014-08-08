@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import nl.tno.coinsapi.tools.QueryBuilder.InsertQueryBuilder;
+
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.apache.marmotta.platform.sparql.api.sparql.SparqlService;
@@ -19,21 +21,24 @@ public class CoinsApiService implements ICoinsApiService {
 	@Inject
 	private ICoinsDateConversion dateConversion;
 	
-	private static final String PREFIX_CBIM = "PREFIX cbim: <http://www.coinsweb.nl/c-bim.owl#>\n";
+	private static final String PREFIX_CBIM = "cbim: <http://www.coinsweb.nl/c-bim.owl#>";
 	
 	@Override
-	public String createRequirement(String context, String name,
-			int layerindex, String userId, String creator, String requirementOf) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException {		
-		String id = "http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl" + "#" + java.util.UUID.randomUUID().toString();		
-		String query = PREFIX_CBIM + "INSERT DATA { GRAPH <" + context
-				+ "> { <" + id + "> " + "cbim:name \"" + name + "\" ; "
-				+ "cbim:userID \"" + userId + "\" ; " + "cbim:creationDate \""
-				+ dateConversion.toString(new Date()) + "\" ; "
-				+ "cbim:layerIndex \"" + layerindex + "\" ; "
-				+ "cbim:creator \"" + creator + "\" ; "
-				+ "cbim:requirementOf \"" + requirementOf + "\" ; "
-				+ "a cbim:Requirement } }";
-		sparqlService.update(QueryLanguage.SPARQL, query);
+	public String createRequirement(String context, String modelURI, String name,
+			int layerindex, String userId,String creator, String requirementOf) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException {		
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:userID", userId);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:layerIndex", String.valueOf(layerindex));
+		builder.addAttribute("cbim:creator", creator);
+		builder.addAttribute("cbim:requirementOf", requirementOf);
+		builder.addAttribute("a", "cbim:Requirement");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
 	}
 	
@@ -60,6 +65,40 @@ public class CoinsApiService implements ICoinsApiService {
 	public String getRequirementQuery(String context, String id) {
 		return "SELECT ?name ?value WHERE { GRAPH <" + context
 				+ "> { <" + id + "> ?name ?value }}";		
+	}
+
+	@Override
+	public String createPersonOrOrganisation(String context, String modelURI, String name)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("a", "cbim:PersonOrOrganisation");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public String getPersonOrOrganisationQuery(String context, String id) {
+		return "SELECT ?name ?value WHERE { GRAPH <" + context
+				+ "> { <" + id + "> ?name ?value }}";		
+	}
+
+	@Override
+	public void setDescription(String context, String id, String description, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException {
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:description", description);
+		builder.addAttribute("cbim:modificationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 	
 }
