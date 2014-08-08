@@ -100,6 +100,32 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttribute("cbim:modifier", modifier);
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
+
+	@Override
+	public String createPhysicalObject(String context, String modelURI,
+			String name, int layerIndex, String userID, String creator)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:userID", userID);
+		builder.addAttribute("cbim:layerIndex", String.valueOf(layerIndex));
+		builder.addAttribute("cbim:creator", creator);		
+		builder.addAttribute("a", "cbim:PhysicalObject");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public String getPhysicalObjectQuery(String context, String id) {
+		return "SELECT ?name ?value WHERE { GRAPH <" + context
+				+ "> { <" + id + "> ?name ?value }}";		
+	}
 	
 }
 

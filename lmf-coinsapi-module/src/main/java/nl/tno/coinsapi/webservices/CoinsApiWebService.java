@@ -47,7 +47,9 @@ public class CoinsApiWebService {
 	public static final String PATH_REQUIREMENT_FORM = "/requirementform";
 	public static final String PATH_PERSON_OR_ORGANISATION = "/persons";
 	public static final String PATH_DESCRIPTION = "/description";
+	public static final String PATH_PHYSICAL_OBJECT = "/PhysicalObject";
 	public static final String MIME_TYPE = "application/json";
+
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -332,7 +334,7 @@ public class CoinsApiWebService {
 	 * @param id The identifier of the object
 	 * @param description The description
 	 * @param modifier URI to the modifier of the object
-	 * @return OK if successfull
+	 * @return OK if successful
 	 */
 	@POST
 	@Path(PATH_DESCRIPTION)
@@ -354,4 +356,89 @@ public class CoinsApiWebService {
 				.entity("Something went wrong when creating the PersonOrOrganisation")
 				.build();
 	}
+	
+	/**
+	 * Create a new <B>PhysicalObject</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>PhysicalObject</B>
+	 * @param layerIndex
+	 *            The layer index of the <B>PhysicalObject</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>PhysicalObject</B>
+	 * @return The id of the created <B>PhysicalObject</B>
+	 */
+	@POST
+	@Path(PATH_PHYSICAL_OBJECT)
+	@Consumes(MIME_TYPE)
+	public Response createPhysicalObject(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,			
+			@QueryParam("name") String name,
+			@QueryParam("layerIndex") int layerIndex,
+			@QueryParam("userID") String userID,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createPhysicalObject(context, modelURI, name, layerIndex, userID, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the PhysicalObject")
+				.build();
+	}
+
+	/**
+	 * Get a <B>PhysicalObject</B>
+	 * 
+	 * @param context The context or graph
+	 * @param id The id of the <B>PhysicalObject</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>PhysicalObject</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_PHYSICAL_OBJECT)
+	public Response getPhysicalObject(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getPhysicalObjectQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>PhysicalObject</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>PhysicalObject</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_PHYSICAL_OBJECT)
+	@Consumes(MIME_TYPE)
+	public Response deletePhysicalObject(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete PhysicalObject")
+				.build();
+	}	
 }

@@ -69,4 +69,27 @@ public interface ICoinsApiService {
 	 */
 	public void setDescription(String context, String id, String description, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
 
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param layerIndex
+	 * @param userID
+	 * @param creator
+	 * @return id of the PysicalObject
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createPhysicalObject(String context, String modelURI,
+			String name, int layerIndex, String userID, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return PhysicalObject Query
+	 */
+	public String getPhysicalObjectQuery(String context, String id);
+
 }
