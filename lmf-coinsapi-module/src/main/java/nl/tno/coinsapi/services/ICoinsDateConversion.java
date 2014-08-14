@@ -2,6 +2,9 @@ package nl.tno.coinsapi.services;
 
 import java.util.Date;
 
+/**
+ * Interface for converting COINS dates
+ */
 public interface ICoinsDateConversion {
 
 	/**

@@ -9,10 +9,16 @@ import nl.tno.coinsapi.services.ICoinsDateConversion;
 
 import org.junit.Test;
 
+/**
+ * Testing Data conversions for Coins
+ */
 public class TestDateConversion {
 
 	private ICoinsDateConversion mDateConversion = new CoinsDateConverter();
 	
+	/**
+	 * Test conversion from String to Date 
+	 */
 	@Test
 	public void testFrom() {
 		Date result = mDateConversion.fromString("2010-08-26T12:34:11.000Z");
@@ -27,6 +33,9 @@ public class TestDateConversion {
 		Assert.assertEquals(0, cal.get(Calendar.MILLISECOND));
 	}
 	
+	/**
+	 * Test conversion from Date to String
+	 */
 	@Test
 	public void testTo() {
 		Date testDate = new Date(1407323085309l);

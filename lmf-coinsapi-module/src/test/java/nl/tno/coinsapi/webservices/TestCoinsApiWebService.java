@@ -16,12 +16,18 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ResponseBody;
 
+/**
+ * Testing COINS API web service
+ */
 public class TestCoinsApiWebService {
 
 	private static final int OK = 200;
 
 	private static JettyMarmotta marmotta;
 
+	/**
+	 * Setting up Marmotta test service and RestAssured 
+	 */
 	@BeforeClass
 	public static void setUp() {
 		marmotta = new JettyMarmotta("/marmotta", CoinsApiWebService.class);
@@ -31,11 +37,17 @@ public class TestCoinsApiWebService {
 		RestAssured.basePath = marmotta.getContext();
 	}
 
+	/**
+	 * Tear down
+	 */
 	@AfterClass
 	public static void tearDown() {
 		marmotta.shutdown();
 	}
 
+	/**
+	 * Testing the version
+	 */
 	@Test
 	public void testVersion() {
 		Response resp = RestAssured.get(CoinsApiWebService.PATH
@@ -45,8 +57,12 @@ public class TestCoinsApiWebService {
 		Assert.assertEquals("0.1 premature", resp.getBody().asString());
 	}
 
+	/**
+	 * Testing Requirement
+	 * @throws JsonProcessingException
+	 */
 	@Test
-	public void testRequirements() throws JsonProcessingException {
+	public void testRequirement() throws JsonProcessingException {
 		// POST requirement
 		String context = RestAssured.baseURI + ":" + RestAssured.port
 				+ RestAssured.basePath;
@@ -176,6 +192,10 @@ public class TestCoinsApiWebService {
 		Assert.assertTrue(isEmpty(body.asString()));
 	}
 
+	/**
+	 * Testing PersonOrOrganisation
+	 * @throws JsonProcessingException
+	 */
 	@Test
 	public void testPersonOrOrganisation() throws JsonProcessingException {
 		// POST PersonOrOrganisation
@@ -235,6 +255,10 @@ public class TestCoinsApiWebService {
 		Assert.assertTrue(isEmpty(body.asString()));
 	}
 
+	/**
+	 * Testing PhysicalObject
+	 * @throws JsonProcessingException
+	 */
 	@Test
 	public void testPhysicalObject() throws JsonProcessingException {
 		// POST PhysicalObject
@@ -355,7 +379,385 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_REQUIREMENT).body();
 		Assert.assertTrue(isEmpty(body.asString()));
 	}
-	
+
+	/**
+	 * Testing Function
+	 * @throws JsonProcessingException
+	 */
+	@Test
+	public void testFunction() throws JsonProcessingException {
+		// POST function
+		String context = RestAssured.baseURI + ":" + RestAssured.port
+				+ RestAssured.basePath;
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "This is a function")
+				.queryParam("layerIndex", 3)
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam(
+						"isFulfilledBy",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c")
+				.queryParam("userID", "C12")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_FUNCTION).body();
+		// GET function
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_FUNCTION).body();
+		Map<String, String> result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("This is a function",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("C12",
+				result.get("http://www.coinsweb.nl/c-bim.owl#userID"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Function",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals("3",
+				result.get("http://www.coinsweb.nl/c-bim.owl#layerIndex"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
+				result.get("http://www.coinsweb.nl/c-bim.owl#isFulfilledBy"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modificationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#description"));
+		// Set description
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("description", "This is the description of a function")
+				.queryParam(
+						"modifier",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_DESCRIPTION);
+		// Check it
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_FUNCTION).body();
+		result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("This is a function",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("C12",
+				result.get("http://www.coinsweb.nl/c-bim.owl#userID"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Function",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals("3",
+				result.get("http://www.coinsweb.nl/c-bim.owl#layerIndex"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
+				result.get("http://www.coinsweb.nl/c-bim.owl#isFulfilledBy"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modificationDate"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
+		Assert.assertEquals("This is the description of a function",
+				result.get("http://www.coinsweb.nl/c-bim.owl#description"));
+
+		// DELETE function
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_FUNCTION);
+		// GET function to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_FUNCTION).body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+
+	/**
+	 * Testing Document
+	 * @throws JsonProcessingException
+	 */
+	@Test
+	public void testDocument() throws JsonProcessingException {
+		// POST document
+		String context = RestAssured.baseURI + ":" + RestAssured.port
+				+ RestAssured.basePath;
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "Document name")
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam("userID", "D16")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_DOCUMENT).body();
+		// GET document
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_DOCUMENT).body();
+		Map<String, String> result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("Document name",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("D16",
+				result.get("http://www.coinsweb.nl/c-bim.owl#userID"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Document",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modificationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#description"));
+		// DELETE document
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_DOCUMENT);
+		// GET document to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_DOCUMENT).body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+
+	/**
+	 * Testing Explicit3DRepresentation
+	 * @throws JsonProcessingException
+	 */
+	@Test
+	public void testExplicit3DRepresentation() throws JsonProcessingException {
+		// POST document
+		String context = RestAssured.baseURI + ":" + RestAssured.port
+				+ RestAssured.basePath;
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "3D Element - Ligger")
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam("documentType", "IFC")
+				.queryParam("documentAliasFilePath", "een zeer eenvoudige casus.ifc")
+				.queryParam("documentUri", "#2K1FrCvpnAIuVj8HuCg0ML")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_EXPLICIT_3D_REPRESENTATION).body();
+		// GET document
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_EXPLICIT_3D_REPRESENTATION).body();
+		Map<String, String> result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("3D Element - Ligger",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Explicit3DRepresentation",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertEquals(
+				"IFC",
+				result.get("http://www.coinsweb.nl/c-bim.owl#documentType"));
+		Assert.assertEquals(
+				"een zeer eenvoudige casus.ifc",
+				result.get("http://www.coinsweb.nl/c-bim.owl#documentAliasFilePath"));
+		Assert.assertEquals(
+				"#2K1FrCvpnAIuVj8HuCg0ML",
+				result.get("http://www.coinsweb.nl/c-bim.owl#documentUri"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modificationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#description"));
+		// DELETE Explicit3DRepresentation
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_EXPLICIT_3D_REPRESENTATION);
+		// GET Explicit3DRepresentation to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_EXPLICIT_3D_REPRESENTATION).body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+
+	/**
+	 * Testing Vector
+	 * @throws JsonProcessingException
+	 */
+	@Test
+	public void testVector() throws JsonProcessingException {
+		// POST vector
+		String context = RestAssured.baseURI + ":" + RestAssured.port
+				+ RestAssured.basePath;
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "tmpPrmOrientation")
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam("xCoordinate", "1.0")
+				.queryParam("yCoordinate", "0.0")
+				.queryParam("zCoordinate", "-1.0")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VECTOR).body();
+		// GET vector
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_EXPLICIT_3D_REPRESENTATION).body();
+		Map<String, String> result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("tmpPrmOrientation",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Vector",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertEquals(
+				"1.0",
+				result.get("http://www.coinsweb.nl/c-bim.owl#xCoordinate"));
+		Assert.assertEquals(
+				"0.0",
+				result.get("http://www.coinsweb.nl/c-bim.owl#yCoordinate"));
+		Assert.assertEquals(
+				"-1.0",
+				result.get("http://www.coinsweb.nl/c-bim.owl#zCoordinate"));		
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		// DELETE Vector
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VECTOR);
+		// GET Vector
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VECTOR).body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+		
 	private Map<String, String> toKeyValueMapping(String pCsvString) {
 		String[] items = pCsvString.replaceAll("\n", ",").split(",");
 		Assert.assertEquals(0, items.length % 2);

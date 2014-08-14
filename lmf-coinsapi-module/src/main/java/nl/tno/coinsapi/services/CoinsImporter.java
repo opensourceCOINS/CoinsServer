@@ -2,7 +2,6 @@ package nl.tno.coinsapi.services;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +29,9 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.slf4j.Logger;
 
+/**
+ * Importer specific for COINS containters
+ */
 @ApplicationScoped
 public class CoinsImporter implements Importer {
 
@@ -179,7 +181,8 @@ public class CoinsImporter implements Importer {
 		try {
 			FileInputStream fis = new FileInputStream(pFile);
 			result = mImportService.importData(fis, format, pUser, pContext);
-		} catch (FileNotFoundException e) {
+			fis.close();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return result;
@@ -191,6 +194,9 @@ public class CoinsImporter implements Importer {
 		return 0;
 	}
 
+	/**
+	 * Registering Coins importer 
+	 */
 	@PostConstruct
 	public void initialise() {
 		mLog.info("registering Coins importer ...");

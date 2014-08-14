@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+/**
+ * Class used for creating SPARQL Queries
+ */
 public abstract class QueryBuilder {
 
 	protected List<String> mPrefixes = new Vector<String>();
@@ -32,10 +35,13 @@ public abstract class QueryBuilder {
 		mGraph = pGraph;
 	}
 	
+	/**
+	 * Class for creating SPARQL InsertQueries
+	 */
 	public static class InsertQueryBuilder extends QueryBuilder{
 
 		private String mId;
-		private Map<String, String> mAttributes = new HashMap<String, String>();
+		private Map<String, Object> mAttributes = new HashMap<String, Object>();
 
 		@Override
 		public String build() {
@@ -58,7 +64,7 @@ public abstract class QueryBuilder {
 			result.append(mId);
 			result.append(">\n");
 			boolean isFirst = true;
-			for (Entry<String, String> entry : mAttributes.entrySet()) {
+			for (Entry<String, Object> entry : mAttributes.entrySet()) {
 				if (!isFirst) {
 					result.append(" ;\n");					
 				}
@@ -77,7 +83,7 @@ public abstract class QueryBuilder {
 		}
 
 		private void appendValue(StringBuilder stringBuilder,
-				Entry<String, String> entry) {
+				Entry<String, Object> entry) {
 			if (entry.getKey().equals("a")) {
 				stringBuilder.append(entry.getValue());
 			}
@@ -104,13 +110,24 @@ public abstract class QueryBuilder {
 			mAttributes.put(pName, pValue);
 		}
 		
+		/**
+		 * Add an attribute
+		 * @param pName
+		 * @param pValue
+		 */
+		public void addAttribute(String pName, int pValue) {
+			mAttributes.put(pName, pValue);
+		}
+		
+		/**
+		 * Add an attribute
+		 * @param pName
+		 * @param pValue
+		 */
+		public void addAttribute(String pName, double pValue) {
+			mAttributes.put(pName, pValue);
+		}
+		
 	}
 
-	public static void main(String...strings) {
-		InsertQueryBuilder builder = new InsertQueryBuilder();
-		builder.addGraph("http://localhost:8080/context/marmotta");
-		builder.addPrefix("cbim: <http://www.coinsweb.nl/c-bim.owl#>");
-		System.err.println(builder.build());
-	}
-	
 }

@@ -28,6 +28,9 @@ import org.apache.marmotta.platform.sparql.webservices.SparqlWebService;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.UpdateExecutionException;
 
+/**
+ * Class defining the web service of the COINS API
+ */
 @ApplicationScoped
 @Path("/" + CoinsApiWebService.PATH)
 public class CoinsApiWebService {
@@ -40,16 +43,62 @@ public class CoinsApiWebService {
 			{ "cbim", "http://www.coinsweb.nl/c-bim.owl#" },
 			{ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" } };
 
+	/**
+	 * API path
+	 */
 	public static final String PATH = "coinsapi";
+	/**
+	 * Version
+	 */
 	public static final String PATH_VERSION = "/version";
+	/**
+	 * Prefixes
+	 */
 	public static final String PATH_PREFIXES = "/prefixes";
+	/**
+	 * Requirement
+	 */
 	public static final String PATH_REQUIREMENT = "/requirement";
+	/**
+	 * Requirement (FORM)
+	 */
 	public static final String PATH_REQUIREMENT_FORM = "/requirementform";
-	public static final String PATH_PERSON_OR_ORGANISATION = "/persons";
+	/**
+	 * PersonOrOrganisation
+	 */
+	public static final String PATH_PERSON_OR_ORGANISATION = "/personorganisation";
+	/**
+	 * Description
+	 */
 	public static final String PATH_DESCRIPTION = "/description";
-	public static final String PATH_PHYSICAL_OBJECT = "/PhysicalObject";
+	/**
+	 * Function
+	 */
+	public static final String PATH_FUNCTION = "/function";
+	/**
+	 * PhysicalObject
+	 */
+	public static final String PATH_PHYSICAL_OBJECT = "/physicalobject";
+	/**
+	 * Document
+	 */
+	public static final String PATH_DOCUMENT = "/document";
+	/**
+	 * Vector
+	 */
+	public static final String PATH_VECTOR = "/vector";
+	/**
+	 * Locator
+	 */
+	public static final String PATH_LOCATOR = "/locator";
+	/**
+	 * Explicit3DRepresentation
+	 */
+	public static final String PATH_EXPLICIT_3D_REPRESENTATION = "/explicit3drepresentation";
+	/**
+	 * Application/json
+	 */
 	public static final String MIME_TYPE = "application/json";
-
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -440,5 +489,366 @@ public class CoinsApiWebService {
 		}
 		return Response.serverError().entity("Cannot delete PhysicalObject")
 				.build();
-	}	
+	}
+	
+	/**
+	 * Create a new <B>Function</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Function</B>
+	 * @param layerIndex
+	 *            The layer index of the <B>Function</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>Function</B>
+	 * @param isFulfilledBy
+	 *  		  URI referring to the function fulfiller.              
+	 * @return The id of the created <B>Function</B>
+	 */
+	@POST
+	@Path(PATH_FUNCTION)
+	@Consumes(MIME_TYPE)
+	public Response createFunction(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("layerIndex") int layerIndex,
+			@QueryParam("userID") String userID,
+			@QueryParam("creator") String creator,
+			@QueryParam("isFulfilledBy") String isFulfilledBy) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (userID == null) {
+			return Response.serverError().entity("Userid cannot be null")
+					.build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createFunction(context, modelURI, name,
+					layerIndex, userID, creator, isFulfilledBy);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the function")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Function</B>
+	 * 
+	 * @param context The context or graph
+	 * @param id The id of the <B>Function</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Function</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_FUNCTION)
+	public Response getFunction(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getFunctionQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>Function</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Function</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_FUNCTION)
+	@Consumes(MIME_TYPE)
+	public Response deleteFunction(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Function")
+				.build();
+	}
+
+	/**
+	 * Create a new <B>Document</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Document</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>Document</B>
+	 * @return The id of the created <B>Document</B>
+	 */
+	@POST
+	@Path(PATH_DOCUMENT)
+	@Consumes(MIME_TYPE)
+	public Response createDocument(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("userID") String userID,
+			@QueryParam("creator") String creator){
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (userID == null) {
+			return Response.serverError().entity("Userid cannot be null")
+					.build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createDocument(context, modelURI, name,
+					userID, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the document")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Document</B>
+	 * 
+	 * @param context The context or graph
+	 * @param id The id of the <B>Document</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Document</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_DOCUMENT)
+	public Response getDocument(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getDocumentQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>Document</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Document</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_DOCUMENT)
+	@Consumes(MIME_TYPE)
+	public Response deleteDocument(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Document")
+				.build();
+	}
+
+	/**
+	 * Create a new <B>Explicit3DRepresentation</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Explicit3DRepresentation</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param documentType
+	 * 			  Type of document (For instance IFC)
+	 * @param documentAliasFilePath
+	 * 			  File name of the document
+	 * @param documentUri
+	 *            URI to the document 
+	 * @param creator
+	 *            URI referring to the user that created this <B>Explicit3DRepresentation</B>
+	 * @return The id of the created <B>Explicit3DRepresentation</B>
+	 */
+	@POST
+	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
+	@Consumes(MIME_TYPE)
+	public Response createExplicit3DRepresentation(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("documentType") String documentType,
+			@QueryParam("documentAliasFilePath") String documentAliasFilePath,
+			@QueryParam("documentUri") String documentUri,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createExplicit3DRepresentation(context, modelURI, name,
+					documentType, documentAliasFilePath, documentUri, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the requirement")
+				.build();
+	}
+	
+	/**
+	 * Delete an <B>Explicit3DRepresentation</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Explicit3DRepresentation</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
+	@Consumes(MIME_TYPE)
+	public Response deleteExplicit3DRepresentation(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Explicit3DRepresentation")
+				.build();
+	}
+
+	/**
+	 * Get an <B>Explicit3DRepresentation</B>
+	 * 
+	 * @param context / graph
+	 * @param id The id of the <B>Explicit3DRepresentation</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Explicit3DRepresentation</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
+	public Response getExplicit3DRepresentation(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getExplicit3DRepresentationQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Create a new <B>Vector</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Vector</B>
+	 * @param xCoordinate
+	 *            X coordinate
+	 * @param yCoordinate
+	 *            Y coordinate
+	 * @param zCoordinate
+	 *            Z coordinate
+	 * @param creator
+	 *            URI referring to the user that created this <B>Vector</B>
+	 * @return The id of the created <B>Vector</B>
+	 */
+	@POST
+	@Path(PATH_VECTOR)
+	@Consumes(MIME_TYPE)
+	public Response createVector(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("xCoordinate") Double xCoordinate,
+			@QueryParam("yCoordinate") Double yCoordinate,
+			@QueryParam("zCoordinate") Double zCoordinate,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createVector(context, modelURI, name,
+					xCoordinate, yCoordinate, zCoordinate, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the Vector")
+				.build();
+	}
+	
+	/**
+	 * Delete a <B>Vector</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Vector</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_VECTOR)
+	@Consumes(MIME_TYPE)
+	public Response deleteVector(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Vector")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Vector</B>
+	 * 
+	 * @param context / graph
+	 * @param id The id of the <B>Vector</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Vector</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_VECTOR)
+	public Response getVector(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getVectorQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+	
 }

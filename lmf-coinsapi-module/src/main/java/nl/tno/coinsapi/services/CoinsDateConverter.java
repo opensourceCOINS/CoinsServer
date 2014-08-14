@@ -7,6 +7,9 @@ import java.util.Date;
 
 import javax.swing.text.DateFormatter;
 
+/**
+ * Date converter for COINS
+ */
 public class CoinsDateConverter implements ICoinsDateConversion {
 
 	// TODO why the quotes round the Z? should not we just add the time zone?
