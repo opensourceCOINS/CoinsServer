@@ -194,4 +194,81 @@ public interface ICoinsApiService {
 	 */
 	public String getVectorQuery(String context, String id);
 
+	/**
+	 * @param context
+	 * @param id
+	 * @return the locator query
+	 */
+	public String getLocatorQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param primaryOrientation
+	 * @param secondaryOrientation
+	 * @param translation
+	 * @param creator
+	 * @return the id of the created locator
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createLocator(String context, String modelURI, String name,
+			String primaryOrientation, String secondaryOrientation,
+			String translation, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param affects
+	 * @param userID
+	 * @param taskType
+	 * @param startDatePlanned
+	 * @param endDatePlanned
+	 * @param creator
+	 * @return id of the new Task that was created
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createTask(String context, String modelURI, String name,
+			String affects, String userID, String taskType,
+			String startDatePlanned, String endDatePlanned, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return Task Query
+	 */
+	public String getTaskQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return NonFunctionalRequirementQuery
+	 */
+	public String getNonFunctionalRequirementQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param layerIndex
+	 * @param userID
+	 * @param creator
+	 * @param nonFunctionalRequirementType
+	 * @return the id of the created NonFunctionalRequirement
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createNonFunctionalRequirement(String context,
+			String modelURI, String name, int layerIndex, String userID,
+			String creator, String nonFunctionalRequirementType) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
 }

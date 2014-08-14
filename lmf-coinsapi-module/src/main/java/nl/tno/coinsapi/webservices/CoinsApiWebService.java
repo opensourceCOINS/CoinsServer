@@ -60,6 +60,10 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_REQUIREMENT = "/requirement";
 	/**
+	 * NonFunctionRequirement
+	 */
+	public static final String PATH_NON_FUNCTIONAL_REQUIREMENT = "/nonfunctionalrequirement";
+	/**
 	 * Requirement (FORM)
 	 */
 	public static final String PATH_REQUIREMENT_FORM = "/requirementform";
@@ -95,6 +99,10 @@ public class CoinsApiWebService {
 	 * Explicit3DRepresentation
 	 */
 	public static final String PATH_EXPLICIT_3D_REPRESENTATION = "/explicit3drepresentation";
+	/**
+	 * Task 
+	 */
+	public static final String PATH_TASK = "/task";
 	/**
 	 * Application/json
 	 */
@@ -850,5 +858,287 @@ public class CoinsApiWebService {
 		String query = coinsService.getVectorQuery(context, id);
 		return sparqlWebService.selectPostForm(query, output, request);
 	}
+
+	/**
+	 * Create a new <B>Locator</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Locator</B>
+	 * @param primaryOrientation
+	 *            URI referring to the primary orientation (Vector)  
+	 * @param secondaryOrientation
+	 *            URI referring to the secondary orientation (Vector)
+	 * @param translation
+	 *  		  URI referring to the translation (Vector)
+	 * @param creator
+	 *            URI referring to the user that created this <B>Locator</B>
+	 * @return The id of the created <B>Locator</B>
+	 */
+	@POST
+	@Path(PATH_LOCATOR)
+	@Consumes(MIME_TYPE)
+	public Response createLocator(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("primaryOrientation") String primaryOrientation,
+			@QueryParam("secondaryOrientation") String secondaryOrientation,
+			@QueryParam("translation") String translation,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createLocator(context, modelURI, name,
+					primaryOrientation, secondaryOrientation, translation, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the Vector")
+				.build();
+	}
 	
+	/**
+	 * Delete a <B>Locator</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Locator</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_LOCATOR)
+	@Consumes(MIME_TYPE)
+	public Response deleteLocator(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Locator")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Locator</B>
+	 * 
+	 * @param context / graph
+	 * @param id The id of the <B>Locator</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Locator</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_LOCATOR)
+	public Response getLocator(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getLocatorQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Create a new <B>Task</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Task</B>
+	 * @param affects 
+	 *            URI of the PhysicalObject this task affects
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param taskType
+	 *            For instance http://www.coinsweb.nl/c-bim.owl#Constructing  
+	 * @param startDatePlanned
+	 *            Start date for this <B>Task</B> formatted to yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+	 * @param endDatePlanned
+	 *            End date for this <B>Task</B> formatted to yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+	 * @param creator
+	 *            URI referring to the user that created this <B>Task</B>
+	 * @return The id of the created <B>Task</B>
+	 */
+	@POST
+	@Path(PATH_TASK)
+	@Consumes(MIME_TYPE)
+	public Response createTask(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("affects") String affects,
+			@QueryParam("userID") String userID,
+			@QueryParam("taskType") String taskType,
+			@QueryParam("startDatePlanned") String startDatePlanned,
+			@QueryParam("endDatePlanned") String endDatePlanned,
+			@QueryParam("creator") String creator){
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (userID == null) {
+			return Response.serverError().entity("Userid cannot be null")
+					.build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createTask(context, modelURI, name,
+					affects, userID, taskType, startDatePlanned,
+					endDatePlanned, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the task")
+				.build();
+	}
+	
+	/**
+	 * Delete a <B>Task</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Task</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_TASK)
+	@Consumes(MIME_TYPE)
+	public Response deleteTask(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete task")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Task</B>
+	 * 
+	 * @param context / graph
+	 * @param id The id of the <B>Task</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Task</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_TASK)
+	public Response getTask(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getTaskQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Create a new <B>NonFunctionalRequirement</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Requirement</B>
+	 * @param layerIndex
+	 *            The layer index of the <B>Requirement</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>NonFunctionalRequirement</B>
+	 * @param nonFunctionalRequirementType
+	 *  		  The type of NonFunctionalRequirement             
+	 * @return The id of the created <B>NonFunctionalRequirement</B>
+	 */
+	@POST
+	@Path(PATH_NON_FUNCTIONAL_REQUIREMENT)
+	@Consumes(MIME_TYPE)
+	public Response createNonFunctionalRequirement(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("layerIndex") int layerIndex,
+			@QueryParam("userID") String userID,
+			@QueryParam("creator") String creator,
+			@QueryParam("nonFunctionalRequirementType") String nonFunctionalRequirementType) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (userID == null) {
+			return Response.serverError().entity("Userid cannot be null")
+					.build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createNonFunctionalRequirement(context, modelURI, name,
+					layerIndex, userID, creator, nonFunctionalRequirementType);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the NonFunctionalRequirement")
+				.build();
+	}
+
+	/**
+	 * Delete a <B>NonFunctionalRequirement</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>NonFunctionalRequirement</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_NON_FUNCTIONAL_REQUIREMENT)
+	@Consumes(MIME_TYPE)
+	public Response deleteNonFunctionalRequirement(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteItem(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete NonFunctionalRequirement")
+				.build();
+	}
+
+	/**
+	 * Get a <B>NonFunctionalRequirement</B>
+	 * 
+	 * @param context / graph
+	 * @param id The id of the <B>NonFunctionalRequirement</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>NonFunctionalRequirement</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_NON_FUNCTIONAL_REQUIREMENT)
+	public Response getNonFunctionalRequirement(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getNonFunctionalRequirementQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
 }

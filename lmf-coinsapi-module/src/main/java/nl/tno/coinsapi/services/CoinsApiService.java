@@ -25,6 +25,7 @@ public class CoinsApiService implements ICoinsApiService {
 	private ICoinsDateConversion dateConversion;
 	
 	private static final String PREFIX_CBIM = "cbim: <http://www.coinsweb.nl/c-bim.owl#>";
+	private static final String PREFIX_CBIMFS = "cbimfs: <http://www.coinsweb.nl/c-bim-fs.owl#>";
 	
 	@Override
 	public String createRequirement(String context, String modelURI, String name,
@@ -235,6 +236,92 @@ public class CoinsApiService implements ICoinsApiService {
 	public String getVectorQuery(String context, String id) {
 		return "SELECT ?name ?value WHERE { GRAPH <" + context
 				+ "> { <" + id + "> ?name ?value }}";		
+	}
+
+	@Override
+	public String getLocatorQuery(String context, String id) {
+		return "SELECT ?name ?value WHERE { GRAPH <" + context
+				+ "> { <" + id + "> ?name ?value }}";		
+	}
+
+	@Override
+	public String createLocator(String context, String modelURI, String name,
+			String primaryOrientation, String secondaryOrientation,
+			String translation, String creator) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:primaryOrientation", primaryOrientation);
+		builder.addAttribute("cbim:secondaryOrientation", secondaryOrientation);
+		builder.addAttribute("cbim:translation", translation);
+		builder.addAttribute("cbim:creator", creator);
+		builder.addAttribute("a", "cbim:Locator");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public String createTask(String context, String modelURI, String name,
+			String affects, String userID, String taskType,
+			String startDatePlanned, String endDatePlanned, String creator)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:startDatePlanned", startDatePlanned);
+		builder.addAttribute("cbim:endDatePlanned", endDatePlanned);
+		builder.addAttribute("cbim:taskType", taskType);
+		builder.addAttribute("cbim:affects", affects);
+		builder.addAttribute("cbim:creator", creator);
+		builder.addAttribute("a", "cbim:Task");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public String getTaskQuery(String context, String id) {
+		return "SELECT ?name ?value WHERE { GRAPH <" + context
+				+ "> { <" + id + "> ?name ?value }}";		
+	}
+
+	@Override
+	public String getNonFunctionalRequirementQuery(String context, String id) {
+		return "SELECT ?name ?value WHERE { GRAPH <" + context
+				+ "> { <" + id + "> ?name ?value }}";		
+	}
+
+	@Override
+	public String createNonFunctionalRequirement(String context,
+			String modelURI, String name, int layerIndex, String userID,
+			String creator, String nonFunctionalRequirementType)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:userID", userID);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:layerIndex", layerIndex);
+		builder.addAttribute("cbim:creator", creator);
+		builder.addAttribute("cbimfs:nonFunctionalRequirementType", nonFunctionalRequirementType);
+		builder.addAttribute("a", "cbimfs:NonFunctionalRequirement");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
 	}
 
 }
