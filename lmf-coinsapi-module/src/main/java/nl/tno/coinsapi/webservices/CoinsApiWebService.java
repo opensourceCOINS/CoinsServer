@@ -1,5 +1,6 @@
 package nl.tno.coinsapi.webservices;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Vector;
@@ -13,11 +14,13 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import nl.tno.coinsapi.services.IBimFileService;
 import nl.tno.coinsapi.services.ICoinsApiService;
 
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
@@ -100,6 +103,10 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_EXPLICIT_3D_REPRESENTATION = "/explicit3drepresentation";
 	/**
+	 * References to BIM documents from COINS containers  
+	 */
+	public static final String PATH_DOCUMENT_REFERENCE = "/bim";
+	/**
 	 * Task 
 	 */
 	public static final String PATH_TASK = "/task";
@@ -114,6 +121,9 @@ public class CoinsApiWebService {
 	@Inject
 	private ICoinsApiService coinsService;
 
+	@Inject 
+	private IBimFileService fileServer;
+	
 	@Inject
 	private PrefixService prefixService;
 
@@ -1139,6 +1149,43 @@ public class CoinsApiWebService {
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getNonFunctionalRequirementQuery(context, id);
 		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * @param pFileName
+	 * @return the requested document
+	 */
+	@GET
+	@Path(PATH_DOCUMENT_REFERENCE+"/{fileName}")	
+	public Response getBimDocument(@PathParam("fileName") String pFileName) {
+		byte[] file = null;
+		try {
+			file = fileServer.getFile(pFileName);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("File not found " + pFileName)
+					.build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("File cannot be read " + pFileName).build();
+		}
+		if (file == null) {
+			return Response.serverError().entity("File not found " + pFileName)
+					.build();
+		}
+		return Response.ok(file).build();
+	}
+
+	/**
+	 * @param pContext 
+	 * @param pFileName
+	 * @return the requested document
+	 */
+	@GET
+	@Path(PATH_DOCUMENT_REFERENCE+"/{context}/{fileName}")	
+	public Response getBimDocumentContext(@PathParam("context") String pContext, @PathParam("fileName") String pFileName) {
+		return getBimDocument(pContext + "/" + pFileName);
 	}
 
 }

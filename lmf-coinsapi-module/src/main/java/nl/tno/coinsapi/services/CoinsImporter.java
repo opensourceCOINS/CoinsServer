@@ -6,11 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -19,14 +21,23 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import nl.tno.coinsapi.webservices.CoinsApiWebService;
+
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
 import org.apache.marmotta.platform.core.api.importer.ImportService;
 import org.apache.marmotta.platform.core.api.importer.Importer;
 import org.apache.marmotta.platform.core.api.task.Task;
 import org.apache.marmotta.platform.core.api.task.TaskManagerService;
+import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
+import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.apache.marmotta.platform.core.exception.io.MarmottaImportException;
+import org.apache.marmotta.platform.sparql.api.sparql.SparqlService;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.UpdateExecutionException;
 import org.slf4j.Logger;
 
 /**
@@ -49,10 +60,16 @@ public class CoinsImporter implements Importer {
 	@Inject
 	private ImportService mImportService;	
 	
+	@Inject
+	private SparqlService mSparqlService;
+	
+	@Inject
+	private IBimFileService mFileServer;
+	
 	private static long mTaskCounter = 0;
 
 	private List<String> mAcceptTypes;
-
+	
 	@Override
 	public String getName() {
 		return "ccr";
@@ -144,13 +161,15 @@ public class CoinsImporter implements Importer {
 						count += importData(file, pUser, pContext, pBaseUri);
 					}
 				}
-//				f = new File(tempFolder + File.separator + "doc");
-//				if (f.exists() && f.isDirectory()) {
-//					for (File file : f.listFiles()) {
-//						count += importData(file, pUser, pContext, pBaseUri);
-//					}
-//				}
-				deleteFolder(new File(tempFolder));				
+				f = new File(tempFolder + File.separator + "doc");
+				if (f.exists() && f.isDirectory()) {
+					for (File file : f.listFiles()) {
+						count += importData(file, pUser, pContext, pBaseUri);
+					}
+				}
+				deleteFolder(new File(tempFolder));
+				
+				updateReferences(pContext);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -160,13 +179,70 @@ public class CoinsImporter implements Importer {
 		return count;
 	}
 
-	private void deleteFolder(File pFolder) {
-		for (File file : pFolder.listFiles()) {
-			if (file.isDirectory()) {
-				deleteFolder(file);
+	private void updateReferences(URI pContext) {
+		File folder = new File(mFileServer.getDocsPath(pContext));
+		if (!folder.exists()) {
+			return;
+		}
+		String[] files = folder.list();
+		if (files == null) {
+			return;
+		}
+		Set<String> fileSet = new HashSet<String>();
+		for (String s : files) {
+			fileSet.add(s);
+		}
+		try {
+			String query = "PREFIX cbim: <http://www.coinsweb.nl/c-bim.owl#>\n\n"
+					+ "SELECT * WHERE { GRAPH <"+pContext+"> {\n"
+					+ "?object cbim:documentUri ?documentUri .\n"
+					+ "?object cbim:documentAliasFilePath ?documentAliasFilePath .\n"
+					+ "?object a cbim:Explicit3DRepresentation .\n}}";
+			List<Map<String, Value>> result = mSparqlService.query(QueryLanguage.SPARQL, query);
+			for (Map<String, Value> item : result) {
+				String fileName = item.get("documentAliasFilePath").stringValue();
+				String oldUri = item.get("documentUri").stringValue();
+				if (oldUri.contains("http")) {
+					oldUri = "\"" + oldUri + "\"";
+				}
+				else {
+					// Usually it is no URI
+					oldUri = "\"" + oldUri + "\"^^<http://www.w3.org/2001/XMLSchema#string>";
+				}
+				if (fileSet.contains(fileName)) {
+					query = "PREFIX cbim: <http://www.coinsweb.nl/c-bim.owl#>\n\n"
+							+ "WITH <"
+							+ pContext
+							+ "> \nDELETE { ?object cbim:documentUri "
+							+ oldUri
+							+ " } \nINSERT { ?object cbim:documentUri <"
+							+ composeUrl(fileName, pContext)
+							+ "> } \nWHERE\n { ?object a cbim:Explicit3DRepresentation .\n ?object cbim:documentUri "
+							+ oldUri + "\n}";
+					try {
+						mSparqlService.update(QueryLanguage.SPARQL, query);
+					} catch (InvalidArgumentException | MalformedQueryException
+							| UpdateExecutionException e) {
+						e.printStackTrace();
+					}
+				}				
 			}
-			else {
-				file.delete();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void deleteFolder(File pFolder) {
+		if (pFolder != null) {
+			File[] files = pFolder.listFiles();
+			if (files != null) {
+				for (File file : files) {
+					if (file.isDirectory()) {
+						deleteFolder(file);
+					} else {
+						file.delete();
+					}
+				}
 			}
 		}
 	}
@@ -174,18 +250,35 @@ public class CoinsImporter implements Importer {
 	private int importData(File pFile, Resource pUser, URI pContext,
 			String pBaseUri) throws MarmottaImportException {
 		int result = 0;
-		String format = "text/turtle";
 		if (pFile.getName().endsWith("owl")) {
-			format = "application/rdf+xml";
+			try {
+				FileInputStream fis = new FileInputStream(pFile);
+				result = mImportService.importData(fis, "application/rdf+xml", pUser, pContext);
+				fis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		try {
-			FileInputStream fis = new FileInputStream(pFile);
-			result = mImportService.importData(fis, format, pUser, pContext);
-			fis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		else {
+			mFileServer.importFile(pFile, pContext);
 		}
 		return result;
+	}
+	
+	private String composeUrl(String fileName, URI pContext) {
+		try {
+			fileName = (new File(fileName)).getName();
+			fileName = (new File(fileName)).toURI().toURL().getFile();
+			fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+			String path = mConfigurationService.getBaseUri()
+					+ CoinsApiWebService.PATH
+					+ CoinsApiWebService.PATH_DOCUMENT_REFERENCE + "/"
+					+ mFileServer.getContextPart(pContext) + fileName;
+			return path;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return "error";
 	}
 
 	@Override
