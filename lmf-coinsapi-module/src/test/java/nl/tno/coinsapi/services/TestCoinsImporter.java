@@ -17,7 +17,6 @@ import org.apache.marmotta.platform.sparql.webservices.SparqlWebService;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
@@ -51,24 +50,21 @@ public class TestCoinsImporter {
 	public static void tearDown() {
 		marmotta.shutdown();
 	}
-
+	
 	/**
 	 * Testing the OWL contents of the container
+	 * @param pContext 
 	 * 
 	 * @throws IOException
 	 */
-	@Test
-	public void testImportZitbankD() throws IOException {
+	protected void testImportZitbankD(String pContext) throws IOException {
 		File file = new File(System.getProperty("user.dir") + File.separator
-				+ "test" + File.separator + "D.ccr");
+				+ "src/test/resources" + File.separator + "D.ccr");
 		Assert.assertTrue(file.exists());
-
-		String context = RestAssured.baseURI + ":" + RestAssured.port
-				+ RestAssured.basePath;
 
 		given().content(createByteArray(file)).given()
 				.header("Content-Type", "application/ccr")
-				.queryParam("context", context).expect().statusCode(OK).when()
+				.queryParam("context", pContext).expect().statusCode(OK).when()
 				.post("import/upload");
 
 		String query = "PREFIX cbim: <http://www.coinsweb.nl/c-bim.owl#>\n\n"
@@ -92,25 +88,21 @@ public class TestCoinsImporter {
 	 * 
 	 * @throws IOException
 	 */
-	@Test
-	public void testImportIFC() throws IOException {
+	protected void testImportIFC(String pContext) throws IOException {
 		File file = new File(System.getProperty("user.dir") + File.separator
-				+ "test" + File.separator + "D.ccr");
+				+ "src/test/resources" + File.separator + "D.ccr");
 		Assert.assertTrue(file.exists());
-
-		String context = RestAssured.baseURI + ":" + RestAssured.port
-				+ RestAssured.basePath;
 
 		given().content(createByteArray(file)).given()
 				.header("Content-Type", "application/ccr")
-				.queryParam("context", context).expect().statusCode(OK).when()
+				.queryParam("context", pContext).expect().statusCode(OK).when()
 				.post("import/upload");
 
 		String query = "PREFIX cbim: <http://www.coinsweb.nl/c-bim.owl#>\n\n"
-				+ "SELECT ?object ?documentUri ?documentAliasFilePath WHERE {\n"
+				+ "SELECT ?object ?documentUri ?documentAliasFilePath WHERE { GRAPH <" + pContext + "> {\n"
 				+ "?object cbim:documentUri ?documentUri .\n"
 				+ "?object cbim:documentAliasFilePath ?documentAliasFilePath .\n"
-				+ "?object a cbim:Explicit3DRepresentation .\n}";
+				+ "?object a cbim:Explicit3DRepresentation .\n}}";
 
 		Response response = given().queryParam("query", query)
 				.queryParam("output", "csv").expect().statusCode(OK).when()
@@ -120,14 +112,23 @@ public class TestCoinsImporter {
 		String[] items = result.split(",");
 		Assert.assertEquals(4 * 3, items.length);
 		Assert.assertEquals("documentAliasFilePath", items[2].trim());
+		String context = "";
+		if (!pContext.endsWith("marmotta")) {			
+			context = pContext.substring(pContext.indexOf("marmotta") + 9) + "/";
+		}
 		for (int i = 0; i < 3; i++) {
 			Assert.assertEquals("Een zeer eenvoudige casus.ifc",
 					items[5 + 3 * i].trim());
 			Assert.assertTrue(items[4 + 3 * i].trim().endsWith(
-					"coinsapi/bim/Een%20zeer%20eenvoudige%20casus.ifc"));
-		}		
-		response = given().expect().statusCode(OK).when()
-				.get("coinsapi/bim/Een zeer eenvoudige casus.ifc");
+					"coinsapi/bim/" + context
+							+ "Een%20zeer%20eenvoudige%20casus.ifc"));
+		}
+		response = given()
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get("coinsapi/bim/" + context
+						+ "Een zeer eenvoudige casus.ifc");
 		InputStream s = response.asInputStream();
 		StringBuilder sb = new StringBuilder();
 		int i = s.read();

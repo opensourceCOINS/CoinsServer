@@ -169,7 +169,54 @@ public class TestCoinsApiWebService {
 				result.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
 		Assert.assertEquals("This is a nice description!",
 				result.get("http://www.coinsweb.nl/c-bim.owl#description"));
-
+		// Set the description again
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+		.queryParam("context", context)
+		.queryParam("id", id)
+		.queryParam("description", "This description is even nicer...")
+		.queryParam(
+				"modifier",
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e52b8")
+		.expect()
+		.statusCode(OK)
+		.when()
+		.post(CoinsApiWebService.PATH
+				+ CoinsApiWebService.PATH_DESCRIPTION);
+		// Check for duplicate descriptions...
+		body = given()
+		.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+		.queryParam("context", context)
+		.queryParam("id", id)
+		.queryParam("output", "csv")
+		.expect()
+		.statusCode(OK)
+		.when()
+		.get(CoinsApiWebService.PATH
+				+ CoinsApiWebService.PATH_REQUIREMENT).body();
+		result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("requirement name",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("B1.1",
+				result.get("http://www.coinsweb.nl/c-bim.owl#userID"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Requirement",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals("3",
+				result.get("http://www.coinsweb.nl/c-bim.owl#layerIndex"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
+				result.get("http://www.coinsweb.nl/c-bim.owl#requirementOf"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#modificationDate"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e52b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#modifier"));
+		Assert.assertEquals("This description is even nicer...",
+				result.get("http://www.coinsweb.nl/c-bim.owl#description"));
 		// DELETE requirement
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
@@ -757,7 +804,7 @@ public class TestCoinsApiWebService {
 				.queryParam("documentType", "IFC")
 				.queryParam("documentAliasFilePath",
 						"een zeer eenvoudige casus.ifc")
-				.queryParam("documentUri", "#2K1FrCvpnAIuVj8HuCg0ML")
+				.queryParam("documentUri", "http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#2K1FrCvpnAIuVj8HuCg0ML")
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -790,7 +837,7 @@ public class TestCoinsApiWebService {
 				result.get("http://www.coinsweb.nl/c-bim.owl#documentType"));
 		Assert.assertEquals("een zeer eenvoudige casus.ifc", result
 				.get("http://www.coinsweb.nl/c-bim.owl#documentAliasFilePath"));
-		Assert.assertEquals("#2K1FrCvpnAIuVj8HuCg0ML",
+		Assert.assertEquals("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#2K1FrCvpnAIuVj8HuCg0ML",
 				result.get("http://www.coinsweb.nl/c-bim.owl#documentUri"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
@@ -1037,7 +1084,10 @@ public class TestCoinsApiWebService {
 		Assert.assertEquals(0, items.length % 2);
 		Map<String, String> result = new HashMap<String, String>();
 		for (int i = 0; i < items.length - 1; i += 2) {
-			result.put(items[i].trim(), items[i + 1].trim());
+			final String key = items[i].trim();
+			final String value = items[i + 1].trim();
+			Assert.assertFalse(result.containsKey(key));
+			result.put(key, value);
 		}
 		return result;
 	}

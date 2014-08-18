@@ -3,8 +3,6 @@ package nl.tno.coinsapi.services;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 
 import javax.inject.Inject;
 
@@ -19,38 +17,20 @@ import com.google.common.io.Files;
 public class BimFileService implements IBimFileService {
 
 	/**
-	 * TODO make it configurable 
+	 * Coins documents path
 	 */
-	private final static String DOCS_FOLDER = "e:/CoinsDocs";
+	private final static String DOCS_FOLDER = "coinsapi.docspath";
 	
 	@Inject
 	private ConfigurationService mConfigurationService;
 	
 	@Override
-	public byte[] getFile(String pFileName) throws URISyntaxException, IOException {
-//		String fileName = "";
-//		java.net.URI u = new java.net.URI("file://" + DOCS_FOLDER + "/" + pFileName);
-//		fileName = Paths.get(u.getPath()).toString();
-//		String driveLabel = getDriveLabel();
-//		if (driveLabel!=null) {
-//			fileName = driveLabel + ":" + fileName;
-//		}
-		File file = new File(DOCS_FOLDER + File.separator + pFileName);
+	public byte[] getFile(String pFileName) throws IOException {
+		File file = new File(mConfigurationService.getStringConfiguration(DOCS_FOLDER) + File.separator + pFileName);
 		if (file.exists()) {
 			return createByteArray(file);
 		}
 		return null;
-	}
-
-	private String getDriveLabel() {
-		int index = DOCS_FOLDER.indexOf(':');
-		if (index < 0) {
-			return null;
-		}
-		if (index > 1) {
-			return null;
-		}
-		return DOCS_FOLDER.substring(0, 1);
 	}
 
 	private byte[] createByteArray(File pFile) throws IOException {
@@ -83,7 +63,11 @@ public class BimFileService implements IBimFileService {
 	}
 
 	public String getDocsPath(URI pContext) {
-		return DOCS_FOLDER + getContextPart(pContext);
+		String context = getContextPart(pContext);
+		if (context=="") {			
+			return mConfigurationService.getStringConfiguration(DOCS_FOLDER);
+		}
+		return mConfigurationService.getStringConfiguration(DOCS_FOLDER) + "/" + context;
 	}
 
 	public String getContextPart(URI pContext) {

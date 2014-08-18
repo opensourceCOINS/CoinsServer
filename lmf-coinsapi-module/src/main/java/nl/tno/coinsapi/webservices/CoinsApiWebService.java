@@ -1152,19 +1152,16 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Get a document retrieved from a Coins Container
 	 * @param pFileName
 	 * @return the requested document
 	 */
 	@GET
-	@Path(PATH_DOCUMENT_REFERENCE+"/{fileName}")	
-	public Response getBimDocument(@PathParam("fileName") String pFileName) {
+	@Path(PATH_DOCUMENT_REFERENCE+"/{filename}")	
+	public Response getBimDocument(@PathParam("filename") String pFileName) {
 		byte[] file = null;
 		try {
 			file = fileServer.getFile(pFileName);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			return Response.serverError().entity("File not found " + pFileName)
-					.build();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Response.serverError()
@@ -1178,13 +1175,14 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Get a document retrieved from a Coins Container
 	 * @param pContext 
 	 * @param pFileName
 	 * @return the requested document
 	 */
 	@GET
-	@Path(PATH_DOCUMENT_REFERENCE+"/{context}/{fileName}")	
-	public Response getBimDocumentContext(@PathParam("context") String pContext, @PathParam("fileName") String pFileName) {
+	@Path(PATH_DOCUMENT_REFERENCE+"/{context}/{filename}")	
+	public Response getBimDocumentContext(@PathParam("context") String pContext, @PathParam("filename") String pFileName) {
 		return getBimDocument(pContext + "/" + pFileName);
 	}
 

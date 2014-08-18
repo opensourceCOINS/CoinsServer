@@ -17,7 +17,7 @@ public interface IBimFileService {
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	public byte[] getFile(String pFileName) throws URISyntaxException, IOException;
+	public byte[] getFile(String pFileName) throws IOException;
 
 	/**
 	 * Move a file to the correct location

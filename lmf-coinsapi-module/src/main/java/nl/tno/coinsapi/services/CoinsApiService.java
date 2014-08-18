@@ -4,7 +4,9 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import nl.tno.coinsapi.tools.QueryBuilder;
 import nl.tno.coinsapi.tools.QueryBuilder.InsertQueryBuilder;
+import nl.tno.coinsapi.tools.QueryBuilder.UpdateQueryBuilder;
 
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
 import org.apache.marmotta.platform.core.exception.MarmottaException;
@@ -95,13 +97,25 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public void setDescription(String context, String id, String description, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException {
-		InsertQueryBuilder builder = new InsertQueryBuilder();
+		// Only inserting the description may cause duplicate descriptions.
+		// Only updating the description does not work if the description was not present yet.
+		// Maybe someone is able to do this with one query. That would be more efficient...
+		QueryBuilder builder = new InsertQueryBuilder();
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(context);
 		builder.setId(id);
 		builder.addAttribute("cbim:description", description);
 		builder.addAttribute("cbim:modificationDate", dateConversion.toString(new Date()));
 		builder.addAttribute("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+
+		builder = new UpdateQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:description", description);
+		builder.addAttribute("cbim:modificationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:modifier", modifier);		
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 
