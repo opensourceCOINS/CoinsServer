@@ -30,16 +30,16 @@ public interface ICoinsApiService {
 	/**
 	 * @param context
 	 * @param id
-	 * @return true if successful
+	 * @return the query to retrieve a requirement
 	 */
-	public boolean deleteItem(String context, String id);
+	public String getRequirementQuery(String context, String id);
 
 	/**
 	 * @param context
 	 * @param id
-	 * @return the query to retrieve a requirement
+	 * @return true if success
 	 */
-	public String getRequirementQuery(String context, String id);
+	public boolean deleteRequirement(String context, String id);
 
 	/**
 	 * @param context
@@ -61,18 +61,11 @@ public interface ICoinsApiService {
 	public String getPersonOrOrganisationQuery(String context, String id);
 
 	/**
-	 * Set the description
-	 * 
 	 * @param context
 	 * @param id
-	 * @param description
-	 * @param modifier
-	 * @throws InvalidArgumentException
-	 * @throws MalformedQueryException
-	 * @throws UpdateExecutionException
-	 * @throws MarmottaException
+	 * @return true if success
 	 */
-	public void setDescription(String context, String id, String description, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+	public boolean deletePersonOrOrganisation(String context, String id);
 
 	/**
 	 * @param context
@@ -96,6 +89,13 @@ public interface ICoinsApiService {
 	 * @return PhysicalObject Query
 	 */
 	public String getPhysicalObjectQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deletePhysicalObject(String context, String id);
 
 	/**
 	 * @param context
@@ -124,6 +124,13 @@ public interface ICoinsApiService {
 	/**
 	 * @param context
 	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteFunction(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
 	 * @return Document query
 	 */
 	public String getDocumentQuery(String context, String id);
@@ -142,6 +149,13 @@ public interface ICoinsApiService {
 	 */
 	public String createDocument(String context, String modelURI, String name,
 			String userID, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteDocument(String context, String id);
 
 	/**
 	 * @param context
@@ -171,6 +185,13 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteExplicit3DRepresentation(String context, String id);
+
+	/**
+	 * @param context
 	 * @param modelURI
 	 * @param name
 	 * @param xCoordinate
@@ -197,6 +218,13 @@ public interface ICoinsApiService {
 	/**
 	 * @param context
 	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteVector(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
 	 * @return the locator query
 	 */
 	public String getLocatorQuery(String context, String id);
@@ -218,6 +246,13 @@ public interface ICoinsApiService {
 	public String createLocator(String context, String modelURI, String name,
 			String primaryOrientation, String secondaryOrientation,
 			String translation, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteLocator(String context, String id);
 
 	/**
 	 * @param context
@@ -249,6 +284,13 @@ public interface ICoinsApiService {
 	/**
 	 * @param context
 	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteTask(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
 	 * @return NonFunctionalRequirementQuery
 	 */
 	public String getNonFunctionalRequirementQuery(String context, String id);
@@ -270,5 +312,89 @@ public interface ICoinsApiService {
 	public String createNonFunctionalRequirement(String context,
 			String modelURI, String name, int layerIndex, String userID,
 			String creator, String nonFunctionalRequirementType) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteNonFunctionalRequirement(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return Amount query
+	 */
+	public String getAmountQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param value
+	 * @param catalogPart
+	 * @param creator
+	 * @return id of the created amount
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createAmount(String context, String modelURI, String name,
+			String userID, int value, String catalogPart, String creator)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteAmount(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return a catalogue part query
+	 */
+	public String getCataloguePartQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param creator
+	 * @return id of the new CataloguePart
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createCataloguePart(String context, String modelURI,
+			String name, String userID, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteCataloguePart(String context, String id);
+
+	/**
+	 * Set the description
+	 * 
+	 * @param context
+	 * @param id
+	 * @param description
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setDescription(String context, String id, String description, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
 
 }

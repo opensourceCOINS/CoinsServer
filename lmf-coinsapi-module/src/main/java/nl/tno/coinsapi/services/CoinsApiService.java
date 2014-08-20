@@ -29,6 +29,24 @@ public class CoinsApiService implements ICoinsApiService {
 	private static final String PREFIX_CBIM = "cbim: <http://www.coinsweb.nl/c-bim.owl#>";
 	private static final String PREFIX_CBIMFS = "cbimfs: <http://www.coinsweb.nl/c-bim-fs.owl#>";
 	
+	private boolean deleteItem(String context, String id, String type, String prefix) {
+		String query = "PREFIX " + prefix + "\nDELETE WHERE { GRAPH <" + context
+				+ "> { <" + id + "> ?name ?value ; a " + type + " }}";
+		try {
+			sparqlService.update(QueryLanguage.SPARQL, query);
+			return true;
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	@Override
 	public String createRequirement(String context, String modelURI, String name,
 			int layerindex, String userId,String creator, String requirementOf) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException {		
@@ -49,28 +67,13 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 	
 	@Override
-	public boolean deleteItem(String context, String id) {
-		String query = "DELETE WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";
-		try {
-			sparqlService.update(QueryLanguage.SPARQL, query);
-			return true;
-		} catch (InvalidArgumentException e) {
-			e.printStackTrace();
-		} catch (MalformedQueryException e) {
-			e.printStackTrace();
-		} catch (UpdateExecutionException e) {
-			e.printStackTrace();
-		} catch (MarmottaException e) {
-			e.printStackTrace();
-		}
-		return false;
+	public String getRequirementQuery(String context, String id) {
+		return getSelectQuery(context, id, "cbim:Requirement", PREFIX_CBIM);
 	}
 
 	@Override
-	public String getRequirementQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+	public boolean deleteRequirement(String context, String id) {
+		return deleteItem(context, id, "cbim:Requirement", PREFIX_CBIM);
 	}
 
 	@Override
@@ -91,8 +94,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public String getPersonOrOrganisationQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbim:PersonOrOrganisation", PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deletePersonOrOrganisation(String context, String id) {
+		return deleteItem(context, id, "cbim:PersonOrOrganisation", PREFIX_CBIM);
 	}
 
 	@Override
@@ -141,16 +148,33 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public String getPhysicalObjectQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbim:PhysicalObject", PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deletePhysicalObject(String context, String id) {
+		return deleteItem(context, id, "cbim:PhysicalObject", PREFIX_CBIM);
 	}
 
 	@Override
 	public String getFunctionQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbim:Function", PREFIX_CBIM);
 	}
-
+	
+	private String getSelectQuery(String context, String id, String type, String prefix) {
+		StringBuilder result = new StringBuilder();
+		result.append("PREFIX ");
+		result.append(prefix);
+		result.append("\n\nSELECT ?name ?value WHERE {\n\tGRAPH <");
+		result.append(context);
+		result.append("> {\n\t\t<");
+		result.append(id);
+		result.append("> ?name ?value ;\n\t\t\ta ");
+		result.append(type);
+		result.append("\n\t}\n}");
+		return result.toString();
+	}
+	
 	@Override
 	public String createFunction(String context, String modelURI, String name,
 			int layerIndex, String userID, String creator, String isFulfilledBy)
@@ -173,9 +197,8 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
-	public String getDocumentQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+	public boolean deleteFunction(String context, String id) {
+		return deleteItem(context, id, "cbim:Function", PREFIX_CBIM);
 	}
 
 	@Override
@@ -198,9 +221,18 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
+	public String getDocumentQuery(String context, String id) {
+		return getSelectQuery(context, id, "cbim:Document", PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deleteDocument(String context, String id) {
+		return deleteItem(context, id, "cbim:Document", PREFIX_CBIM);
+	}
+
+	@Override
 	public String getExplicit3DRepresentationQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbim:Explicit3DRepresentation", PREFIX_CBIM);
 	}
 
 	@Override
@@ -226,6 +258,11 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
+	public boolean deleteExplicit3DRepresentation(String context, String id) {
+		return deleteItem(context, id, "cbim:Explicit3DRepresentation", PREFIX_CBIM);
+	}
+
+	@Override
 	public String createVector(String context, String modelURI, String name,
 			Double xCoordinate, Double yCoordinate, Double zCoordinate,
 			String creator) throws MarmottaException, InvalidArgumentException,
@@ -248,14 +285,17 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public String getVectorQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbim:Vector", PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deleteVector(String context, String id) {
+		return deleteItem(context, id, "cbim:Vector", PREFIX_CBIM);
 	}
 
 	@Override
 	public String getLocatorQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbim:Locator", PREFIX_CBIM);
 	}
 
 	@Override
@@ -278,6 +318,11 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttribute("a", "cbim:Locator");
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
+	}
+
+	@Override
+	public boolean deleteLocator(String context, String id) {
+		return deleteItem(context, id, "cbim:Locator", PREFIX_CBIM);
 	}
 
 	@Override
@@ -304,15 +349,23 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
+	public boolean deleteTask(String context, String id) {
+		return deleteItem(context, id, "cbim:Task", PREFIX_CBIM);
+	}
+
+	@Override
 	public String getTaskQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbim:Task", PREFIX_CBIM);
 	}
 
 	@Override
 	public String getNonFunctionalRequirementQuery(String context, String id) {
-		return "SELECT ?name ?value WHERE { GRAPH <" + context
-				+ "> { <" + id + "> ?name ?value }}";		
+		return getSelectQuery(context, id, "cbimfs:NonFunctionalRequirement", PREFIX_CBIMFS);
+	}
+
+	@Override
+	public boolean deleteNonFunctionalRequirement(String context, String id) {
+		return deleteItem(context, id, "cbimfs:NonFunctionalRequirement", PREFIX_CBIMFS);
 	}
 
 	@Override
@@ -336,6 +389,66 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttribute("a", "cbimfs:NonFunctionalRequirement");
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
+	}
+
+	@Override
+	public String getAmountQuery(String context, String id) {
+		return getSelectQuery(context, id, "cbim:Amount", PREFIX_CBIM);
+	}
+
+	@Override
+	public String createAmount(String context, String modelURI, String name,
+			String userID, int value, String catalogPart, String creator)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:userID", userID);
+		builder.addAttribute("cbim:cataloguePart", catalogPart);
+		builder.addAttribute("cbim:value", value);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:creator", creator);
+		builder.addAttribute("a", "cbim:Amount");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public boolean deleteAmount(String context, String id) {
+		return deleteItem(context, id, "cbim:Amount", PREFIX_CBIM);
+	}
+
+	@Override
+	public String getCataloguePartQuery(String context, String id) {
+		return getSelectQuery(context, id, "cbim:CataloguePart", PREFIX_CBIM);
+	}
+
+	@Override
+	public String createCataloguePart(String context, String modelURI,
+			String name, String userID, String creator)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder();
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(id);
+		builder.addAttribute("cbim:name", name);
+		builder.addAttribute("cbim:userID", userID);
+		builder.addAttribute("cbim:creationDate", dateConversion.toString(new Date()));
+		builder.addAttribute("cbim:creator", creator);
+		builder.addAttribute("a", "cbim:CataloguePart");
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public boolean deleteCataloguePart(String context, String id) {
+		return deleteItem(context, id, "cbim:CataloguePart", PREFIX_CBIM);
 	}
 
 }

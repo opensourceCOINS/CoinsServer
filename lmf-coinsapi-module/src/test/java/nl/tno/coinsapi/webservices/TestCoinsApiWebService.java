@@ -1079,6 +1079,134 @@ public class TestCoinsApiWebService {
 		Assert.assertTrue(isEmpty(body.asString()));
 	}
 
+	/**
+	 * Testing Amount
+	 * 
+	 * @throws JsonProcessingException
+	 */
+	@Test
+	public void testAmount() throws JsonProcessingException {
+		// POST amount
+		String context = RestAssured.baseURI + ":" + RestAssured.port
+				+ RestAssured.basePath;
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "amount")
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam("userID", "A 25.3")
+				.queryParam("value", 2)
+				.queryParam(
+						"cataloguePart",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_844d271b-844b-4f05-a971-7894664e32b8")
+				.expect().statusCode(OK).when()
+				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_AMOUNT)
+				.body();
+		// GET amount
+		String id = body.asString();
+		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context).queryParam("id", id)
+				.queryParam("output", "csv").expect().statusCode(OK).when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_AMOUNT)
+				.body();
+		Map<String, String> result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("amount",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#Amount",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertEquals("2",
+				result.get("http://www.coinsweb.nl/c-bim.owl#value"));
+		Assert.assertEquals("A 25.3",
+				result.get("http://www.coinsweb.nl/c-bim.owl#userID"));
+		Assert.assertEquals("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_844d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#cataloguePart"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		// DELETE amount
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_AMOUNT);
+		// GET Amount
+		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context).queryParam("id", id)
+				.queryParam("output", "csv").expect().statusCode(OK).when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_AMOUNT)
+				.body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+
+	/**
+	 * Testing CataloguePart
+	 * 
+	 * @throws JsonProcessingException
+	 */
+	@Test
+	public void testCataloguePart() throws JsonProcessingException {
+		// POST CataloguePart
+		String context = RestAssured.baseURI + ":" + RestAssured.port
+				+ RestAssured.basePath;
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "A catalogue part")
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam("userID", "C 123")
+				.expect().statusCode(OK).when()
+				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_CATALOGUE_PART)
+				.body();
+		// GET CataloguePart
+		String id = body.asString();
+		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context).queryParam("id", id)
+				.queryParam("output", "csv").expect().statusCode(OK).when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_CATALOGUE_PART)
+				.body();
+		Map<String, String> result = toKeyValueMapping(body.asString());
+		Assert.assertEquals("A catalogue part",
+				result.get("http://www.coinsweb.nl/c-bim.owl#name"));
+		Assert.assertEquals("C 123",
+				result.get("http://www.coinsweb.nl/c-bim.owl#userID"));
+		Assert.assertEquals("http://www.coinsweb.nl/c-bim.owl#CataloguePart",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
+				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/c-bim.owl#creationDate"));
+		// DELETE CataloguePart
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_CATALOGUE_PART);
+		// GET CataloguePart
+		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context).queryParam("id", id)
+				.queryParam("output", "csv").expect().statusCode(OK).when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_CATALOGUE_PART)
+				.body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+	
 	private Map<String, String> toKeyValueMapping(String pCsvString) {
 		String[] items = pCsvString.replaceAll("\n", ",").split(",");
 		Assert.assertEquals(0, items.length % 2);

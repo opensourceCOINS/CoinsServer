@@ -103,13 +103,21 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_EXPLICIT_3D_REPRESENTATION = "/explicit3drepresentation";
 	/**
-	 * References to BIM documents from COINS containers  
-	 */
-	public static final String PATH_DOCUMENT_REFERENCE = "/bim";
-	/**
 	 * Task 
 	 */
 	public static final String PATH_TASK = "/task";
+	/**
+	 * Amount 
+	 */
+	public static final String PATH_AMOUNT = "/amount";
+	/**
+	 * CataloguePart 
+	 */
+	public static final String PATH_CATALOGUE_PART = "/cataloguepart";
+	/**
+	 * References to BIM documents from COINS containers  
+	 */
+	public static final String PATH_DOCUMENT_REFERENCE = "/bim";
 	/**
 	 * Application/json
 	 */
@@ -294,7 +302,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteRequirement(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteRequirement(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete requirement")
@@ -387,7 +395,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deletePersonOrOrganisation(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deletePersonOrOrganisation(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete PersonOrOrganisation")
@@ -502,7 +510,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deletePhysicalObject(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deletePhysicalObject(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete PhysicalObject")
@@ -595,7 +603,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteFunction(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteFunction(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete Function")
@@ -682,7 +690,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteDocument(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteDocument(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete Document")
@@ -756,7 +764,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteExplicit3DRepresentation(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteExplicit3DRepresentation(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete Explicit3DRepresentation")
@@ -845,7 +853,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteVector(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteVector(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete Vector")
@@ -934,7 +942,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteLocator(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteLocator(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete Locator")
@@ -1034,7 +1042,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteTask(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteTask(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete task")
@@ -1127,7 +1135,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response deleteNonFunctionalRequirement(@QueryParam("context") String context,
 			@QueryParam("id") String id) {
-		if (coinsService.deleteItem(context, id)) {
+		if (coinsService.deleteNonFunctionalRequirement(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete NonFunctionalRequirement")
@@ -1186,4 +1194,176 @@ public class CoinsApiWebService {
 		return getBimDocument(pContext + "/" + pFileName);
 	}
 
+	/**
+	 * Create a new <B>Amount</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Amount</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param cataloguePart
+	 *            URI referring to the catalogPart associated with this <B>Amount</B>            
+	 * @param value 
+	 * 			  The value belonging to the <B>Amount</B>
+	 * @param creator
+	 *            URI referring to the user that created this <B>Amount</B>
+	 * @return The id of the created <B>Amount</B>
+	 */
+	@POST
+	@Path(PATH_AMOUNT)
+	@Consumes(MIME_TYPE)
+	public Response createAmount(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("userID") String userID,
+			@QueryParam("cataloguePart") String cataloguePart,
+			@QueryParam("value") int value,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createAmount(context, modelURI, name,
+					userID, value, cataloguePart, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the amount")
+				.build();
+	}
+	
+	/**
+	 * Delete an <B>Amount</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Amount</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_AMOUNT)
+	@Consumes(MIME_TYPE)
+	public Response deleteAmount(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteAmount(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Amount")
+				.build();
+	}
+
+	/**
+	 * Get an <B>Amount</B>
+	 * 
+	 * @param context / graph
+	 * @param id The id of the <B>Amount</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Amount</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_AMOUNT)
+	public Response getAmount(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getAmountQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+	
+	/**
+	 * Create a new <B>CataloguePart</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>CataloguePart</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>Amount</B>
+	 * @return The id of the created <B>Amount</B>
+	 */
+	@POST
+	@Path(PATH_CATALOGUE_PART)
+	@Consumes(MIME_TYPE)
+	public Response createCataloguePart(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("userID") String userID,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createCataloguePart(context, modelURI,
+					name, userID, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the catalogue part")
+				.build();
+	}
+	
+	/**
+	 * Delete a <B>CataloguePart</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Amount</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_CATALOGUE_PART)
+	@Consumes(MIME_TYPE)
+	public Response deleteCataloguePart(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteCataloguePart(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete CataloguePart")
+				.build();
+	}
+
+	/**
+	 * Get a <B>CataloguePart</B>
+	 * 
+	 * @param context / graph
+	 * @param id The id of the <B>CataloguePartt</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>CataloguePart</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_CATALOGUE_PART)
+	public Response getCataloguePart(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getCataloguePartQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+ 
 }
