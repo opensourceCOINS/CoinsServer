@@ -141,6 +141,21 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_LINK_DOCUMENT = "/link/document";
 
+	/**
+	 * Link a function to a function fulfiller (isFulfilledBy)
+	 */
+	public static final String PATH_LINK_FULFILLED_BY = "/link/isfulfilledby";
+	
+	/**
+	 * Link a function fulfiller to a function (fulfills) 
+	 */
+	public static final String PATH_LINK_FULFILLS = "/link/fulfills";
+
+	/**
+	 * Link an Explicit3DRepresentation to a PhysicalObject 
+	 */
+	public static final String PATH_LINK_SHAPE = "/link/shape";
+
 	@Inject
 	private ConfigurationService configurationService;
 
@@ -568,8 +583,6 @@ public class CoinsApiWebService {
 	 *            A user defined identifier (for convenience)
 	 * @param creator
 	 *            URI referring to the user that created this <B>Function</B>
-	 * @param isFulfilledBy
-	 *  		  URI referring to the function fulfiller.              
 	 * @return The id of the created <B>Function</B>
 	 */
 	@POST
@@ -580,8 +593,7 @@ public class CoinsApiWebService {
 			@QueryParam("name") String name,
 			@QueryParam("layerIndex") int layerIndex,
 			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator,
-			@QueryParam("isFulfilledBy") String isFulfilledBy) {
+			@QueryParam("creator") String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -595,7 +607,7 @@ public class CoinsApiWebService {
 		String identifier;
 		try {
 			identifier = coinsService.createFunction(context, modelURI, name,
-					layerIndex, userID, creator, isFulfilledBy);
+					layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1434,6 +1446,32 @@ public class CoinsApiWebService {
 	}
 	
 	/**
+	 * Link an Explicit3DRepresentation to a PhysicalObject
+	 * A Physical Object can only have one shape 
+	 * 
+	 * @param context Context / Graph
+	 * @param physicalobject id of PhysicalObject
+	 * @param shape id of Explicit3DRepresentation
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_SHAPE)
+	public Response linkShape(@QueryParam("context") String context,
+			@QueryParam("physicalobject") String physicalobject,
+			@QueryParam("shape") String shape,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.setShape(context, physicalobject, shape, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Setting physical parent of <" + physicalobject + "> to <" + shape + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
 	 * Add NonFunctionalRequirement(s) to PhysicalObjects. Leaves previously
 	 * linked NonFunctionalRequirements untouched.
 	 * 
@@ -1491,6 +1529,65 @@ public class CoinsApiWebService {
 			return Response.serverError().entity("Linking NonFunctionalRequirements failed").build();
 		}
 		return Response.ok().build();
+	}
+
+	/**
+	 * Link a Function to one of more PhysicalObjects by the fulfills property
+     * Leaves previously linked functions untouched
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param physicalobject
+	 *            PhysicalObject Id
+	 * @param fulfills
+	 *            List containing one or more Function ids
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_FULFILLS)
+	public Response linkPhysicalObjectFulfills(@QueryParam("context") String context,
+			@QueryParam("physicalobject") String physicalobject,
+			@QueryParam("fulfills") String[] fulfills,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.linkPhysicalObjectFulfills(context, physicalobject, fulfills, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Linking functions failed").build();
+		}
+		return Response.ok().build();		
+	}
+	
+	/**
+	 * Link a PhysicalObject to one or more functions by the fulFilledBy
+	 * property
+     * Leaves previously linked function fulfillers untouched
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param function
+	 *            Function Id
+	 * @param isFulfilledBy
+	 *            List containing one or more Physical Object ids
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_FULFILLED_BY)
+	public Response linkFunctionIsFulfilledBy(@QueryParam("context") String context,
+			@QueryParam("function") String function,
+			@QueryParam("isFulfilledBy") String[] isFulfilledBy,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.linkFunctionIsFulfilledBy(context, function, isFulfilledBy, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Linking function fulfiller failed").build();
+		}
+		return Response.ok().build();		
 	}
 	
 }

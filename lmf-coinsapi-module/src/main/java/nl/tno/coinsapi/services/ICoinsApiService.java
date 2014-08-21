@@ -111,7 +111,6 @@ public interface ICoinsApiService {
 	 * @param layerIndex
 	 * @param userID
 	 * @param creator
-	 * @param isFulfilledBy
 	 * @return id of the created function
 	 * @throws MarmottaException
 	 * @throws InvalidArgumentException
@@ -119,7 +118,7 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 */
 	public String createFunction(String context, String modelURI, String name,
-			int layerIndex, String userID, String creator, String isFulfilledBy) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
+			int layerIndex, String userID, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -444,5 +443,43 @@ public interface ICoinsApiService {
 	 */
 	public void linkDocument(String context, String physicalobject,
 			String[] document, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param function
+	 * @param isFulfilledBy
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkFunctionIsFulfilledBy(String context, String function,
+			String[] isFulfilledBy, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param physicalobject
+	 * @param fulfills
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkPhysicalObjectFulfills(String context, String physicalobject, String[] fulfills, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param physicalobject
+	 * @param shape
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setShape(String context, String physicalobject, String shape,
+			String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
 
 }

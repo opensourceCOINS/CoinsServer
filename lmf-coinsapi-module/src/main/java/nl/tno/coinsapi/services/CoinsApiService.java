@@ -181,7 +181,7 @@ public class CoinsApiService implements ICoinsApiService {
 	
 	@Override
 	public String createFunction(String context, String modelURI, String name,
-			int layerIndex, String userID, String creator, String isFulfilledBy)
+			int layerIndex, String userID, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
 		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
@@ -194,7 +194,6 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeString("cbim:userID", userID);
 		builder.addAttributeInteger("cbim:layerIndex", layerIndex);
 		builder.addAttributeLink("cbim:creator", creator);
-		builder.addAttributeLink("cbim:isFulfilledBy", isFulfilledBy);
 		builder.addAttributeString("a", "cbim:Function");
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
@@ -560,6 +559,83 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.setId(physicalobject);
 		builder.addAttributeDate("cbim:modificationDate", new Date());
 		builder.addAttributeLink("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void linkFunctionIsFulfilledBy(String context, String function,
+			String[] fulfilledby, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(function);
+		for (String physicalObjectId : fulfilledby) {
+			builder.addAttributeLink("cbim:isFulfilledBy", physicalObjectId);
+		}
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		// The previous query might have caused two modificationDates/modifiers
+		// so...
+		builder = new UpdateQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(function);
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void linkPhysicalObjectFulfills(String context,
+			String physicalobject, String[] fulfills, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(physicalobject);
+		for (String function : fulfills) {
+			builder.addAttributeLink("cbim:fulfills", function);
+		}
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+		// The previous query might have caused two modificationDates/modifiers
+		// so...
+		builder = new UpdateQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(physicalobject);
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void setShape(String context, String physicalobject, String shape,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(physicalobject);
+		builder.addAttributeLink("cbim:shape", shape);
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+
+		builder = new UpdateQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(physicalobject);
+		builder.addAttributeLink("cbim:physicalParent", shape);
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);		
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 

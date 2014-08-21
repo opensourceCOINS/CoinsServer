@@ -591,9 +591,6 @@ public class TestCoinsApiWebService {
 				.queryParam(
 						"creator",
 						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
-				.queryParam(
-						"isFulfilledBy",
-						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c")
 				.queryParam("userID", "C12")
 				.expect()
 				.statusCode(OK)
@@ -621,9 +618,6 @@ public class TestCoinsApiWebService {
 				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
 		Assert.assertEquals("3",
 				result.get("http://www.coinsweb.nl/c-bim.owl#layerIndex"));
-		Assert.assertEquals(
-				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
-				result.get("http://www.coinsweb.nl/c-bim.owl#isFulfilledBy"));
 		Assert.assertEquals(
 				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
 				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
@@ -669,9 +663,6 @@ public class TestCoinsApiWebService {
 				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
 		Assert.assertEquals("3",
 				result.get("http://www.coinsweb.nl/c-bim.owl#layerIndex"));
-		Assert.assertEquals(
-				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c",
-				result.get("http://www.coinsweb.nl/c-bim.owl#isFulfilledBy"));
 		Assert.assertEquals(
 				"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8",
 				result.get("http://www.coinsweb.nl/c-bim.owl#creator"));
