@@ -119,9 +119,27 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_DOCUMENT_REFERENCE = "/bim";
 	/**
+	 * Initialize the context
+	 */
+	public static final String PATH_INITIALIZE_CONTEXT = "/initializecontext";
+	/**
+	 * Edit physical parent relation 
+	 */
+	public static final String PATH_LINK_PHYSICAL_PARENT = "/link/physicalparent";
+	/**
 	 * Application/json
 	 */
 	public static final String MIME_TYPE = "application/json";
+
+	/**
+	 * Link NonFunctionalRequirements to a PhysicalObject
+	 */
+	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = "/link/nonfunctionalrequirement";
+
+	/**
+	 * Link Documents to a PhysicalObject 
+	 */
+	public static final String PATH_LINK_DOCUMENT = "/link/document";
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -150,6 +168,24 @@ public class CoinsApiWebService {
 		return Response.ok().entity("0.1 premature").build();
 	}
 
+	/**
+	 * Initialize the context
+	 * @param context
+	 * @param modelURI 
+	 * @return true if it succeeded
+	 */
+	@POST
+	@Path(PATH_INITIALIZE_CONTEXT)
+	@Consumes(MIME_TYPE)
+	public Response initializeContext(@QueryParam("context") String context, @QueryParam("modelURI") String modelURI) {
+		try {
+			coinsService.initializeContext(context, modelURI);
+			return Response.ok().build();
+		} catch (Exception e) {
+			return Response.serverError().build();
+		}
+	}
+	
 	/**
 	 * Add the default COINS prefixes
 	 * 
@@ -1352,7 +1388,7 @@ public class CoinsApiWebService {
 	/**
 	 * Get a <B>CataloguePart</B>
 	 * 
-	 * @param context / graph
+	 * @param context context or graph
 	 * @param id The id of the <B>CataloguePartt</B>
 	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
 	 * @param request
@@ -1365,5 +1401,96 @@ public class CoinsApiWebService {
 		String query = coinsService.getCataloguePartQuery(context, id);
 		return sparqlWebService.selectPostForm(query, output, request);
 	}
- 
+
+	/**
+	 * Add a Physical parent relation. A child can only have one Physical parent
+	 * so if a physical parent relation already exists, it will be modified.
+	 * Otherwise a new one will be added.
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param child
+	 *            Child identifier
+	 * @param parent
+	 *            Parent identifier
+	 * @param modifier 
+	 *            Identifier of PersonOrOrganisation that modifies the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_PHYSICAL_PARENT)
+	public Response linkPhysicalParent(@QueryParam("context") String context,
+			@QueryParam("child") String child,
+			@QueryParam("parent") String parent,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.setPysicalParent(context, child, parent, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Setting physical parent of <" + child + "> to <" + parent + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+	
+	/**
+	 * Add NonFunctionalRequirement(s) to PhysicalObjects. Leaves previously
+	 * linked NonFunctionalRequirements untouched.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param physicalobject
+	 *            id of Physical object
+	 * @param nonfunctionalrequirement
+	 *            list of NonFunctionalRequirement id's
+	 * @param modifier
+	 *            who did this modification
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_NON_FUNCTIONAL_REQUIREMENT)
+	public Response linkNonFunctionalRequirement(@QueryParam("context") String context,
+			@QueryParam("physicalobject") String physicalobject,
+			@QueryParam("nonfunctionalrequirement") String[] nonfunctionalrequirement,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.linkNonFunctionalRequirement(context, physicalobject, nonfunctionalrequirement, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Linking NonFunctionalRequirements failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Add Document(s) to PhysicalObjects. Leaves previously
+	 * linked Documents untouched.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param physicalobject
+	 *            id of Physical object
+	 * @param document
+	 *            list of Document id's
+	 * @param modifier
+	 *            who did this modification
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_DOCUMENT)
+	public Response linkDocument(@QueryParam("context") String context,
+			@QueryParam("physicalobject") String physicalobject,
+			@QueryParam("document") String[] document,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.linkDocument(context, physicalobject, document, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Linking NonFunctionalRequirements failed").build();
+		}
+		return Response.ok().build();
+	}
+	
 }

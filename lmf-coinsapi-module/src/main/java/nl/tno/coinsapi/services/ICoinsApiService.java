@@ -396,5 +396,53 @@ public interface ICoinsApiService {
 	 */
 	public void setDescription(String context, String id, String description, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
 
+	/**
+	 * @param context
+	 * @param modelURI 
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void initializeContext(String context, String modelURI) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param child
+	 * @param parent
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setPysicalParent(String context, String child, String parent, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param physicalobject
+	 * @param nonfunctionalrequirement
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkNonFunctionalRequirement(String context,
+			String physicalobject, String[] nonfunctionalrequirement,
+			String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param physicalobject
+	 * @param document
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkDocument(String context, String physicalobject,
+			String[] document, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
 
 }

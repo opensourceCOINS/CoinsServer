@@ -1,25 +1,34 @@
 package nl.tno.coinsapi.tools;
 
-import java.util.HashMap;
+import java.text.NumberFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
+
+import nl.tno.coinsapi.services.ICoinsDateConversion;
 
 /**
  * Class used for creating SPARQL Queries
  */
 public abstract class QueryBuilder {
 
-	protected final static Set<String> URI_NAMES = new HashSet<String>();
-
 	protected List<String> mPrefixes = new Vector<String>();
+	private Set<String> mPrefixKeys = new HashSet<String>();
 	protected String mGraph;
 	protected String mId;
-	protected Map<String, Object> mAttributes = new HashMap<String, Object>();
+	protected List<Item> mAttributes = new Vector<Item>();
+	protected final ICoinsDateConversion mDateConversion; 
 
+	protected static NumberFormat DOUBLE_NUMBER_FORMAT;
+	
+	protected QueryBuilder(ICoinsDateConversion pDateConversion) {
+		super();
+		mDateConversion = pDateConversion;
+	}
+	
 	/**
 	 * Add a prefix
 	 * 
@@ -27,10 +36,12 @@ public abstract class QueryBuilder {
 	 *            For instance cbim: <http://www.coinsweb.nl/c-bim.owl#>
 	 */
 	public void addPrefix(String pPrefix) {
+		mPrefixKeys.add(pPrefix.split(":")[0]);
 		mPrefixes.add(pPrefix);
 	}
 
 	/**
+	 * @param pDateConversion 
 	 * @return a query
 	 */
 	public abstract String build();
@@ -55,8 +66,13 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttribute(String pName, String pValue) {
-		mAttributes.put(pName, pValue);
+	public void addAttributeString(String pName, String pValue) {
+		if (pName.equals("a")) {
+			mAttributes.add(new Item(pName, pValue));
+		}
+		else {			
+			mAttributes.add(new Item(pName, "\"" + pValue + "\"^^<http://www.w3.org/2001/XMLSchema#string>"));
+		}
 	}
 
 	/**
@@ -65,8 +81,21 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttribute(String pName, int pValue) {
-		mAttributes.put(pName, pValue);
+	public void addAttributeLink(String pName, String pValue) {
+		if (isPrefixedValue(pValue)) {
+			mAttributes.add(new Item(pName, pValue));			
+		}
+		else {			
+			mAttributes.add(new Item(pName, "<" + pValue + ">"));
+		}
+	}
+
+	private boolean isPrefixedValue(String pValue) {
+		String items[] = pValue.split(":");
+		if (items.length == 2) {
+			return mPrefixKeys.contains(items[0]);
+		}
+		return false;
 	}
 
 	/**
@@ -75,31 +104,58 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttribute(String pName, double pValue) {
-		mAttributes.put(pName, pValue);
+	public void addAttributeDate(String pName, Date pValue) {
+		mAttributes.add(new Item(pName, "\"" + mDateConversion.toString(pValue)
+				+ "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
+	}
+
+	/**
+	 * Add an attribute
+	 * 
+	 * @param pName
+	 * @param pValue
+	 */
+	public void addAttributeDate(String pName, String pValue) {
+		mAttributes.add(new Item(pName, "\"" + pValue
+				+ "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
+	}
+
+	/**
+	 * Add an attribute
+	 * 
+	 * @param pName
+	 * @param pValue
+	 */
+	public void addAttributeInteger(String pName, int pValue) {
+		mAttributes.add(new Item(pName, "\"" + pValue + "\"^^<http://www.w3.org/2001/XMLSchema#int>"));
+	}
+
+	/**
+	 * Add an attribute
+	 * 
+	 * @param pName
+	 * @param pValue
+	 */
+	public void addAttributeDouble(String pName, double pValue) {
+		mAttributes.add(new Item(pName, "\""+ DOUBLE_NUMBER_FORMAT.format(pValue) + "\"^^<http://www.w3.org/2001/XMLSchema#float>"));
 	}
 
 	protected void appendValue(StringBuilder stringBuilder,
-			Entry<String, Object> entry) {
-		if (entry.getKey().equals("a")) {
-			stringBuilder.append(entry.getValue());
-		} else {
-			if (URI_NAMES.contains(entry.getKey())) {
-				stringBuilder.append('<');
-				stringBuilder.append(entry.getValue());
-				stringBuilder.append('>');
-			} else {
-				stringBuilder.append('"');
-				stringBuilder.append(entry.getValue());
-				stringBuilder.append('"');
-			}
-		}
+			Item item) {
+		stringBuilder.append(item.getValue());
 	}
 
 	/**
 	 * Class for creating SPARQL InsertQueries
 	 */
 	public static class InsertQueryBuilder extends QueryBuilder {
+
+		/**
+		 * @param pDateConversion
+		 */
+		public InsertQueryBuilder(ICoinsDateConversion pDateConversion) {
+			super(pDateConversion);
+		}
 
 		@Override
 		public String build() {
@@ -122,14 +178,14 @@ public abstract class QueryBuilder {
 			result.append(mId);
 			result.append(">\n");
 			boolean isFirst = true;
-			for (Entry<String, Object> entry : mAttributes.entrySet()) {
+			for (Item item : mAttributes) {
 				if (!isFirst) {
 					result.append(" ;\n");
 				}
 				result.append(tab);
-				result.append(entry.getKey());
+				result.append(item.getName());
 				result.append(" ");
-				appendValue(result, entry);
+				appendValue(result, item);
 				isFirst = false;
 			}
 			result.append("\n");
@@ -139,8 +195,6 @@ public abstract class QueryBuilder {
 			result.append("}");
 			return result.toString();
 		}
-
-
 
 	}
 
@@ -170,6 +224,13 @@ public abstract class QueryBuilder {
 	 */
 	public static class UpdateQueryBuilder extends QueryBuilder {
 
+		/**
+		 * @param pDateConversion
+		 */
+		public UpdateQueryBuilder(ICoinsDateConversion pDateConversion) {
+			super(pDateConversion);
+		}
+
 		@Override
 		public String build() {
 			StringBuilder result = new StringBuilder();
@@ -184,65 +245,80 @@ public abstract class QueryBuilder {
 			result.append(mId);
 			result.append("> ");
 			boolean isFirst = true;
-			for (Entry<String, Object> entry : mAttributes.entrySet()) {
+			for (Item item : mAttributes) {
 				if (!isFirst) {
 					result.append(" ;\n ");
 				}
-				result.append(entry.getKey());
+				result.append(item.getName());
 				result.append(" ?");
-				result.append(composeVariableName(entry));
+				result.append(composeVariableName(item));
 				isFirst = false;
 			}
 			result.append(". }\nINSERT {\n <");
 			result.append(mId);
 			result.append("> ");
 			isFirst = true;
-			for (Entry<String, Object> entry : mAttributes.entrySet()) {
+			for (Item item : mAttributes) {
 				if (!isFirst) {
 					result.append(" ;\n ");
 				}
-				result.append(entry.getKey());
+				result.append(item.getName());
 				result.append(" ");
-				appendValue(result, entry);
+				appendValue(result, item);
 				isFirst = false;
 			}
 			result.append(" }\nWHERE {\n <");
 			result.append(mId);
 			result.append("> ");
 			isFirst = true;
-			for (Entry<String, Object> entry : mAttributes.entrySet()) {
+			for (Item item : mAttributes) {
 				if (!isFirst) {
 					result.append(" ;\n ");
 				}
-				result.append(entry.getKey());
+				result.append(item.getName());
 				result.append(" ?");
-				result.append(composeVariableName(entry));
+				result.append(composeVariableName(item));
 				isFirst = false;
 			}
 			result.append(". }");
 			return result.toString();
 		}
 		
-		private String composeVariableName(Entry<String, Object> entry) {
-			int index = entry.getKey().indexOf(':');
+		private String composeVariableName(Item item) {
+			int index = item.getName().indexOf(':');
 			if (index==-1) {
-				index = entry.getKey().indexOf('#');
+				index = item.getName().indexOf('#');
 			}
-			return entry.getKey().substring(index + 1);
+			return item.getName().substring(index + 1);
 		}
 	}
 	
-	static {
-		URI_NAMES.add("cbim:creator");
-		URI_NAMES.add("cbim:modifier");
-		URI_NAMES.add("cbim:isFulfilledBy");
-		URI_NAMES.add("cbim:physicalParent");
-		URI_NAMES.add("cbim:shape");
-		URI_NAMES.add("cbim:primaryOrientation");
-		URI_NAMES.add("cbim:secondaryOrientation");
-		URI_NAMES.add("cbim:translation");
-		URI_NAMES.add("cbim:requirementOf");
-		URI_NAMES.add("cbim:documentUri");
-		URI_NAMES.add("cbim:nonFunctionalRequirementType");
+	private static class Item {
+		private final String mName;
+		private final String mValue;
+		
+		public Item(String pName, String pValue) {
+			mName = pName;
+			mValue = pValue;
+		}
+		
+		public String getName() {
+			return mName;
+		}
+		
+		public String getValue() {
+			return mValue;
+		}
+		
+		@Override
+		public String toString() {
+			return mName + " : " + mValue;
+		}
 	}
-}
+
+	static {
+		DOUBLE_NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
+		DOUBLE_NUMBER_FORMAT.setGroupingUsed(false);		
+	}
+	
+}	
