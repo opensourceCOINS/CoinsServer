@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import nl.tno.coinsapi.tools.CoinsValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAllValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsFunctionFulfillerValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalParentValidator;
 import nl.tno.coinsapi.tools.QueryBuilder;
 import nl.tno.coinsapi.tools.QueryBuilder.InsertQueryBuilder;
@@ -694,6 +695,9 @@ public class CoinsApiService implements ICoinsApiService {
 			break;
 		case PHYSICALPARENT:
 			validator = new CoinsPhysicalParentValidator();
+			break;
+		case FUNCTIONFULFILLERS:
+			validator = new CoinsFunctionFulfillerValidator();
 			break;
 		}
 		validator.setContext(pContext);

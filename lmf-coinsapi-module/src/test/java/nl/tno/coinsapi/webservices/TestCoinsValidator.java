@@ -29,7 +29,7 @@ public class TestCoinsValidator {
 	private static String context;
 
 	private static String creatorId;
-	
+
 	/**
 	 * Setting up Marmotta test service and RestAssured
 	 */
@@ -43,7 +43,7 @@ public class TestCoinsValidator {
 		RestAssured.basePath = marmotta.getContext();
 		context = RestAssured.baseURI + ":" + RestAssured.port
 				+ RestAssured.basePath;
-		
+
 		// POST PersonOrOrganisation (creator/modifier)
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -95,21 +95,23 @@ public class TestCoinsValidator {
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();		
-		ResponseBody body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
 				.queryParam("aspect", "physicalParent")
 				.expect()
 				.statusCode(OK)
 				.when()
-				.get(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_VALIDATE).body();
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
 		@SuppressWarnings("unchecked")
 		List<String> result = body.as(List.class);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals("OK", result.get(0));
 		// Now add a duplicate...
-		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
 				.queryParam("object", fundatieSysteemId)
 				.queryParam("name", "cbim:physicalParent")
@@ -118,21 +120,107 @@ public class TestCoinsValidator {
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_ADD_ATTRIBUTE_RESOURCE).body();
-		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+						+ CoinsApiWebService.PATH_ADD_ATTRIBUTE_RESOURCE)
+				.body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
 				.queryParam("aspect", "physicalParent")
 				.expect()
 				.statusCode(OK)
 				.when()
-				.get(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_VALIDATE).body();
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
 		@SuppressWarnings("unchecked")
 		List<String> result2 = body.as(List.class);
 		Assert.assertEquals(1, result2.size());
 		Assert.assertTrue(result2.get(0).contains("multiple parents"));
 	}
-	
+
+	/**
+	 * Test isFulfilledBy and fulfills
+	 */
+	@Test
+	public void testFunctionFullfillers() {
+		String zitBankId = addPhysicalObject("Zitbank", "B1", 0);
+		String zitSysteemId = addPhysicalObject("Zitsysteem", "B1.1", 1);
+		String zitten = addFunction("Bieden zitgelegenheid", "F1", 0);
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("function", zitten)
+				.queryParam("isFulfilledBy", zitSysteemId)
+				.queryParam("modifier", creatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_FULFILLED_BY).body();
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("physicalobject", zitBankId)
+				.queryParam("fulfills", zitten)
+				.queryParam("modifier", creatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_FULFILLS).body();
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("aspect", "functionfulfillers")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
+		@SuppressWarnings("unchecked")
+		List<String> result = body.as(List.class);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("OK", result.get(0));
+		// Now add an invalid reference
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("physicalobject", zitSysteemId)
+				.queryParam("fulfills", zitten)
+				.queryParam("modifier", creatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_FULFILLS).body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("aspect", "functionfulfillers")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
+		@SuppressWarnings("unchecked")
+		List<String> result2 = body.as(List.class);
+		Assert.assertEquals(1, result2.size());
+	    Assert.assertTrue(result2.get(0).contains("fulfiller"));
+	}
+
+	private String addFunction(String name, String userId, int layerIndex) {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI", MODEL_URI)
+				.queryParam("name", name)
+				.queryParam("layerIndex", layerIndex)
+				.queryParam("creator", creatorId)
+				.queryParam("userID", userId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_FUNCTION).body();
+		return body.asString();
+	}
+
 	private String addPhysicalObject(String name, String userId, int layerIndex) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -149,5 +237,5 @@ public class TestCoinsValidator {
 						+ CoinsApiWebService.PATH_PHYSICAL_OBJECT).body();
 		return body.asString();
 	}
-	
+
 }

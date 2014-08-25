@@ -23,7 +23,11 @@ public interface ICoinsApiService {
 		/**
 		 * Physical parents
 		 */
-		PHYSICALPARENT;
+		PHYSICALPARENT,
+		/**
+		 * isFulfilledBy / fulfills
+		 */
+		FUNCTIONFULFILLERS;
 	}
 	
 	/**

@@ -65,10 +65,13 @@ public abstract class CoinsValidator {
 				switch (aspect) {
 				case ALL:
 					break;
+				case FUNCTIONFULFILLERS:
+					mValidators.add(new CoinsFunctionFulfillerValidator());
+					break;
 				case PHYSICALPARENT:
 					mValidators.add(new CoinsPhysicalParentValidator());
-					break;
-				}
+					break;					
+				}				
 			}
 		}
 		
@@ -140,5 +143,58 @@ public abstract class CoinsValidator {
 		}
 		
 	}
-	
+
+	/**
+	 * Validator for validating function fulfillers
+	 */
+	public static class CoinsFunctionFulfillerValidator extends CoinsValidator {
+
+		@Override
+		public boolean validate() {
+			boolean isOk = true;
+			mErrors.clear();
+			Set<String> couples = new HashSet<String>();
+			StringBuilder query = new StringBuilder();
+			query.append("PREFIX ");
+			query.append(CoinsApiService.PREFIX_CBIM);
+			query.append("\n\nSELECT ?function ?fulfiller WHERE {\n\tGRAPH <");
+			query.append(mContext);
+			query.append("> {\n\t\t?function cbim:isFulfilledBy ?fulfiller }}");
+			List<Map<String, Value>> result = null;
+			try {
+				result = mSparqlService.query(QueryLanguage.SPARQL, query.toString());
+				for (Map<String, Value> item : result) {
+					String couple = item.get("function").toString() + " - " + item.get("fulfiller").toString();
+					couples.add(couple);
+				}
+			} catch (MarmottaException e) {
+				e.printStackTrace();
+				mErrors.add("MarmottaException");
+				return false;
+			}
+			query = new StringBuilder();
+			query.append("PREFIX ");
+			query.append(CoinsApiService.PREFIX_CBIM);
+			query.append("\n\nSELECT ?function ?fulfiller WHERE {\n\tGRAPH <");
+			query.append(mContext);
+			query.append("> {\n\t\t?fulfiller cbim:fulfills ?function }}");
+			try {
+				result = mSparqlService.query(QueryLanguage.SPARQL, query.toString());
+				for (Map<String, Value> item : result) {
+					String couple = item.get("function").toString() + " - " + item.get("fulfiller").toString();
+					if (!couples.add(couple)) {						
+						isOk=false;
+						mErrors.add("Function <" +item.get("function").toString() + "> is linked to function fulfiller <" + item.get("fulfiller") + "> and vice versa (both fulfulls and isFulfilledBy)");
+					}
+				}
+			} catch (MarmottaException e) {
+				e.printStackTrace();
+				mErrors.add("MarmottaException");
+				return false;
+			}
+			
+			return isOk;
+		}
+		
+	}
 }
