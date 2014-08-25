@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 
 import nl.tno.coinsapi.services.IBimFileService;
 import nl.tno.coinsapi.services.ICoinsApiService;
+import nl.tno.coinsapi.services.ICoinsApiService.ValidationAspect;
 
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
 import org.apache.marmotta.platform.core.api.prefix.PrefixService;
@@ -155,6 +156,51 @@ public class CoinsApiWebService {
 	 * Link an Explicit3DRepresentation to a PhysicalObject 
 	 */
 	public static final String PATH_LINK_SHAPE = "/link/shape";
+
+	/**
+	 * A Physical object affected by a task 
+	 */
+	public static final String PATH_LINK_ISAFFECTEDBY = "/link/isaffectedby";
+
+	/**
+	 * Validate 
+	 */
+	public static final String PATH_VALIDATE = "/validate";
+
+	/**
+	 *  Validate all
+	 */
+	public static final String PATH_VALIDATEALL = "/validateall";
+	
+	/**
+	 * Add attribute
+	 */
+	public static final String PATH_ADD_ATTRIBUTE = "/addattribute";
+	
+	/**
+	 * Add attribute string
+	 */
+	public static final String PATH_ADD_ATTRIBUTE_STRING = PATH_ADD_ATTRIBUTE + "/string";
+	
+	/**
+	 * Add attribute float
+	 */
+	public static final String PATH_ADD_ATTRIBUTE_FLOAT = PATH_ADD_ATTRIBUTE + "/foat";
+	
+	/**
+	 * Add attribute int
+	 */
+	public static final String PATH_ADD_ATTRIBUTE_INTEGER = PATH_ADD_ATTRIBUTE + "/int";
+	
+	/**
+	 * Add attribute resource
+	 */
+	public static final String PATH_ADD_ATTRIBUTE_RESOURCE = PATH_ADD_ATTRIBUTE + "/resource";
+
+	/**
+	 * Add attribute date
+	 */
+	public static final String PATH_ADD_ATTRIBUTE_DATE = PATH_ADD_ATTRIBUTE + "/date";
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -371,6 +417,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_REQUIREMENT)
+	@Consumes(MIME_TYPE)
 	public Response getRequirement(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getRequirementQuery(context, id);
@@ -390,7 +437,7 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_PERSON_OR_ORGANISATION)
-	@Consumes(MIME_TYPE)
+	@Consumes(MIME_TYPE)	
 	public Response createPersonOrOrganisation(@QueryParam("context") String context,
 			@QueryParam("modelURI") String modelURI,			
 			@QueryParam("name") String name) {
@@ -429,6 +476,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_PERSON_OR_ORGANISATION)
+	@Consumes(MIME_TYPE)
 	public Response getPersonOrOrganisation(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getPersonOrOrganisationQuery(context, id);
@@ -544,6 +592,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_PHYSICAL_OBJECT)
+	@Consumes(MIME_TYPE)
 	public Response getPhysicalObject(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getPhysicalObjectQuery(context, id);
@@ -634,6 +683,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_FUNCTION)
+	@Consumes(MIME_TYPE)
 	public Response getFunction(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getFunctionQuery(context, id);
@@ -721,6 +771,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_DOCUMENT)
+	@Consumes(MIME_TYPE)
 	public Response getDocument(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getDocumentQuery(context, id);
@@ -830,6 +881,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
+	@Consumes(MIME_TYPE)
 	public Response getExplicit3DRepresentation(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getExplicit3DRepresentationQuery(context, id);
@@ -919,6 +971,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_VECTOR)
+	@Consumes(MIME_TYPE)
 	public Response getVector(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getVectorQuery(context, id);
@@ -1008,6 +1061,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_LOCATOR)
+	@Consumes(MIME_TYPE)
 	public Response getLocator(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getLocatorQuery(context, id);
@@ -1024,7 +1078,7 @@ public class CoinsApiWebService {
 	 * @param name
 	 *            The name of the <B>Task</B>
 	 * @param affects 
-	 *            URI of the PhysicalObject this task affects
+	 *            List of URIs of the PhysicalObjects this task affects
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param taskType
@@ -1043,7 +1097,7 @@ public class CoinsApiWebService {
 	public Response createTask(@QueryParam("context") String context,
 			@QueryParam("modelURI") String modelURI,
 			@QueryParam("name") String name,
-			@QueryParam("affects") String affects,
+			@QueryParam("affects") String[] affects,
 			@QueryParam("userID") String userID,
 			@QueryParam("taskType") String taskType,
 			@QueryParam("startDatePlanned") String startDatePlanned,
@@ -1108,6 +1162,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_TASK)
+	@Consumes(MIME_TYPE)
 	public Response getTask(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getTaskQuery(context, id);
@@ -1201,6 +1256,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_NON_FUNCTIONAL_REQUIREMENT)
+	@Consumes(MIME_TYPE)
 	public Response getNonFunctionalRequirement(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getNonFunctionalRequirementQuery(context, id);
@@ -1213,7 +1269,8 @@ public class CoinsApiWebService {
 	 * @return the requested document
 	 */
 	@GET
-	@Path(PATH_DOCUMENT_REFERENCE+"/{filename}")	
+	@Path(PATH_DOCUMENT_REFERENCE+"/{filename}")
+	@Consumes(MIME_TYPE)
 	public Response getBimDocument(@PathParam("filename") String pFileName) {
 		byte[] file = null;
 		try {
@@ -1237,7 +1294,8 @@ public class CoinsApiWebService {
 	 * @return the requested document
 	 */
 	@GET
-	@Path(PATH_DOCUMENT_REFERENCE+"/{context}/{filename}")	
+	@Path(PATH_DOCUMENT_REFERENCE+"/{context}/{filename}")
+	@Consumes(MIME_TYPE)
 	public Response getBimDocumentContext(@PathParam("context") String pContext, @PathParam("filename") String pFileName) {
 		return getBimDocument(pContext + "/" + pFileName);
 	}
@@ -1325,6 +1383,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_AMOUNT)
+	@Consumes(MIME_TYPE)
 	public Response getAmount(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getAmountQuery(context, id);
@@ -1408,6 +1467,7 @@ public class CoinsApiWebService {
 	 */
 	@GET
 	@Path(PATH_CATALOGUE_PART)
+	@Consumes(MIME_TYPE)
 	public Response getCataloguePart(@QueryParam("context") String context,
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getCataloguePartQuery(context, id);
@@ -1431,6 +1491,7 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_LINK_PHYSICAL_PARENT)
+	@Consumes(MIME_TYPE)
 	public Response linkPhysicalParent(@QueryParam("context") String context,
 			@QueryParam("child") String child,
 			@QueryParam("parent") String parent,
@@ -1457,6 +1518,7 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_LINK_SHAPE)
+	@Consumes(MIME_TYPE)
 	public Response linkShape(@QueryParam("context") String context,
 			@QueryParam("physicalobject") String physicalobject,
 			@QueryParam("shape") String shape,
@@ -1487,6 +1549,7 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_LINK_NON_FUNCTIONAL_REQUIREMENT)
+	@Consumes(MIME_TYPE)
 	public Response linkNonFunctionalRequirement(@QueryParam("context") String context,
 			@QueryParam("physicalobject") String physicalobject,
 			@QueryParam("nonfunctionalrequirement") String[] nonfunctionalrequirement,
@@ -1517,6 +1580,7 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_LINK_DOCUMENT)
+	@Consumes(MIME_TYPE)
 	public Response linkDocument(@QueryParam("context") String context,
 			@QueryParam("physicalobject") String physicalobject,
 			@QueryParam("document") String[] document,
@@ -1546,6 +1610,7 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_LINK_FULFILLS)
+	@Consumes(MIME_TYPE)
 	public Response linkPhysicalObjectFulfills(@QueryParam("context") String context,
 			@QueryParam("physicalobject") String physicalobject,
 			@QueryParam("fulfills") String[] fulfills,
@@ -1576,6 +1641,7 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_LINK_FULFILLED_BY)
+	@Consumes(MIME_TYPE)
 	public Response linkFunctionIsFulfilledBy(@QueryParam("context") String context,
 			@QueryParam("function") String function,
 			@QueryParam("isFulfilledBy") String[] isFulfilledBy,
@@ -1589,5 +1655,233 @@ public class CoinsApiWebService {
 		}
 		return Response.ok().build();		
 	}
-	
+
+	/**
+	 * Link a task to a <B>PhysicalObject</B> by the isAffectedBy property
+	 * @param context Context of Graph
+	 * @param physicalobject <B>PhysicalObject</B> id 
+	 * @param isAffectedBy id of <B>Task<B> that affects the <B>PhysicalObject</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_ISAFFECTEDBY)
+	@Consumes(MIME_TYPE)
+	public Response linkIsAffectedBy(@QueryParam("context") String context,
+			@QueryParam("physicalobject") String physicalobject,
+			@QueryParam("isAffectedBy") String isAffectedBy,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.linkIsAffectedBy(context, physicalobject, isAffectedBy, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Linking function fulfiller failed").build();
+		}
+		return Response.ok().build();		
+	}
+
+	/**
+	 * Validate the complete Coins model present in this context
+	 * 
+	 * @param context
+	 * @return the validation result
+	 */
+	@GET
+	@Path(PATH_VALIDATEALL)
+	@Produces(MIME_TYPE)
+	public Response validateAll(@QueryParam("context") String context) {
+		List<String> result = coinsService.validate(context, ValidationAspect.ALL);
+		return Response.ok().entity(result).build();
+	}
+
+	/**
+	 * Validate an aspect of the Coins model present in this context
+	 * 
+	 * @param context
+	 *            The Context or Graph to be validated
+	 * @param aspect
+	 *            The aspect to be validated
+	 *            <B>PhysicalParent<\B> Check for duplicate physical parents
+	 * @return the validation result
+	 */
+	@GET
+	@Path(PATH_VALIDATE)
+	@Produces(MIME_TYPE)
+	public Response validate(@QueryParam("context") String context, @QueryParam("aspect") String aspect) {
+		for (ValidationAspect as : ValidationAspect.values()) {
+			if (as.name().equalsIgnoreCase(aspect)) {
+				List<String> result = coinsService.validate(context, as);
+				return Response.ok().entity(result).build();				
+			}
+		}
+		return Response.serverError().entity("Unknown validation aspect " + aspect).build();
+	}
+
+	/**
+	 * Insert an attribute of type String
+	 * This method ignores the fact that duplicate entries may result if it is executed
+	 * No validation on attribute names is done either
+	 * The modification date is not updated
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_ADD_ATTRIBUTE_STRING)
+	@Consumes(MIME_TYPE)
+	public Response addAttributeString(@QueryParam("context") String context,
+			@QueryParam("object") String object,
+			@QueryParam("name") String name,
+			@QueryParam("value") String value) {
+		try {
+			coinsService.addAttributeString(context, object, name, value);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Adding attribute failed").build();
+		}
+		return Response.ok().build();		
+	}
+
+	/**
+	 * Insert an attribute of type Float
+	 * This method ignores the fact that duplicate entries may result if it is executed
+	 * No validation on attribute names is done either
+	 * The modification date is not updated
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_ADD_ATTRIBUTE_FLOAT)
+	@Consumes(MIME_TYPE)
+	public Response addAttributeFloat(@QueryParam("context") String context,
+			@QueryParam("object") String object,
+			@QueryParam("name") String name,
+			@QueryParam("value") Double value) {
+		try {
+			coinsService.addAttributeFloat(context, object, name, value);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Adding attribute failed").build();
+		}
+		return Response.ok().build();		
+	}
+
+	/**
+	 * Insert an attribute of type Resource (URL)
+	 * This method ignores the fact that duplicate entries may result if it is executed
+	 * No validation on attribute names is done either
+	 * The modification date is not updated
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_ADD_ATTRIBUTE_RESOURCE)
+	@Consumes(MIME_TYPE)
+	public Response addAttributeResource(@QueryParam("context") String context,
+			@QueryParam("object") String object,
+			@QueryParam("name") String name,
+			@QueryParam("value") String value) {
+		try {
+			coinsService.addAttributeResource(context, object, name, value);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Adding attribute failed").build();
+		}
+		return Response.ok().build();		
+	}
+
+	/**
+	 * Insert an attribute of type Integer
+	 * This method ignores the fact that duplicate entries may result if it is executed
+	 * No validation on attribute names is done either
+	 * The modification date is not updated
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_ADD_ATTRIBUTE_INTEGER)
+	@Consumes(MIME_TYPE)
+	public Response addAttributeInteger(@QueryParam("context") String context,
+			@QueryParam("object") String object,
+			@QueryParam("name") String name,
+			@QueryParam("value") int value) {
+		try {
+			coinsService.addAttributeInt(context, object, name, value);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Adding attribute failed").build();
+		}
+		return Response.ok().build();		
+	}
+
+	/**
+	 * Insert an attribute of type Date
+	 * This method ignores the fact that duplicate entries may result if it is executed
+	 * No validation on attribute names is done either
+	 * The modification date is not updated
+	 * Formatting the date in the correct format is left to the user
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_ADD_ATTRIBUTE_DATE)
+	@Consumes(MIME_TYPE)
+	public Response addAttributeDate(@QueryParam("context") String context,
+			@QueryParam("object") String object,
+			@QueryParam("name") String name,
+			@QueryParam("value") String value) {
+		try {
+			coinsService.addAttributeDate(context, object, name, value);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Adding attribute failed").build();
+		}
+		return Response.ok().build();		
+	}
+
 }

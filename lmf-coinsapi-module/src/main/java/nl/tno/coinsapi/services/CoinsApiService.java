@@ -3,9 +3,14 @@ package nl.tno.coinsapi.services;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 import javax.inject.Inject;
 
+import nl.tno.coinsapi.tools.CoinsValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsAllValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalParentValidator;
 import nl.tno.coinsapi.tools.QueryBuilder;
 import nl.tno.coinsapi.tools.QueryBuilder.InsertQueryBuilder;
 import nl.tno.coinsapi.tools.QueryBuilder.UpdateQueryBuilder;
@@ -28,9 +33,23 @@ public class CoinsApiService implements ICoinsApiService {
 	@Inject
 	private ICoinsDateConversion dateConversion;
 	
-	private static final String PREFIX_CBIM = "cbim: <http://www.coinsweb.nl/c-bim.owl#>";
-	private static final String PREFIX_CBIMFS = "cbimfs: <http://www.coinsweb.nl/c-bim-fs.owl#>";
-	private static final String PREFIX_OWL = "owl: <http://www.w3.org/2002/07/owl#>";
+	/**
+	 * PREFIX for sparql query
+	 * cbim: <http://www.coinsweb.nl/c-bim.owl#>
+	 */
+	public static final String PREFIX_CBIM = "cbim: <http://www.coinsweb.nl/c-bim.owl#>";
+	
+	/**
+	 * PREFIX for sparql query
+	 * cbimfs: <http://www.coinsweb.nl/c-bim-fs.owl#>
+	 */
+	public static final String PREFIX_CBIMFS = "cbimfs: <http://www.coinsweb.nl/c-bim-fs.owl#>";
+	
+	/**
+	 * PREFIX for sparql query
+	 * owl: <http://www.w3.org/2002/07/owl#>
+	 */
+	public static final String PREFIX_OWL = "owl: <http://www.w3.org/2002/07/owl#>";
 	
 	private boolean deleteItem(String context, String id, String type, String prefix) {
 		String query = "PREFIX " + prefix + "\nDELETE WHERE { GRAPH <" + context
@@ -330,7 +349,7 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public String createTask(String context, String modelURI, String name,
-			String affects, String userID, String taskType,
+			String[] affects, String userID, String taskType,
 			String startDatePlanned, String endDatePlanned, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
@@ -344,7 +363,9 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeDate("cbim:startDatePlanned", startDatePlanned);
 		builder.addAttributeDate("cbim:endDatePlanned", endDatePlanned);
 		builder.addAttributeString("cbim:taskType", taskType);
-		builder.addAttributeString("cbim:affects", affects);
+		for (String physicalObjecId : affects) {			
+			builder.addAttributeString("cbim:affects", physicalObjecId);
+		}
 		builder.addAttributeLink("cbim:creator", creator);
 		builder.addAttributeString("a", "cbim:Task");
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
@@ -636,6 +657,122 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeLink("cbim:physicalParent", shape);
 		builder.addAttributeDate("cbim:modificationDate", new Date());
 		builder.addAttributeLink("cbim:modifier", modifier);		
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void linkIsAffectedBy(String context, String physicalobject,
+			String isAffectedBy, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(physicalobject);
+		builder.addAttributeLink("cbim:isAffectedBy", isAffectedBy);
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+
+		builder = new UpdateQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(context);
+		builder.setId(physicalobject);
+		builder.addAttributeLink("cbim:isAffectedBy", isAffectedBy);
+		builder.addAttributeDate("cbim:modificationDate", new Date());
+		builder.addAttributeLink("cbim:modifier", modifier);		
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public List<String> validate(String pContext, ValidationAspect aspect) {
+		CoinsValidator validator = null;
+		switch (aspect) {
+		case ALL:
+			validator = new CoinsAllValidator();
+			break;
+		case PHYSICALPARENT:
+			validator = new CoinsPhysicalParentValidator();
+			break;
+		}
+		validator.setContext(pContext);
+		validator.setSparqlService(sparqlService);
+		if (validator.validate()) {
+			List<String> result = new Vector<String>();
+			result.add("OK");
+			return result;
+		}
+		return validator.getValidationErrors();
+	}
+
+	@Override
+	public void addAttributeString(String context, String object, String name,
+			String value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addGraph(context);
+		builder.setId(object);
+		builder.addAttributeString(name, value);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void addAttributeResource(String context, String object,
+			String name, String value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addGraph(context);
+		builder.setId(object);
+		builder.addAttributeLink(name, value);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void addAttributeFloat(String context, String object, String name,
+			double value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addGraph(context);
+		builder.setId(object);
+		builder.addAttributeDouble(name, value);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void addAttributeInt(String context, String object, String name,
+			int value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addGraph(context);
+		builder.setId(object);
+		builder.addAttributeInteger(name, value);
+		sparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void addAttributeDate(String context, String object, String name,
+			String value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addGraph(context);
+		builder.setId(object);
+		builder.addAttributeDate(name, value);
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 

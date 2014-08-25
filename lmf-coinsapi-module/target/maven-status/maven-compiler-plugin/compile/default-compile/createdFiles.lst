@@ -1,10 +1,12 @@
-nl\tno\coinsapi\services\ICoinsApiService.class
 nl\tno\coinsapi\tools\QueryBuilder.class
 nl\tno\coinsapi\services\ICoinsDateConversion.class
-nl\tno\coinsapi\services\CoinsImporter.class
 nl\tno\coinsapi\services\CoinsDateConverter.class
 nl\tno\coinsapi\webservices\CoinsApiWebService.class
+nl\tno\coinsapi\services\ICoinsApiService.class
+nl\tno\coinsapi\services\CoinsImporter.class
+nl\tno\coinsapi\tools\QueryBuilder$UpdateQueryBuilder.class
 nl\tno\coinsapi\services\IBimFileService.class
 nl\tno\coinsapi\tools\QueryBuilder$InsertQueryBuilder.class
+nl\tno\coinsapi\tools\QueryBuilder$Item.class
 nl\tno\coinsapi\services\CoinsApiService.class
 nl\tno\coinsapi\services\BimFileService.class

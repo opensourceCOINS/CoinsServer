@@ -1,5 +1,7 @@
 package nl.tno.coinsapi.services;
 
+import java.util.List;
+
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.openrdf.query.MalformedQueryException;
@@ -10,6 +12,20 @@ import org.openrdf.query.UpdateExecutionException;
  */
 public interface ICoinsApiService {
 
+	/**
+	 * What do we want to validate
+	 */
+	public enum ValidationAspect {
+		/**
+		 * All aspects that have been implemented 
+		 */
+		ALL,
+		/**
+		 * Physical parents
+		 */
+		PHYSICALPARENT;
+	}
+	
 	/**
 	 * @param context
 	 * @param name
@@ -270,7 +286,7 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 */
 	public String createTask(String context, String modelURI, String name,
-			String affects, String userID, String taskType,
+			String[] affects, String userID, String taskType,
 			String startDatePlanned, String endDatePlanned, String creator) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException;
 
 	/**
@@ -481,5 +497,90 @@ public interface ICoinsApiService {
 	 */
 	public void setShape(String context, String physicalobject, String shape,
 			String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param physicalobject
+	 * @param isAffectedBy
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkIsAffectedBy(String context, String physicalobject,
+			String isAffectedBy, String modifier) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param pContext 
+	 * @param aspect
+	 * @return a List of "troubles"
+	 */
+	public List<String> validate(String pContext, ValidationAspect aspect);
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void addAttributeString(String context, String object, String name,
+			String value) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void addAttributeResource(String context, String object, String name,
+			String value) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void addAttributeFloat(String context, String object, String name,
+			double value) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void addAttributeInt(String context, String object, String name,
+			int value) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void addAttributeDate(String context, String object, String name,
+			String value) throws InvalidArgumentException, MalformedQueryException, UpdateExecutionException, MarmottaException;
 
 }

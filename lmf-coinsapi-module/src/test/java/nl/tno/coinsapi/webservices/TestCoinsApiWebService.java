@@ -965,7 +965,7 @@ public class TestCoinsApiWebService {
 				.when()
 				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_LOCATOR)
 				.body();
-		// GET vector
+		// GET locator
 		String id = body.asString();
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context).queryParam("id", id)
@@ -1039,7 +1039,7 @@ public class TestCoinsApiWebService {
 				.expect().statusCode(OK).when()
 				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_TASK)
 				.body();
-		// GET vector
+		// GET task
 		String id = body.asString();
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context).queryParam("id", id)

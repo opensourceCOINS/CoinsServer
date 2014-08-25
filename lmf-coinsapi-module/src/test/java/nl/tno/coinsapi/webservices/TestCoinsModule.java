@@ -105,8 +105,11 @@ public class TestCoinsModule {
 		String steunRechtsId = addPhysicalObject("Steun rechts", "B1.2.2", 2);
 		// Functions
 		String voorzieningZittenId = addFunction(
-				"Voorziening voor meerdere personen om te kunnen zitten", "F1");
-		String hechtenAanBodemId = addFunction("Hechten aan bodem", "F1.2");
+				"Voorziening voor meerdere personen om te kunnen zitten", "F1",
+				0);
+		String biedenZitgelegenheid = addFunction("Bieden zitgelegenheid",
+				"F1.1", 1);
+		String hechtenAanBodemId = addFunction("Hechten aan bodem", "F1.2", 1);
 		// Documents
 		String d0001 = addDocument("Alle van toepassing zijnde NEN-normen",
 				"D0001");
@@ -120,20 +123,64 @@ public class TestCoinsModule {
 				"Situering: zie document xxxx", "NR2",
 				"cbimfs:AspectEnvironment");
 		// Requirements
-		String sterkGenoeg = addRequirement(
+		// String sterkGenoeg =
+		addRequirement(
 				"Sterk genoeg om een belasting van 300 kg te kunnen dragen",
 				"RF1.2", voorzieningZittenId, 0);
-		String geschiktVoorDrie = addRequirement(
-				"Geschikt voor tenminste drie personen", "RF1.1",
+		// String geschiktVoorDrie =
+		addRequirement("Geschikt voor tenminste drie personen", "RF1.1",
 				voorzieningZittenId, 0);
 		// Explicit3DRepresentations
 		String explicit3DSteunLinks = addExplicit3DRepresentation(
 				"3D Element - Steun links", "IFC",
 				"Een zeer eenvoudige casus.ifc", "#1Mre5XRrn72hoJ9l3zDDeS");
+		// Vectors
+		String tmpPrmOrientation = addVector("tmpPrmOrientation", 0.0, 0.0, 1.0);
+		String tmpSecOrientation = addVector("tmpSecOrientation", 1.0, 0.0, 0.0);
+		String tmpTranslation = addVector("tmpTranslation", 0.0, 0.0, 0.0);
+		// locator
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI", MODEL_URI)
+				.queryParam("name", "Tmp_Locator")
+				.queryParam("creator", creatorId)
+				.queryParam("primaryOrientation", tmpPrmOrientation)
+				.queryParam("secondaryOrientation", tmpSecOrientation)
+				.queryParam("translation", tmpTranslation)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_LOCATOR)
+				.body();
+		// String locatorId = body.asString();
+		// tasks
+		String t001 = addTask("Plaatsen steun links", "T001",
+				"http://www.coinsweb.nl/c-bim.owl#Constructing",
+				new String[] { steunLinksId }, "2010-09-01T15:13:04.000Z",
+				"2010-09-01T15:13:04.000Z");
+		addTask("Plaatsen steun rechts", "T002",
+				"http://www.coinsweb.nl/c-bim.owl#Constructing",
+				new String[] { steunRechtsId }, "2010-09-01T15:13:04.000Z",
+				"2010-09-01T15:13:04.000Z");
+		addTask("Plaatsen ligger", "T003",
+				"http://www.coinsweb.nl/c-bim.owl#Constructing",
+				new String[] {}, "2010-09-01T15:13:04.000Z",
+				"2010-09-01T15:13:04.000Z");
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("physiscalobject", ligger)
+				.queryParam("isAffectedBy", t001)
+				.queryParam("modifier", creatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_ISAFFECTEDBY).body();
 		// Set function fulfiller
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
-				.queryParam("function", voorzieningZittenId)
+				.queryParam("function", biedenZitgelegenheid)
 				.queryParam("isFulfilledBy", zitSysteemId)
 				.queryParam("modifier", creatorId)
 				.expect()
@@ -146,6 +193,16 @@ public class TestCoinsModule {
 				.queryParam("context", context)
 				.queryParam("child", zitSysteemId)
 				.queryParam("parent", zitBankId)
+				.queryParam("modifier", creatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("child", ligger)
+				.queryParam("parent", zitSysteemId)
 				.queryParam("modifier", creatorId)
 				.expect()
 				.statusCode(OK)
@@ -239,6 +296,8 @@ public class TestCoinsModule {
 		Assert.assertTrue(owl.contains("cbim:document"));
 		Assert.assertTrue(owl.contains("cbim:fulfills"));
 		Assert.assertTrue(owl.contains("cbim:isFulfilledBy"));
+		Assert.assertTrue(owl.contains("cbim:affects"));
+		Assert.assertTrue(owl.contains("cbim:isAffectedBy"));
 		Assert.assertTrue(owl.contains("cbim:physicalParent"));
 		Assert.assertTrue(owl.contains("cbim:shape"));
 		Assert.assertTrue(owl.contains("cbimfs:nonFunctionalRequirement"));
@@ -299,13 +358,13 @@ public class TestCoinsModule {
 		return body.asString();
 	}
 
-	private String addFunction(String name, String userId) {
+	private String addFunction(String name, String userId, int layerIndex) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
-				.queryParam("layerIndex", 1)
+				.queryParam("layerIndex", layerIndex)
 				.queryParam("creator", creatorId)
 				.queryParam("userID", userId)
 				.expect()
@@ -351,6 +410,59 @@ public class TestCoinsModule {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_EXPLICIT_3D_REPRESENTATION)
 				.body();
+		return body.asString();
+	}
+
+	private String addVector(String pName, double x, double y, double z) {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI", MODEL_URI).queryParam("name", pName)
+				.queryParam("creator", creatorId).queryParam("xCoordinate", x)
+				.queryParam("yCoordinate", y).queryParam("zCoordinate", z)
+				.expect().statusCode(OK).when()
+				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VECTOR)
+				.body();
+		return body.asString();
+	}
+
+	private String addTask(String name, String userId, String taskType,
+			Object[] affects, String startDatePlanned, String endDatePlanned) {
+		ResponseBody body = null;
+		if (affects.length == 0) {
+			body = given()
+					.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+					.queryParam("context", context)
+					.queryParam("modelURI", MODEL_URI)
+					.queryParam("name", name)
+					.queryParam("creator", creatorId)
+					.queryParam("userID", userId)
+					.queryParam("taskType", taskType)
+					.queryParam("startDatePlanned", startDatePlanned)
+					.queryParam("endDatePlanned", endDatePlanned)
+					.expect()
+					.statusCode(OK)
+					.when()
+					.post(CoinsApiWebService.PATH
+							+ CoinsApiWebService.PATH_TASK).body();
+		} else {
+			body = given()
+					.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+					.queryParam("context", context)
+					.queryParam("modelURI", MODEL_URI)
+					.queryParam("name", name)
+					.queryParam("creator", creatorId)
+					.queryParam("userID", userId)
+					.queryParam("taskType", taskType)
+					.queryParam("affects", affects)
+					.queryParam("startDatePlanned", startDatePlanned)
+					.queryParam("endDatePlanned", endDatePlanned)
+					.expect()
+					.statusCode(OK)
+					.when()
+					.post(CoinsApiWebService.PATH
+							+ CoinsApiWebService.PATH_TASK).body();
+		}
 		return body.asString();
 	}
 

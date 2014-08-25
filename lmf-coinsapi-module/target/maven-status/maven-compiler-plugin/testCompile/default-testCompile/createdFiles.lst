@@ -1,3 +1,7 @@
-nl\tno\coinsapi\webservices\TestCoinsApiWebService.class
 nl\tno\coinsapi\services\TestDateConversion.class
+nl\tno\coinsapi\services\TestCoinsImporterIFC.class
+nl\tno\coinsapi\services\TestCoinsImporterOwl.class
 nl\tno\coinsapi\services\TestCoinsImporter.class
+nl\tno\coinsapi\services\TestCoinsImporterIFC2.class
+nl\tno\coinsapi\webservices\TestCoinsApiWebService.class
+nl\tno\coinsapi\webservices\TestCoinsModule.class
