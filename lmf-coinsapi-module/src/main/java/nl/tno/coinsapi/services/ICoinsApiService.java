@@ -27,7 +27,19 @@ public interface ICoinsApiService {
 		/**
 		 * isFulfilledBy / fulfills
 		 */
-		FUNCTIONFULFILLERS;
+		FUNCTIONFULFILLERS,
+		/**
+		 * Literal object validation
+		 */
+		LITERALS,
+		/**
+		 * physicalParent/physicalChild
+		 */
+		PHYSICALOBJECT_PARENT_CHILD,
+		/**
+		 * spatialChild/spationParent
+		 */
+		SPACE_PARENT_CHILD,
 	}
 	
 	/**

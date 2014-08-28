@@ -86,8 +86,8 @@ public class TestCoinsApiWebService {
 				.when()
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_REQUIREMENT).body();
-		// GET requirement
 		String id = body.asString();
+		// GET requirement
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", context)
@@ -240,6 +240,67 @@ public class TestCoinsApiWebService {
 		Assert.assertTrue(isEmpty(body.asString()));
 	}
 
+	/**
+	 * Only fill in the base path for the context. Coins can fill in the rest of it
+	 */
+	@Test
+	public void testContext() {
+		// POST requirement
+		String context = "marmotta";
+		ResponseBody body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("modelURI",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl")
+				.queryParam("name", "requirement name")
+				.queryParam("layerIndex", 3)
+				.queryParam(
+						"creator",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_494d271b-844b-4f05-a971-7894664e32b8")
+				.queryParam(
+						"requirementOf",
+						"http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl#_3eb587eb-0de9-4a1a-a136-aea85266ce3c")
+				.queryParam("userID", "B1.1")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_REQUIREMENT).body();
+		String id = body.asString();
+		// GET requirement to check it is available removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_REQUIREMENT).body();
+		Assert.assertFalse(isEmpty(body.asString()));
+		// DELETE requirement
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_REQUIREMENT);
+		// GET requirement to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_REQUIREMENT).body();
+		Assert.assertTrue(isEmpty(body.asString()));
+	}
+	
 	/**
 	 * Testing NonFunctionalRequirement
 	 * 

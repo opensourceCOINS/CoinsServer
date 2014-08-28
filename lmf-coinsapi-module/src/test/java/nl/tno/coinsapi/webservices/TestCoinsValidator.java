@@ -174,8 +174,7 @@ public class TestCoinsValidator {
 				.when()
 				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
 				.body();
-		@SuppressWarnings("unchecked")
-		List<String> result = body.as(List.class);
+		List<String> result = getStringList(body);
 		Assert.assertEquals(1, result.size());
 		Assert.assertEquals("OK", result.get(0));
 		// Now add an invalid reference
@@ -198,12 +197,84 @@ public class TestCoinsValidator {
 				.when()
 				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
 				.body();
-		@SuppressWarnings("unchecked")
-		List<String> result2 = body.as(List.class);
-		Assert.assertEquals(1, result2.size());
-	    Assert.assertTrue(result2.get(0).contains("fulfiller"));
+		result = getStringList(body);
+		Assert.assertEquals(1, result.size());
+	    Assert.assertTrue(result.get(0).contains("fulfiller"));	    
+	}
+	
+	/**
+	 * Test the literals
+	 */
+	@Test
+	public void testLiterals() {
+		String zitBankId = addPhysicalObject("Zitbank", "B1", 0);
+		String zitSysteemId = addPhysicalObject("Zitsysteem", "B1.1", 1);
+		String zitten = addFunction("Bieden zitgelegenheid", "F1", 0);
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("function", zitten)
+				.queryParam("isFulfilledBy", zitSysteemId)
+				.queryParam("modifier", creatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_FULFILLED_BY).body();
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("physicalobject", zitBankId)
+				.queryParam("fulfills", zitten)
+				.queryParam("modifier", creatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_FULFILLS).body();
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("aspect", "literals")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
+		List<String> result = getStringList(body);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("OK", result.get(0));		
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("object", zitSysteemId)
+				.queryParam("name", "cbim:creationDate")
+				.queryParam("value", "StringValue")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_ADD_ATTRIBUTE_STRING)
+				.body();
+		// Validate again
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", context)
+				.queryParam("aspect", "literals")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();		
+		result = getStringList(body);
+		Assert.assertEquals(1, result.size());
+		Assert.assertTrue(result.get(0).contains("invalid data type"));		
 	}
 
+	private List<String> getStringList(ResponseBody pBody) {
+		@SuppressWarnings("unchecked")
+		List<String> result = pBody.as(List.class);
+		return result;
+	}
+	
 	private String addFunction(String name, String userId, int layerIndex) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
