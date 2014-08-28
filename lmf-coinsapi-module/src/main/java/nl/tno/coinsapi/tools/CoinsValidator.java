@@ -84,6 +84,15 @@ public abstract class CoinsValidator {
 				case SPACE_PARENT_CHILD:
 					mValidators.add(new CoinsSpaceParentChildValidator());
 					break;
+				case AFFECTS:
+					mValidators.add(new CoinsAffectsValidator());
+					break;
+				case REQUIREMENT:
+					mValidators.add(new CoinsRequirementValidator());
+					break;
+				case SITUATES:
+					mValidators.add(new CoinsSituatedValidator());
+					break;
 				}				
 			}
 		}
@@ -173,12 +182,12 @@ public abstract class CoinsValidator {
 			result.add(new ResourceRelation("cbim:fulfills", "cbim:Function"));
 			result.add(new ResourceRelation("cbim:requirementOf", "cbim:Function"));
 			result.add(new ResourceRelation("cbim:requirement", "cbim:Requirement"));
-			result.add(new ResourceRelation("cbim:amount", "cbim:CatalogPart"));
 			result.add(new ResourceRelation("cbim:isSituatedIn", "cbim:Space"));
 			result.add(new ResourceRelation("cbim:situates", "cbim:PhysicalObject"));
-			result.add(new ResourceRelation("cbim:shape", "cbim:Explicit3DRepresentation"));
 			result.add(new ResourceRelation("cbim:affects", "cbim:FunctionFulfiller"));
 			result.add(new ResourceRelation("cbim:isAffectedBy", "cbim:Task"));
+			result.add(new ResourceRelation("cbim:amount", "cbim:CatalogPart"));
+			result.add(new ResourceRelation("cbim:shape", "cbim:Explicit3DRepresentation"));
 			result.add(new ResourceRelation("cbim:primaryOrientation", "cbim:Vector"));
 			result.add(new ResourceRelation("cbim:secondaryOrientation", "cbim:Vector"));
 			result.add(new ResourceRelation("cbim:translation", "cbim:Vector"));
@@ -524,4 +533,89 @@ public abstract class CoinsValidator {
 		}
 		
 	}
+	
+	/**
+	 * cbim:requirementOf
+     * cbim:requirement
+	 */
+	public static class CoinsRequirementValidator extends CoinsTwoWayRelationValidator {
+
+		@Override
+		protected String getTo() {
+			return "cbim:requirementOf";
+		}
+
+		@Override
+		protected String getToDescription() {
+			return "Function";
+		}
+
+		@Override
+		protected String getFrom() {
+			return "cbim:requirement";
+		}
+
+		@Override
+		protected String getFromDescription() {
+			return "requirement";
+		}
+		
+	}
+	
+	/**
+	 * cbim:isSituatedIn
+	 * cbim:situates
+	 */
+	public static class CoinsSituatedValidator extends CoinsTwoWayRelationValidator {
+
+		@Override
+		protected String getTo() {
+			return "cbim:isSituatedIn";
+		}
+
+		@Override
+		protected String getToDescription() {
+			return "Physical object";
+		}
+
+		@Override
+		protected String getFrom() {
+			return "cbim:situates";
+		}
+
+		@Override
+		protected String getFromDescription() {
+			return "space";
+		}
+		
+	}
+
+	/**
+	 * cbim:affects
+	 * cbim:isAffectedBy
+	 */
+	public static class CoinsAffectsValidator extends CoinsTwoWayRelationValidator {
+
+		@Override
+		protected String getTo() {
+			return "cbim:affects";
+		}
+
+		@Override
+		protected String getToDescription() {
+			return "Function fulfiller";
+		}
+
+		@Override
+		protected String getFrom() {
+			return "cbim:isAffectedBy";
+		}
+
+		@Override
+		protected String getFromDescription() {
+			return "task";
+		}
+		
+	}
+	
 }

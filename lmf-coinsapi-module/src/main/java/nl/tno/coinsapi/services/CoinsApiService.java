@@ -9,11 +9,14 @@ import java.util.Vector;
 import javax.inject.Inject;
 
 import nl.tno.coinsapi.tools.CoinsValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsAffectsValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAllValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsFunctionFulfillerValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsLiteralValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalObjectParentChildValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalParentValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsRequirementValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsSituatedValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsSpaceParentChildValidator;
 import nl.tno.coinsapi.tools.QueryBuilder;
 import nl.tno.coinsapi.tools.QueryBuilder.InsertQueryBuilder;
@@ -725,6 +728,15 @@ public class CoinsApiService implements ICoinsApiService {
 		case SPACE_PARENT_CHILD:
 			validator = new CoinsSpaceParentChildValidator();
 			break;
+		case AFFECTS:
+			validator = new CoinsAffectsValidator();
+			break;			
+		case SITUATES:
+			validator = new CoinsSituatedValidator();
+			break;			
+		case REQUIREMENT:
+			validator = new CoinsRequirementValidator();
+			break;			
 		}
 		validator.setContext(getFullContext(pContext));
 		validator.setSparqlService(sparqlService);

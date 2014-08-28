@@ -15,6 +15,10 @@ public interface ICoinsApiService {
 	/**
 	 * What do we want to validate
 	 */
+	/**
+	 * @author kunnenj
+	 *
+	 */
 	public enum ValidationAspect {
 		/**
 		 * All aspects that have been implemented 
@@ -40,6 +44,18 @@ public interface ICoinsApiService {
 		 * spatialChild/spationParent
 		 */
 		SPACE_PARENT_CHILD,
+		/**
+		 * affects/isAffectedBy
+		 */
+		AFFECTS,
+		/**
+		 * situates/isSituatedBy
+		 */
+		SITUATES,
+		/**
+		 * requirement/requirementOf
+		 */
+		REQUIREMENT;
 	}
 	
 	/**
