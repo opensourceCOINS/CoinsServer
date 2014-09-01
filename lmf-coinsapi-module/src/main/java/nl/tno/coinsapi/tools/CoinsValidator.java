@@ -135,6 +135,10 @@ public abstract class CoinsValidator {
 	 */
 	public static class CoinsLiteralValidator extends CoinsValidator {
 		
+		private static final String HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT = "http://www.w3.org/2001/XMLSchema#int";
+		private static final String HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING = "http://www.w3.org/2001/XMLSchema#string";
+		private static final String HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME = "http://www.w3.org/2001/XMLSchema#dateTime";
+
 		@Override
 		public boolean validate() {
 			boolean isOk = true;
@@ -172,43 +176,44 @@ public abstract class CoinsValidator {
 		
 		private List<Relation> getRelations() {
 			List<Relation> result = new Vector<Relation>();
-			result.add(new ResourceRelation("cbim:creator", "cbim:PersonOrOrganisation"));
-			result.add(new ResourceRelation("cbim:modifier", "cbim:PersonOrOrganisation"));
-			result.add(new ResourceRelation("cbim:spatialChild", "cbim:Space"));
-			result.add(new ResourceRelation("cbim:spatialParent", "cbim:Space"));
-			result.add(new ResourceRelation("cbim:physicalParent", "cbim:PhysicalObject"));
-			result.add(new ResourceRelation("cbim:physicalChild", "cbim:PhysicalObject"));
-			result.add(new ResourceRelation("cbim:isFulfilledBy", "cbim:FunctionFulfiller"));
-			result.add(new ResourceRelation("cbim:fulfills", "cbim:Function"));
-			result.add(new ResourceRelation("cbim:requirementOf", "cbim:Function"));
-			result.add(new ResourceRelation("cbim:requirement", "cbim:Requirement"));
-			result.add(new ResourceRelation("cbim:isSituatedIn", "cbim:Space"));
-			result.add(new ResourceRelation("cbim:situates", "cbim:PhysicalObject"));
-			result.add(new ResourceRelation("cbim:affects", "cbim:FunctionFulfiller"));
-			result.add(new ResourceRelation("cbim:isAffectedBy", "cbim:Task"));
-			result.add(new ResourceRelation("cbim:amount", "cbim:CatalogPart"));
-			result.add(new ResourceRelation("cbim:shape", "cbim:Explicit3DRepresentation"));
-			result.add(new ResourceRelation("cbim:primaryOrientation", "cbim:Vector"));
-			result.add(new ResourceRelation("cbim:secondaryOrientation", "cbim:Vector"));
-			result.add(new ResourceRelation("cbim:translation", "cbim:Vector"));
-			result.add(new ResourceRelation("cbim:firstParameter", "cbim:Parameter"));
-			result.add(new ResourceRelation("cbim:nextParameter", "cbim:Parameter"));
-			result.add(new ResourceRelation("cbim:documentUri", null));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_CREATOR, CoinsApiService.CBIM_PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_MODIFIER, CoinsApiService.CBIM_PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_SPATIAL_CHILD, CoinsApiService.CBIM_SPACE));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_SPATIAL_PARENT, CoinsApiService.CBIM_SPACE));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_PHYSICAL_PARENT, CoinsApiService.CBIM_PHYSICAL_OBJECT));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_PHYSICAL_CHILD, CoinsApiService.CBIM_PHYSICAL_OBJECT));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_IS_FULFILLED_BY, CoinsApiService.CBIM_FUNCTION_FULFILLER));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_FULFILLS, CoinsApiService.CBIM_FUNCTION));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_REQUIREMENT_OF, CoinsApiService.CBIM_FUNCTION));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_REQUIREMENT_RELATION, CoinsApiService.CBIM_REQUIREMENT));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_IS_SITUATED_IN, CoinsApiService.CBIM_SPACE));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_SITUATES, CoinsApiService.CBIM_PHYSICAL_OBJECT));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_AFFECTS, CoinsApiService.CBIM_FUNCTION_FULFILLER));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_IS_AFFECTED_BY, CoinsApiService.CBIM_TASK));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_AMOUNT, CoinsApiService.CBIM_CATALOGUE_PART));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_SHAPE, CoinsApiService.CBIM_EXPLICIT3D_REPRESENTATION));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_PRIMARY_ORIENTATION, CoinsApiService.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_SECONDARY_ORIENTATION, CoinsApiService.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_TRANSLATION, CoinsApiService.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_FIRST_PARAMETER, CoinsApiService.CBIM_PARAMETER));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_NEXT_PARAMETER, CoinsApiService.CBIM_PARAMETER));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_DOCUMENT_URI, null));
 
 			
-			result.add(new LiteralRelation("cbim:endDateActual", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:startDate", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:startDateActual", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:startDatePlanned", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:endDate", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:releaseDate", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:creationDate", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:modificationDate", "http://www.w3.org/2001/XMLSchema#dateTime"));
-			result.add(new LiteralRelation("cbim:name", "http://www.w3.org/2001/XMLSchema#string"));
-			result.add(new LiteralRelation("cbim:documentType", "http://www.w3.org/2001/XMLSchema#string"));
-			result.add(new LiteralRelation("cbim:documentAliasFilePath", "http://www.w3.org/2001/XMLSchema#string"));
-			result.add(new LiteralRelation("cbim:userID", "http://www.w3.org/2001/XMLSchema#string"));
-			result.add(new LiteralRelation("cbim:layerIndex", "http://www.w3.org/2001/XMLSchema#int"));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_END_DATE_ACTUAL, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_START_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_START_DATE_ACTUAL, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_START_DATE_PLANNED, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_END_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_END_DATE_PLANNED, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_RELEASE_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_CREATION_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_MODIFICATION_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_NAME, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_DOCUMENT_TYPE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_DOCUMENT_ALIAS_FILE_PATH, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_USER_ID, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsApiService.CBIM_LAYER_INDEX, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT));
 			for (Relation rel : result) {
 				if (rel instanceof ResourceRelation) {
 					ResourceRelation relation = (ResourceRelation)rel;
@@ -285,8 +290,8 @@ public abstract class CoinsValidator {
 			}
 			
 			private String[] getDataTypes() {
-				if (mDataType.equals("cbim:FunctionFulfiller")) {
-					return new String[] {"cbim:PhysicalObject", "cbim:Space"};
+				if (mDataType.equals(CoinsApiService.CBIM_FUNCTION_FULFILLER)) {
+					return new String[] {CoinsApiService.CBIM_PHYSICAL_OBJECT, CoinsApiService.CBIM_SPACE};
 				}
 				return new String[] {mDataType};
 			}

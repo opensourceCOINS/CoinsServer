@@ -39,6 +39,92 @@ import org.openrdf.query.UpdateExecutionException;
 @Path("/" + CoinsApiWebService.PATH)
 public class CoinsApiWebService {
 
+	private static final String OBJECT = "object";
+
+	private static final String LAYERINDEX = "layerindex";
+
+	private static final String LOCATOR = "locator";
+
+	private static final String IS_AFFECTED_BY = "isAffectedBy";
+
+	private static final String IS_FULFILLED_BY = "isFulfilledBy";
+
+	private static final String FUNCTION = "function";
+
+	private static final String FULFILLS = "fulfills";
+
+	private static final String DOCUMENT = "document";
+
+	private static final String NONFUNCTIONALREQUIREMENT = "nonfunctionalrequirement";
+
+	private static final String FUNCTIONFULFILLER = "functionfulfiller";
+
+	private static final String SHAPE = "shape";
+
+	private static final String PHYSICALOBJECT = "physicalobject";
+
+	private static final String PARENT = "parent";
+
+	private static final String CHILD = "child";
+
+	private static final String DEFAULT_VALUE = "defaultValue";
+
+	private static final String VALUE = "value";
+
+	private static final String CATALOGUE_PART = "cataloguePart";
+
+	private static final String FILENAME = "filename";
+
+	private static final String NON_FUNCTIONAL_REQUIREMENT_TYPE = "nonFunctionalRequirementType";
+
+	private static final String END_DATE_PLANNED = "endDatePlanned";
+
+	private static final String START_DATE_PLANNED = "startDatePlanned";
+
+	private static final String TASK_TYPE = "taskType";
+
+	private static final String AFFECTS = "affects";
+
+	private static final String TRANSLATION = "translation";
+
+	private static final String SECONDARY_ORIENTATION = "secondaryOrientation";
+
+	private static final String PRIMARY_ORIENTATION = "primaryOrientation";
+
+	private static final String Z_COORDINATE = "zCoordinate";
+
+	private static final String Y_COORDINATE = "yCoordinate";
+
+	private static final String X_COORDINATE = "xCoordinate";
+
+	private static final String DOCUMENT_URI = "documentUri";
+
+	private static final String DOCUMENT_ALIAS_FILE_PATH = "documentAliasFilePath";
+
+	private static final String DOCUMENT_TYPE = "documentType";
+
+	private static final String MODIFIER = "modifier";
+
+	private static final String DESCRIPTION = "description";
+
+	private static final String OUTPUT = "output";
+
+	private static final String ID = "id";
+
+	private static final String REQUIREMENT_OF = "requirementOf";
+
+	private static final String CREATOR = "creator";
+
+	private static final String USER_ID = "userID";
+
+	private static final String LAYER_INDEX = "layerIndex";
+
+	private static final String NAME = "name";
+
+	private static final String CONTEXT = "context";
+
+	private static final String MODEL_URI = "modelURI";
+
 	private static final String[][] PREFIXES = new String[][] {
 			{ "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
 			{ "owl", "http://www.w3.org/2002/07/owl#" },
@@ -104,19 +190,19 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_EXPLICIT_3D_REPRESENTATION = "/explicit3drepresentation";
 	/**
-	 * Task 
+	 * Task
 	 */
 	public static final String PATH_TASK = "/task";
 	/**
-	 * Amount 
+	 * Amount
 	 */
 	public static final String PATH_AMOUNT = "/amount";
 	/**
-	 * CataloguePart 
+	 * CataloguePart
 	 */
 	public static final String PATH_CATALOGUE_PART = "/cataloguepart";
 	/**
-	 * References to BIM documents from COINS containers  
+	 * References to BIM documents from COINS containers
 	 */
 	public static final String PATH_DOCUMENT_REFERENCE = "/bim";
 	/**
@@ -124,27 +210,27 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_INITIALIZE_CONTEXT = "/initializecontext";
 	/**
-	 * Edit physical parent relation 
+	 * Edit physical parent relation
 	 */
 	public static final String PATH_LINK_PHYSICAL_PARENT = "/link/physicalparent";
 	/**
-	 * Add a physical child relation 
+	 * Add a physical child relation
 	 */
 	public static final String PATH_LINK_PHYSICAL_CHILD = "/link/physicalchild";
 	/**
-	 * Edit spatial parent relation 
+	 * Edit spatial parent relation
 	 */
 	public static final String PATH_LINK_SPATIAL_PARENT = "/link/spatialparent";
 	/**
-	 * Add a spatial child relation 
+	 * Add a spatial child relation
 	 */
-	public static final String PATH_LINK_SPATIAL_CHILD = "/link/spatialchild";	
+	public static final String PATH_LINK_SPATIAL_CHILD = "/link/spatialchild";
 	/**
 	 * Link NonFunctionalRequirements to a PhysicalObject
 	 */
 	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = "/link/nonfunctionalrequirement";
 	/**
-	 * Link Documents to a PhysicalObject 
+	 * Link Documents to a PhysicalObject
 	 */
 	public static final String PATH_LINK_DOCUMENT = "/link/document";
 
@@ -152,71 +238,76 @@ public class CoinsApiWebService {
 	 * Link a function to a function fulfiller (isFulfilledBy)
 	 */
 	public static final String PATH_LINK_FULFILLED_BY = "/link/isfulfilledby";
-	
+
 	/**
-	 * Link a function fulfiller to a function (fulfills) 
+	 * Link a function fulfiller to a function (fulfills)
 	 */
 	public static final String PATH_LINK_FULFILLS = "/link/fulfills";
 
 	/**
-	 * Link an Explicit3DRepresentation to a PhysicalObject 
+	 * Link an Explicit3DRepresentation to a PhysicalObject
 	 */
 	public static final String PATH_LINK_SHAPE = "/link/shape";
 
 	/**
-	 * A Physical object affected by a task 
+	 * A Physical object affected by a task
 	 */
 	public static final String PATH_LINK_ISAFFECTEDBY = "/link/isaffectedby";
 
 	/**
-	 * Add an Explicit3DRepresentation to a parameter 
+	 * Add an Explicit3DRepresentation to a parameter
 	 */
-	public static final String PATH_LINK_FIRST_PARAMETER = "/link/firstparameter";	
+	public static final String PATH_LINK_FIRST_PARAMETER = "/link/firstparameter";
 
 	/**
-	 * Add a parameter to the next one 
+	 * Add a parameter to the next one
 	 */
-	public static final String PATH_LINK_NEXT_PARAMETER = "/link/nextparameter";	
+	public static final String PATH_LINK_NEXT_PARAMETER = "/link/nextparameter";
 
 	/**
-	 * Validate 
+	 * Validate
 	 */
 	public static final String PATH_VALIDATE = "/validate";
 
 	/**
-	 *  Validate all
+	 * Validate all
 	 */
 	public static final String PATH_VALIDATEALL = "/validateall";
-	
+
 	/**
 	 * Add attribute
 	 */
 	public static final String PATH_ADD_ATTRIBUTE = "/addattribute";
-	
+
 	/**
 	 * Add attribute string
 	 */
-	public static final String PATH_ADD_ATTRIBUTE_STRING = PATH_ADD_ATTRIBUTE + "/string";
-	
+	public static final String PATH_ADD_ATTRIBUTE_STRING = PATH_ADD_ATTRIBUTE
+			+ "/string";
+
 	/**
 	 * Add attribute float
 	 */
-	public static final String PATH_ADD_ATTRIBUTE_FLOAT = PATH_ADD_ATTRIBUTE + "/foat";
-	
+	public static final String PATH_ADD_ATTRIBUTE_FLOAT = PATH_ADD_ATTRIBUTE
+			+ "/foat";
+
 	/**
 	 * Add attribute int
 	 */
-	public static final String PATH_ADD_ATTRIBUTE_INTEGER = PATH_ADD_ATTRIBUTE + "/int";
-	
+	public static final String PATH_ADD_ATTRIBUTE_INTEGER = PATH_ADD_ATTRIBUTE
+			+ "/int";
+
 	/**
 	 * Add attribute resource
 	 */
-	public static final String PATH_ADD_ATTRIBUTE_RESOURCE = PATH_ADD_ATTRIBUTE + "/resource";
+	public static final String PATH_ADD_ATTRIBUTE_RESOURCE = PATH_ADD_ATTRIBUTE
+			+ "/resource";
 
 	/**
 	 * Add attribute date
 	 */
-	public static final String PATH_ADD_ATTRIBUTE_DATE = PATH_ADD_ATTRIBUTE + "/date";
+	public static final String PATH_ADD_ATTRIBUTE_DATE = PATH_ADD_ATTRIBUTE
+			+ "/date";
 
 	/**
 	 * Add a space object
@@ -227,24 +318,28 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_PARAMETER = "/parameter";
 	/**
+	 * Terminal
+	 */
+	public static final String PATH_TERMINAL = "/terminal";
+	/**
 	 * Application/json
 	 */
 	public static final String MIME_TYPE = "application/json";
 
 	@Inject
-	private ConfigurationService configurationService;
+	private ConfigurationService mConfigurationService;
 
 	@Inject
-	private ICoinsApiService coinsService;
-
-	@Inject 
-	private IBimFileService fileServer;
-	
-	@Inject
-	private PrefixService prefixService;
+	private ICoinsApiService mCoinsService;
 
 	@Inject
-	private SparqlWebService sparqlWebService;
+	private IBimFileService mFileServer;
+
+	@Inject
+	private PrefixService mPrefixService;
+
+	@Inject
+	private SparqlWebService mSparqlWebService;
 
 	/**
 	 * Get the version of the COINS API
@@ -260,22 +355,24 @@ public class CoinsApiWebService {
 
 	/**
 	 * Initialize the context
+	 * 
 	 * @param context
-	 * @param modelURI 
+	 * @param modelURI
 	 * @return true if it succeeded
 	 */
 	@POST
 	@Path(PATH_INITIALIZE_CONTEXT)
 	@Consumes(MIME_TYPE)
-	public Response initializeContext(@QueryParam("context") String context, @QueryParam("modelURI") String modelURI) {
+	public Response initializeContext(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI) {
 		try {
-			coinsService.initializeContext(context, modelURI);
+			mCoinsService.initializeContext(context, modelURI);
 			return Response.ok().build();
 		} catch (Exception e) {
 			return Response.serverError().build();
 		}
 	}
-	
+
 	/**
 	 * Add the default COINS prefixes
 	 * 
@@ -287,10 +384,10 @@ public class CoinsApiWebService {
 	public Response setPrefixes() {
 		List<String> addedPrefixes = new Vector<String>();
 		for (int i = 0; i < PREFIXES.length; i++) {
-			String nameSpace = prefixService.getNamespace(PREFIXES[i][0]);
+			String nameSpace = mPrefixService.getNamespace(PREFIXES[i][0]);
 			if (nameSpace == null) {
 				try {
-					prefixService.add(PREFIXES[i][0], PREFIXES[i][1]);
+					mPrefixService.add(PREFIXES[i][0], PREFIXES[i][1]);
 					addedPrefixes.add(PREFIXES[i][0]);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
@@ -300,15 +397,15 @@ public class CoinsApiWebService {
 			}
 		}
 		return Response.ok().entity(addedPrefixes).build();
-	}	
-	
+	}
+
 	/**
 	 * Create a new <B>Requirement</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Requirement</B>
 	 * @param layerIndex
@@ -318,19 +415,20 @@ public class CoinsApiWebService {
 	 * @param creator
 	 *            URI referring to the user that created this <B>Requirement</B>
 	 * @param requirementOf
-	 *  		  URI referring to the function this <B>Requirement</B> is part of             
+	 *            URI referring to the function this <B>Requirement</B> is part
+	 *            of
 	 * @return The id of the created <B>Requirement</B>
 	 */
 	@POST
 	@Path(PATH_REQUIREMENT)
 	@Consumes(MIME_TYPE)
-	public Response createRequirement(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("layerIndex") int layerIndex,
-			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator,
-			@QueryParam("requirementOf") String requirementOf) {
+	public Response createRequirement(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(LAYER_INDEX) int layerIndex,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator,
+			@QueryParam(REQUIREMENT_OF) String requirementOf) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -339,12 +437,12 @@ public class CoinsApiWebService {
 					.build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createRequirement(context, modelURI, name,
-					layerIndex, userID, creator, requirementOf);
+			identifier = mCoinsService.createRequirement(context, modelURI,
+					name, layerIndex, userID, creator, requirementOf);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -366,7 +464,7 @@ public class CoinsApiWebService {
 	 * @param context
 	 *            Context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Requirement</B>
 	 * @param layerIndex
@@ -376,18 +474,19 @@ public class CoinsApiWebService {
 	 * @param creator
 	 *            URI referring to the user that created this <B>Requirement</B>
 	 * @param requirementOf
-	 *  		  URI referring to the function this <B>Requirement</B> is part of
+	 *            URI referring to the function this <B>Requirement</B> is part
+	 *            of
 	 * @return The id of the created requirement
-	 */	
+	 */
 	@POST
 	@Path(PATH_REQUIREMENT_FORM)
-	public Response createRequirementForm(@FormParam("context") String context,
-			@FormParam("modelURI") String modelURI,			
-			@FormParam("name") String name,
-			@FormParam("layerIndex") int layerIndex,
-			@FormParam("userID") String userId,
-			@FormParam("creator") String creator,
-			@FormParam("requirementOf") String requirementOf) {
+	public Response createRequirementForm(@FormParam(CONTEXT) String context,
+			@FormParam(MODEL_URI) String modelURI,
+			@FormParam(NAME) String name,
+			@FormParam(LAYER_INDEX) int layerIndex,
+			@FormParam(USER_ID) String userId,
+			@FormParam(CREATOR) String creator,
+			@FormParam(REQUIREMENT_OF) String requirementOf) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -396,12 +495,12 @@ public class CoinsApiWebService {
 					.build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createRequirement(context, modelURI, name,
-					layerIndex, userId, creator, requirementOf);
+			identifier = mCoinsService.createRequirement(context, modelURI,
+					name, layerIndex, userId, creator, requirementOf);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -414,11 +513,12 @@ public class CoinsApiWebService {
 		}
 		return Response.serverError()
 				.entity("Something went wrong when creating the requirement")
-				.build();		
+				.build();
 	}
-	
+
 	/**
 	 * Delete a <B>Requirement</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Requirement</B> was deleted
@@ -426,9 +526,9 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_REQUIREMENT)
 	@Consumes(MIME_TYPE)
-	public Response deleteRequirement(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteRequirement(context, id)) {
+	public Response deleteRequirement(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteRequirement(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete requirement")
@@ -438,19 +538,25 @@ public class CoinsApiWebService {
 	/**
 	 * Get a <B>Requirement</B>
 	 * 
-	 * @param context / graph
-	 * @param id The id of the <B>Requirement</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            / graph
+	 * @param id
+	 *            The id of the <B>Requirement</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Requirement</B> formatted the way specified by means of the output
+	 * @return the <B>Requirement</B> formatted the way specified by means of
+	 *         the output
 	 */
 	@GET
 	@Path(PATH_REQUIREMENT)
 	@Consumes(MIME_TYPE)
-	public Response getRequirement(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getRequirementQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getRequirement(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getRequirementQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
@@ -459,26 +565,28 @@ public class CoinsApiWebService {
 	 * @param context
 	 *            The context or named graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>PersonOrOrganisation</B>
 	 * @return The id of the created <B>PersonOrOrganisation</B>
 	 */
 	@POST
 	@Path(PATH_PERSON_OR_ORGANISATION)
-	@Consumes(MIME_TYPE)	
-	public Response createPersonOrOrganisation(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,			
-			@QueryParam("name") String name) {
+	@Consumes(MIME_TYPE)
+	public Response createPersonOrOrganisation(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createPersonOrOrganisation(context, modelURI, name);
+			identifier = mCoinsService.createPersonOrOrganisation(context,
+					modelURI, name);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -489,7 +597,8 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response.serverError()
+		return Response
+				.serverError()
 				.entity("Something went wrong when creating the PersonOrOrganisation")
 				.build();
 	}
@@ -497,23 +606,31 @@ public class CoinsApiWebService {
 	/**
 	 * Get a <B>PersonOrOrganisation</B>
 	 * 
-	 * @param context The context or graph
-	 * @param id The id of the <B>PersonOrOrganisation</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>PersonOrOrganisation</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>PersonOrOrganisation</B> formatted the way specified by means of the output
+	 * @return the <B>PersonOrOrganisation</B> formatted the way specified by
+	 *         means of the output
 	 */
 	@GET
 	@Path(PATH_PERSON_OR_ORGANISATION)
 	@Consumes(MIME_TYPE)
-	public Response getPersonOrOrganisation(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getPersonOrOrganisationQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getPersonOrOrganisation(
+			@QueryParam(CONTEXT) String context, @QueryParam(ID) String id,
+			@QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getPersonOrOrganisationQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Delete a <B>PersonOrOrganisation</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>PersonOrOrganisation</B> was deleted
@@ -521,30 +638,38 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_PERSON_OR_ORGANISATION)
 	@Consumes(MIME_TYPE)
-	public Response deletePersonOrOrganisation(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deletePersonOrOrganisation(context, id)) {
+	public Response deletePersonOrOrganisation(
+			@QueryParam(CONTEXT) String context, @QueryParam(ID) String id) {
+		if (mCoinsService.deletePersonOrOrganisation(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete PersonOrOrganisation")
-				.build();
+		return Response.serverError()
+				.entity("Cannot delete PersonOrOrganisation").build();
 	}
 
 	/**
-	 * Set the description of an object. 
-	 * The description is not mandatory and therefore no default argument
-	 * @param context The context or graph
-	 * @param id The identifier of the object
-	 * @param description The description
-	 * @param modifier URI to the modifier of the object
+	 * Set the description of an object. The description is not mandatory and
+	 * therefore no default argument
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The identifier of the object
+	 * @param description
+	 *            The description
+	 * @param modifier
+	 *            URI to the modifier of the object
 	 * @return OK if successful
 	 */
 	@POST
 	@Path(PATH_DESCRIPTION)
-	@Consumes(MIME_TYPE)	
-	public Response setDescription(@QueryParam("context") String context, @QueryParam("id") String id, @QueryParam("description") String description, @QueryParam("modifier") String modifier) {
+	@Consumes(MIME_TYPE)
+	public Response setDescription(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id,
+			@QueryParam(DESCRIPTION) String description,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setDescription(context, id, description, modifier);
+			mCoinsService.setDescription(context, id, description, modifier);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -559,14 +684,14 @@ public class CoinsApiWebService {
 				.entity("Something went wrong when setting the Description")
 				.build();
 	}
-	
+
 	/**
 	 * Create a new <B>PhysicalObject</B>
 	 * 
 	 * @param context
 	 *            The context or named graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>PhysicalObject</B>
 	 * @param layerIndex
@@ -574,27 +699,29 @@ public class CoinsApiWebService {
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param creator
-	 *            URI referring to the user that created this <B>PhysicalObject</B>
+	 *            URI referring to the user that created this
+	 *            <B>PhysicalObject</B>
 	 * @return The id of the created <B>PhysicalObject</B>
 	 */
 	@POST
 	@Path(PATH_PHYSICAL_OBJECT)
 	@Consumes(MIME_TYPE)
-	public Response createPhysicalObject(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,			
-			@QueryParam("name") String name,
-			@QueryParam("layerIndex") int layerIndex,
-			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator) {
+	public Response createPhysicalObject(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(LAYER_INDEX) int layerIndex,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createPhysicalObject(context, modelURI, name, layerIndex, userID, creator);
+			identifier = mCoinsService.createPhysicalObject(context, modelURI,
+					name, layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -605,7 +732,8 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response.serverError()
+		return Response
+				.serverError()
 				.entity("Something went wrong when creating the PhysicalObject")
 				.build();
 	}
@@ -613,23 +741,30 @@ public class CoinsApiWebService {
 	/**
 	 * Get a <B>PhysicalObject</B>
 	 * 
-	 * @param context The context or graph
-	 * @param id The id of the <B>PhysicalObject</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>PhysicalObject</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>PhysicalObject</B> formatted the way specified by means of the output
+	 * @return the <B>PhysicalObject</B> formatted the way specified by means of
+	 *         the output
 	 */
 	@GET
 	@Path(PATH_PHYSICAL_OBJECT)
 	@Consumes(MIME_TYPE)
-	public Response getPhysicalObject(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getPhysicalObjectQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getPhysicalObject(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getPhysicalObjectQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Delete a <B>PhysicalObject</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>PhysicalObject</B> was deleted
@@ -637,9 +772,9 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_PHYSICAL_OBJECT)
 	@Consumes(MIME_TYPE)
-	public Response deletePhysicalObject(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deletePhysicalObject(context, id)) {
+	public Response deletePhysicalObject(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deletePhysicalObject(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete PhysicalObject")
@@ -652,7 +787,7 @@ public class CoinsApiWebService {
 	 * @param context
 	 *            The context or named graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Space</B>
 	 * @param layerIndex
@@ -666,21 +801,22 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_SPACE)
 	@Consumes(MIME_TYPE)
-	public Response createSpace(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,			
-			@QueryParam("name") String name,
-			@QueryParam("layerIndex") int layerIndex,
-			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator) {
+	public Response createSpace(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(LAYER_INDEX) int layerIndex,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createSpace(context, modelURI, name, layerIndex, userID, creator);
+			identifier = mCoinsService.createSpace(context, modelURI, name,
+					layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -692,30 +828,36 @@ public class CoinsApiWebService {
 			e.printStackTrace();
 		}
 		return Response.serverError()
-				.entity("Something went wrong when creating the Space")
-				.build();
+				.entity("Something went wrong when creating the Space").build();
 	}
 
 	/**
 	 * Get a <B>Space</B>
 	 * 
-	 * @param context The context or graph
-	 * @param id The id of the <B>Space</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>Space</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Space</B> formatted the way specified by means of the output
+	 * @return the <B>Space</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_SPACE)
 	@Consumes(MIME_TYPE)
-	public Response getSpace(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getSpaceQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getSpace(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getSpaceQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Delete a <B>Space</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Space</B> was deleted
@@ -723,22 +865,21 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_SPACE)
 	@Consumes(MIME_TYPE)
-	public Response deleteSpace(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteSpace(context, id)) {
+	public Response deleteSpace(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteSpace(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Space")
-				.build();
+		return Response.serverError().entity("Cannot delete Space").build();
 	}
-	
+
 	/**
 	 * Create a new <B>Function</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Function</B>
 	 * @param layerIndex
@@ -752,12 +893,12 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_FUNCTION)
 	@Consumes(MIME_TYPE)
-	public Response createFunction(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("layerIndex") int layerIndex,
-			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator) {
+	public Response createFunction(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(LAYER_INDEX) int layerIndex,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -766,11 +907,11 @@ public class CoinsApiWebService {
 					.build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createFunction(context, modelURI, name,
+			identifier = mCoinsService.createFunction(context, modelURI, name,
 					layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -790,23 +931,30 @@ public class CoinsApiWebService {
 	/**
 	 * Get a <B>Function</B>
 	 * 
-	 * @param context The context or graph
-	 * @param id The id of the <B>Function</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>Function</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Function</B> formatted the way specified by means of the output
+	 * @return the <B>Function</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_FUNCTION)
 	@Consumes(MIME_TYPE)
-	public Response getFunction(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getFunctionQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getFunction(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getFunctionQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Delete a <B>Function</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Function</B> was deleted
@@ -814,22 +962,21 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_FUNCTION)
 	@Consumes(MIME_TYPE)
-	public Response deleteFunction(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteFunction(context, id)) {
+	public Response deleteFunction(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteFunction(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Function")
-				.build();
+		return Response.serverError().entity("Cannot delete Function").build();
 	}
 
 	/**
 	 * Create a new <B>Document</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Document</B>
 	 * @param userID
@@ -841,11 +988,10 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_DOCUMENT)
 	@Consumes(MIME_TYPE)
-	public Response createDocument(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator){
+	public Response createDocument(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -854,11 +1000,11 @@ public class CoinsApiWebService {
 					.build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createDocument(context, modelURI, name,
+			identifier = mCoinsService.createDocument(context, modelURI, name,
 					userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -878,23 +1024,30 @@ public class CoinsApiWebService {
 	/**
 	 * Get a <B>Document</B>
 	 * 
-	 * @param context The context or graph
-	 * @param id The id of the <B>Document</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>Document</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Document</B> formatted the way specified by means of the output
+	 * @return the <B>Document</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_DOCUMENT)
 	@Consumes(MIME_TYPE)
-	public Response getDocument(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getDocumentQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getDocument(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getDocumentQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Delete a <B>Document</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Document</B> was deleted
@@ -902,56 +1055,58 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_DOCUMENT)
 	@Consumes(MIME_TYPE)
-	public Response deleteDocument(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteDocument(context, id)) {
+	public Response deleteDocument(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteDocument(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Document")
-				.build();
+		return Response.serverError().entity("Cannot delete Document").build();
 	}
 
 	/**
 	 * Create a new <B>Explicit3DRepresentation</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Explicit3DRepresentation</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param documentType
-	 * 			  Type of document (For instance IFC)
+	 *            Type of document (For instance IFC)
 	 * @param documentAliasFilePath
-	 * 			  File name of the document
+	 *            File name of the document
 	 * @param documentUri
-	 *            URI to the document 
+	 *            URI to the document
 	 * @param creator
-	 *            URI referring to the user that created this <B>Explicit3DRepresentation</B>
+	 *            URI referring to the user that created this
+	 *            <B>Explicit3DRepresentation</B>
 	 * @return The id of the created <B>Explicit3DRepresentation</B>
 	 */
 	@POST
 	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
 	@Consumes(MIME_TYPE)
-	public Response createExplicit3DRepresentation(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("documentType") String documentType,
-			@QueryParam("documentAliasFilePath") String documentAliasFilePath,
-			@QueryParam("documentUri") String documentUri,
-			@QueryParam("creator") String creator) {
+	public Response createExplicit3DRepresentation(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(DOCUMENT_TYPE) String documentType,
+			@QueryParam(DOCUMENT_ALIAS_FILE_PATH) String documentAliasFilePath,
+			@QueryParam(DOCUMENT_URI) String documentUri,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createExplicit3DRepresentation(context, modelURI, name,
-					documentType, documentAliasFilePath, documentUri, creator);
+			identifier = mCoinsService.createExplicit3DRepresentation(context,
+					modelURI, name, documentType, documentAliasFilePath,
+					documentUri, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -962,13 +1117,15 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response.serverError()
+		return Response
+				.serverError()
 				.entity("Something went wrong when creating the Explicit3dRepresentation")
 				.build();
 	}
-	
+
 	/**
 	 * Delete an <B>Explicit3DRepresentation</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Explicit3DRepresentation</B> was deleted
@@ -976,40 +1133,48 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
 	@Consumes(MIME_TYPE)
-	public Response deleteExplicit3DRepresentation(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteExplicit3DRepresentation(context, id)) {
+	public Response deleteExplicit3DRepresentation(
+			@QueryParam(CONTEXT) String context, @QueryParam(ID) String id) {
+		if (mCoinsService.deleteExplicit3DRepresentation(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Explicit3DRepresentation")
-				.build();
+		return Response.serverError()
+				.entity("Cannot delete Explicit3DRepresentation").build();
 	}
 
 	/**
 	 * Get an <B>Explicit3DRepresentation</B>
 	 * 
-	 * @param context / graph
-	 * @param id The id of the <B>Explicit3DRepresentation</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            Context or graph
+	 * @param id
+	 *            The id of the <B>Explicit3DRepresentation</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Explicit3DRepresentation</B> formatted the way specified by means of the output
+	 * @return the <B>Explicit3DRepresentation</B> formatted the way specified
+	 *         by means of the output
 	 */
 	@GET
 	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
 	@Consumes(MIME_TYPE)
-	public Response getExplicit3DRepresentation(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getExplicit3DRepresentationQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getExplicit3DRepresentation(
+			@QueryParam(CONTEXT) String context, @QueryParam(ID) String id,
+			@QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getExplicit3DRepresentationQuery(context,
+				id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Create a new <B>Vector</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Vector</B>
 	 * @param xCoordinate
@@ -1025,22 +1190,22 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_VECTOR)
 	@Consumes(MIME_TYPE)
-	public Response createVector(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("xCoordinate") Double xCoordinate,
-			@QueryParam("yCoordinate") Double yCoordinate,
-			@QueryParam("zCoordinate") Double zCoordinate,
-			@QueryParam("creator") String creator) {
+	public Response createVector(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(X_COORDINATE) Double xCoordinate,
+			@QueryParam(Y_COORDINATE) Double yCoordinate,
+			@QueryParam(Z_COORDINATE) Double zCoordinate,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createVector(context, modelURI, name,
+			identifier = mCoinsService.createVector(context, modelURI, name,
 					xCoordinate, yCoordinate, zCoordinate, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1056,9 +1221,10 @@ public class CoinsApiWebService {
 				.entity("Something went wrong when creating the Vector")
 				.build();
 	}
-	
+
 	/**
 	 * Delete a <B>Vector</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Vector</B> was deleted
@@ -1066,48 +1232,53 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_VECTOR)
 	@Consumes(MIME_TYPE)
-	public Response deleteVector(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteVector(context, id)) {
+	public Response deleteVector(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteVector(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Vector")
-				.build();
+		return Response.serverError().entity("Cannot delete Vector").build();
 	}
 
 	/**
 	 * Get a <B>Vector</B>
 	 * 
-	 * @param context / graph
-	 * @param id The id of the <B>Vector</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            / graph
+	 * @param id
+	 *            The id of the <B>Vector</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Vector</B> formatted the way specified by means of the output
+	 * @return the <B>Vector</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_VECTOR)
 	@Consumes(MIME_TYPE)
-	public Response getVector(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getVectorQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getVector(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getVectorQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Create a new <B>Locator</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Locator</B>
 	 * @param primaryOrientation
-	 *            URI referring to the primary orientation (Vector)  
+	 *            URI referring to the primary orientation (Vector)
 	 * @param secondaryOrientation
 	 *            URI referring to the secondary orientation (Vector)
 	 * @param translation
-	 *  		  URI referring to the translation (Vector)
+	 *            URI referring to the translation (Vector)
 	 * @param creator
 	 *            URI referring to the user that created this <B>Locator</B>
 	 * @return The id of the created <B>Locator</B>
@@ -1115,23 +1286,24 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LOCATOR)
 	@Consumes(MIME_TYPE)
-	public Response createLocator(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("primaryOrientation") String primaryOrientation,
-			@QueryParam("secondaryOrientation") String secondaryOrientation,
-			@QueryParam("translation") String translation,
-			@QueryParam("creator") String creator) {
+	public Response createLocator(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(PRIMARY_ORIENTATION) String primaryOrientation,
+			@QueryParam(SECONDARY_ORIENTATION) String secondaryOrientation,
+			@QueryParam(TRANSLATION) String translation,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createLocator(context, modelURI, name,
-					primaryOrientation, secondaryOrientation, translation, creator);
+			identifier = mCoinsService.createLocator(context, modelURI, name,
+					primaryOrientation, secondaryOrientation, translation,
+					creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1146,9 +1318,10 @@ public class CoinsApiWebService {
 				.entity("Something went wrong when creating the Vector")
 				.build();
 	}
-	
+
 	/**
 	 * Delete a <B>Locator</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Locator</B> was deleted
@@ -1156,52 +1329,60 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_LOCATOR)
 	@Consumes(MIME_TYPE)
-	public Response deleteLocator(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteLocator(context, id)) {
+	public Response deleteLocator(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteLocator(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Locator")
-				.build();
+		return Response.serverError().entity("Cannot delete Locator").build();
 	}
 
 	/**
 	 * Get a <B>Locator</B>
 	 * 
-	 * @param context / graph
-	 * @param id The id of the <B>Locator</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            / graph
+	 * @param id
+	 *            The id of the <B>Locator</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Locator</B> formatted the way specified by means of the output
+	 * @return the <B>Locator</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_LOCATOR)
 	@Consumes(MIME_TYPE)
-	public Response getLocator(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getLocatorQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getLocator(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getLocatorQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Create a new <B>Task</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Task</B>
-	 * @param affects 
-	 *            List of URIs of the <B>FunctionFulfillers</B> this task affects
+	 * @param affects
+	 *            List of URIs of the <B>FunctionFulfillers</B> this task
+	 *            affects
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param taskType
-	 *            For instance http://www.coinsweb.nl/c-bim.owl#Constructing  
+	 *            For instance http://www.coinsweb.nl/c-bim.owl#Constructing
 	 * @param startDatePlanned
-	 *            Start date for this <B>Task</B> formatted to yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+	 *            Start date for this <B>Task</B> formatted to
+	 *            yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
 	 * @param endDatePlanned
-	 *            End date for this <B>Task</B> formatted to yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
+	 *            End date for this <B>Task</B> formatted to
+	 *            yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
 	 * @param creator
 	 *            URI referring to the user that created this <B>Task</B>
 	 * @return The id of the created <B>Task</B>
@@ -1209,15 +1390,15 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_TASK)
 	@Consumes(MIME_TYPE)
-	public Response createTask(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("affects") String[] affects,
-			@QueryParam("userID") String userID,
-			@QueryParam("taskType") String taskType,
-			@QueryParam("startDatePlanned") String startDatePlanned,
-			@QueryParam("endDatePlanned") String endDatePlanned,
-			@QueryParam("creator") String creator){
+	public Response createTask(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(AFFECTS) String[] affects,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(TASK_TYPE) String taskType,
+			@QueryParam(START_DATE_PLANNED) String startDatePlanned,
+			@QueryParam(END_DATE_PLANNED) String endDatePlanned,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -1226,11 +1407,11 @@ public class CoinsApiWebService {
 					.build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createTask(context, modelURI, name,
+			identifier = mCoinsService.createTask(context, modelURI, name,
 					affects, userID, taskType, startDatePlanned,
 					endDatePlanned, creator);
 			return Response.ok().entity(identifier).build();
@@ -1244,12 +1425,12 @@ public class CoinsApiWebService {
 			e.printStackTrace();
 		}
 		return Response.serverError()
-				.entity("Something went wrong when creating the task")
-				.build();
+				.entity("Something went wrong when creating the task").build();
 	}
-	
+
 	/**
 	 * Delete a <B>Task</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Task</B> was deleted
@@ -1257,40 +1438,45 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_TASK)
 	@Consumes(MIME_TYPE)
-	public Response deleteTask(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteTask(context, id)) {
+	public Response deleteTask(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteTask(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete task")
-				.build();
+		return Response.serverError().entity("Cannot delete task").build();
 	}
 
 	/**
 	 * Get a <B>Task</B>
 	 * 
-	 * @param context / graph
-	 * @param id The id of the <B>Task</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            / graph
+	 * @param id
+	 *            The id of the <B>Task</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Task</B> formatted the way specified by means of the output
+	 * @return the <B>Task</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_TASK)
 	@Consumes(MIME_TYPE)
-	public Response getTask(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getTaskQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getTask(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getTaskQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Create a new <B>NonFunctionalRequirement</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>NonFunctionalRequirement</B>
 	 * @param layerIndex
@@ -1298,21 +1484,23 @@ public class CoinsApiWebService {
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param creator
-	 *            URI referring to the user that created this <B>NonFunctionalRequirement</B>
+	 *            URI referring to the user that created this
+	 *            <B>NonFunctionalRequirement</B>
 	 * @param nonFunctionalRequirementType
-	 *  		  The type of NonFunctionalRequirement             
+	 *            The type of NonFunctionalRequirement
 	 * @return The id of the created <B>NonFunctionalRequirement</B>
 	 */
 	@POST
 	@Path(PATH_NON_FUNCTIONAL_REQUIREMENT)
 	@Consumes(MIME_TYPE)
-	public Response createNonFunctionalRequirement(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("layerIndex") int layerIndex,
-			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator,
-			@QueryParam("nonFunctionalRequirementType") String nonFunctionalRequirementType) {
+	public Response createNonFunctionalRequirement(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(LAYER_INDEX) int layerIndex,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator,
+			@QueryParam(NON_FUNCTIONAL_REQUIREMENT_TYPE) String nonFunctionalRequirementType) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -1321,12 +1509,13 @@ public class CoinsApiWebService {
 					.build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createNonFunctionalRequirement(context, modelURI, name,
-					layerIndex, userID, creator, nonFunctionalRequirementType);
+			identifier = mCoinsService.createNonFunctionalRequirement(context,
+					modelURI, name, layerIndex, userID, creator,
+					nonFunctionalRequirementType);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1337,13 +1526,15 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response.serverError()
+		return Response
+				.serverError()
 				.entity("Something went wrong when creating the NonFunctionalRequirement")
 				.build();
 	}
 
 	/**
 	 * Delete a <B>NonFunctionalRequirement</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>NonFunctionalRequirement</B> was deleted
@@ -1351,45 +1542,54 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_NON_FUNCTIONAL_REQUIREMENT)
 	@Consumes(MIME_TYPE)
-	public Response deleteNonFunctionalRequirement(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteNonFunctionalRequirement(context, id)) {
+	public Response deleteNonFunctionalRequirement(
+			@QueryParam(CONTEXT) String context, @QueryParam(ID) String id) {
+		if (mCoinsService.deleteNonFunctionalRequirement(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete NonFunctionalRequirement")
-				.build();
+		return Response.serverError()
+				.entity("Cannot delete NonFunctionalRequirement").build();
 	}
 
 	/**
 	 * Get a <B>NonFunctionalRequirement</B>
 	 * 
-	 * @param context / graph
-	 * @param id The id of the <B>NonFunctionalRequirement</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            / graph
+	 * @param id
+	 *            The id of the <B>NonFunctionalRequirement</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>NonFunctionalRequirement</B> formatted the way specified by means of the output
+	 * @return the <B>NonFunctionalRequirement</B> formatted the way specified
+	 *         by means of the output
 	 */
 	@GET
 	@Path(PATH_NON_FUNCTIONAL_REQUIREMENT)
 	@Consumes(MIME_TYPE)
-	public Response getNonFunctionalRequirement(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getNonFunctionalRequirementQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getNonFunctionalRequirement(
+			@QueryParam(CONTEXT) String context, @QueryParam(ID) String id,
+			@QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getNonFunctionalRequirementQuery(context,
+				id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Get a document retrieved from a Coins Container
+	 * 
 	 * @param pFileName
 	 * @return the requested document
 	 */
 	@GET
-	@Path(PATH_DOCUMENT_REFERENCE+"/{filename}")
+	@Path(PATH_DOCUMENT_REFERENCE + "/{filename}")
 	@Consumes(MIME_TYPE)
-	public Response getBimDocument(@PathParam("filename") String pFileName) {
+	public Response getBimDocument(@PathParam(FILENAME) String pFileName) {
 		byte[] file = null;
 		try {
-			file = fileServer.getFile(pFileName);
+			file = mFileServer.getFile(pFileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Response.serverError()
@@ -1404,32 +1604,35 @@ public class CoinsApiWebService {
 
 	/**
 	 * Get a document retrieved from a Coins Container
-	 * @param pContext 
+	 * 
+	 * @param pContext
 	 * @param pFileName
 	 * @return the requested document
 	 */
 	@GET
-	@Path(PATH_DOCUMENT_REFERENCE+"/{context}/{filename}")
+	@Path(PATH_DOCUMENT_REFERENCE + "/{context}/{filename}")
 	@Consumes(MIME_TYPE)
-	public Response getBimDocumentContext(@PathParam("context") String pContext, @PathParam("filename") String pFileName) {
+	public Response getBimDocumentContext(@PathParam(CONTEXT) String pContext,
+			@PathParam(FILENAME) String pFileName) {
 		return getBimDocument(pContext + "/" + pFileName);
 	}
 
 	/**
 	 * Create a new <B>Amount</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Amount</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param cataloguePart
-	 *            URI referring to the catalogPart associated with this <B>Amount</B>            
-	 * @param value 
-	 * 			  The value belonging to the <B>Amount</B>
+	 *            URI referring to the catalogPart associated with this
+	 *            <B>Amount</B>
+	 * @param value
+	 *            The value belonging to the <B>Amount</B>
 	 * @param creator
 	 *            URI referring to the user that created this <B>Amount</B>
 	 * @return The id of the created <B>Amount</B>
@@ -1437,22 +1640,20 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_AMOUNT)
 	@Consumes(MIME_TYPE)
-	public Response createAmount(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("userID") String userID,
-			@QueryParam("cataloguePart") String cataloguePart,
-			@QueryParam("value") int value,
-			@QueryParam("creator") String creator) {
+	public Response createAmount(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(CATALOGUE_PART) String cataloguePart,
+			@QueryParam(VALUE) int value, @QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createAmount(context, modelURI, name,
+			identifier = mCoinsService.createAmount(context, modelURI, name,
 					userID, value, cataloguePart, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1468,9 +1669,10 @@ public class CoinsApiWebService {
 				.entity("Something went wrong when creating the amount")
 				.build();
 	}
-	
+
 	/**
 	 * Delete an <B>Amount</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Amount</B> was deleted
@@ -1478,40 +1680,45 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_AMOUNT)
 	@Consumes(MIME_TYPE)
-	public Response deleteAmount(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteAmount(context, id)) {
+	public Response deleteAmount(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteAmount(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Amount")
-				.build();
+		return Response.serverError().entity("Cannot delete Amount").build();
 	}
 
 	/**
 	 * Get an <B>Amount</B>
 	 * 
-	 * @param context / graph
-	 * @param id The id of the <B>Amount</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            / graph
+	 * @param id
+	 *            The id of the <B>Amount</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Amount</B> formatted the way specified by means of the output
+	 * @return the <B>Amount</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_AMOUNT)
 	@Consumes(MIME_TYPE)
-	public Response getAmount(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getAmountQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getAmount(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getAmountQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
-	
+
 	/**
 	 * Create a new <B>CataloguePart</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>CataloguePart</B>
 	 * @param userID
@@ -1523,20 +1730,19 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_CATALOGUE_PART)
 	@Consumes(MIME_TYPE)
-	public Response createCataloguePart(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("userID") String userID,
-			@QueryParam("creator") String creator) {
+	public Response createCataloguePart(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createCataloguePart(context, modelURI,
+			identifier = mCoinsService.createCataloguePart(context, modelURI,
 					name, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1548,13 +1754,15 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response.serverError()
+		return Response
+				.serverError()
 				.entity("Something went wrong when creating the catalogue part")
 				.build();
 	}
-	
+
 	/**
 	 * Delete a <B>CataloguePart</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Amount</B> was deleted
@@ -1562,9 +1770,9 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_CATALOGUE_PART)
 	@Consumes(MIME_TYPE)
-	public Response deleteCataloguePart(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteCataloguePart(context, id)) {
+	public Response deleteCataloguePart(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteCataloguePart(context, id)) {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete CataloguePart")
@@ -1574,33 +1782,39 @@ public class CoinsApiWebService {
 	/**
 	 * Get a <B>CataloguePart</B>
 	 * 
-	 * @param context context or graph
-	 * @param id The id of the <B>CataloguePart</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            context or graph
+	 * @param id
+	 *            The id of the <B>CataloguePart</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>CataloguePart</B> formatted the way specified by means of the output
+	 * @return the <B>CataloguePart</B> formatted the way specified by means of
+	 *         the output
 	 */
 	@GET
 	@Path(PATH_CATALOGUE_PART)
 	@Consumes(MIME_TYPE)
-	public Response getCataloguePart(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getCataloguePartQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getCataloguePart(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getCataloguePartQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
 	 * Create a new <B>Parameter</B>
 	 * 
-	 * @param context 
+	 * @param context
 	 *            The context or graph
 	 * @param modelURI
-	 * 			  The URI of the model
+	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Parameter</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
-	 * @param defaultValue 
+	 * @param defaultValue
 	 *            The default value
 	 * @param creator
 	 *            URI referring to the user that created this <B>Amount</B>
@@ -1609,22 +1823,21 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_PARAMETER)
 	@Consumes(MIME_TYPE)
-	public Response createParameter(@QueryParam("context") String context,
-			@QueryParam("modelURI") String modelURI,
-			@QueryParam("name") String name,
-			@QueryParam("userID") String userID,
-			@QueryParam("defaultValue") String defaultValue,
-			@QueryParam("creator") String creator) {
+	public Response createParameter(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(DEFAULT_VALUE) String defaultValue,
+			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
 		if (context == null) {
-			context = configurationService.getDefaultContext();
+			context = mConfigurationService.getDefaultContext();
 		}
 		String identifier;
 		try {
-			identifier = coinsService.createParameter(context, modelURI,
-					name, userID, defaultValue, creator);
+			identifier = mCoinsService.createParameter(context, modelURI, name,
+					userID, defaultValue, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1635,13 +1848,15 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response.serverError()
+		return Response
+				.serverError()
 				.entity("Something went wrong when creating the parameter part")
 				.build();
 	}
 
 	/**
 	 * Delete a <B>Parameter</B>
+	 * 
 	 * @param context
 	 * @param id
 	 * @return OK if the <B>Parameter</B> was deleted
@@ -1649,71 +1864,81 @@ public class CoinsApiWebService {
 	@DELETE
 	@Path(PATH_PARAMETER)
 	@Consumes(MIME_TYPE)
-	public Response deleteParameter(@QueryParam("context") String context,
-			@QueryParam("id") String id) {
-		if (coinsService.deleteParameter(context, id)) {
+	public Response deleteParameter(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteParameter(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Parameter")
-				.build();
+		return Response.serverError().entity("Cannot delete Parameter").build();
 	}
 
 	/**
 	 * Get a <B>Parameter</B>
 	 * 
-	 * @param context context or graph
-	 * @param id The id of the <B>Parameter</B>
-	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param context
+	 *            context or graph
+	 * @param id
+	 *            The id of the <B>Parameter</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Parameter</B> formatted the way specified by means of the output
+	 * @return the <B>Parameter</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_PARAMETER)
 	@Consumes(MIME_TYPE)
-	public Response getParameter(@QueryParam("context") String context,
-			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
-		String query = coinsService.getParameterQuery(context, id);
-		return sparqlWebService.selectPostForm(query, output, request);
+	public Response getParameter(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getParameterQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
 	/**
-	 * Add a <B>Parameter</P> to an <B>Explicit3DRepresentation</B> object via the
-	 * cbim:firstParameter relation.
-	 * Only one parameter is allowed in this relation so any old firstParameter relation will be
-	 * overwritten
+	 * Add a <B>Parameter</P> to an <B>Explicit3DRepresentation</B> object via
+	 * the cbim:firstParameter relation. Only one parameter is allowed in this
+	 * relation so any old firstParameter relation will be overwritten
 	 * 
 	 * @param context
 	 *            context or graph
 	 * @param explicit3DRepresentation
 	 *            Identifier of the <B>Explicit3DRepresenation</B> object
 	 * @param firstParameter
-	 *            Identifier of first parameter 
-	 * @param modifier 
-	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
+	 *            Identifier of first parameter
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_FIRST_PARAMETER)
 	@Consumes(MIME_TYPE)
-	public Response linkFirstParameter(@QueryParam("context") String context,
+	public Response linkFirstParameter(
+			@QueryParam(CONTEXT) String context,
 			@QueryParam("explicit3DRepresentation") String explicit3DRepresentation,
 			@QueryParam("firstParameter") String firstParameter,
-			@QueryParam("modifier") String modifier) {
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setFirstParameter(context, explicit3DRepresentation, firstParameter, modifier);
+			mCoinsService.setFirstParameter(context, explicit3DRepresentation,
+					firstParameter, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Setting first parameter of <" + explicit3DRepresentation + "> to <" + firstParameter + "> failed").build();
+			return Response
+					.serverError()
+					.entity("Setting first parameter of <"
+							+ explicit3DRepresentation + "> to <"
+							+ firstParameter + "> failed").build();
 		}
 		return Response.ok().build();
 	}
 
 	/**
 	 * Add a <B>Parameter</P> to another <B>Parameter</B> object via the
-	 * cbim:nextParameter relation.
-	 * Only one parameter is allowed in this relation so any old nextParameter relation will be
-	 * overwritten
+	 * cbim:nextParameter relation. Only one parameter is allowed in this
+	 * relation so any old nextParameter relation will be overwritten
 	 * 
 	 * @param context
 	 *            context or graph
@@ -1721,23 +1946,28 @@ public class CoinsApiWebService {
 	 *            Identifier of <B>Parameter</B>
 	 * @param nextParameter
 	 *            Identifier of next <B>Parameter</B>
-	 * @param modifier 
-	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_NEXT_PARAMETER)
 	@Consumes(MIME_TYPE)
-	public Response linkNextParameter(@QueryParam("context") String context,
+	public Response linkNextParameter(@QueryParam(CONTEXT) String context,
 			@QueryParam("parameter") String parameter,
 			@QueryParam("nextParameter") String nextParameter,
-			@QueryParam("modifier") String modifier) {
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setNextParameter(context, parameter, nextParameter, modifier);
+			mCoinsService.setNextParameter(context, parameter, nextParameter,
+					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Setting next parameter of <" + parameter + "> to <" + nextParameter + "> failed").build();
+			return Response
+					.serverError()
+					.entity("Setting next parameter of <" + parameter
+							+ "> to <" + nextParameter + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -1753,27 +1983,30 @@ public class CoinsApiWebService {
 	 *            Child identifier
 	 * @param parent
 	 *            Parent identifier
-	 * @param modifier 
-	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_PHYSICAL_PARENT)
 	@Consumes(MIME_TYPE)
-	public Response linkPhysicalParent(@QueryParam("context") String context,
-			@QueryParam("child") String child,
-			@QueryParam("parent") String parent,
-			@QueryParam("modifier") String modifier) {
+	public Response linkPhysicalParent(@QueryParam(CONTEXT) String context,
+			@QueryParam(CHILD) String child, @QueryParam(PARENT) String parent,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setPysicalParent(context, child, parent, modifier);
+			mCoinsService.setPysicalParent(context, child, parent, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Setting physical parent of <" + child + "> to <" + parent + "> failed").build();
+			return Response
+					.serverError()
+					.entity("Setting physical parent of <" + child + "> to <"
+							+ parent + "> failed").build();
 		}
 		return Response.ok().build();
 	}
-	
+
 	/**
 	 * Add a Physical child relation.
 	 * 
@@ -1783,23 +2016,26 @@ public class CoinsApiWebService {
 	 *            Child identifier
 	 * @param parent
 	 *            Parent identifier
-	 * @param modifier 
-	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_PHYSICAL_CHILD)
 	@Consumes(MIME_TYPE)
-	public Response linkPhysicalChild(@QueryParam("context") String context,
-			@QueryParam("child") String child,
-			@QueryParam("parent") String parent,
-			@QueryParam("modifier") String modifier) {
+	public Response linkPhysicalChild(@QueryParam(CONTEXT) String context,
+			@QueryParam(CHILD) String child, @QueryParam(PARENT) String parent,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setPysicalChild(context, child, parent, modifier);
+			mCoinsService.setPysicalChild(context, child, parent, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Setting physical child of <" + parent + "> to <" + child + "> failed").build();
+			return Response
+					.serverError()
+					.entity("Setting physical child of <" + parent + "> to <"
+							+ child + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -1815,23 +2051,26 @@ public class CoinsApiWebService {
 	 *            Child identifier
 	 * @param parent
 	 *            Parent identifier
-	 * @param modifier 
-	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_SPATIAL_PARENT)
 	@Consumes(MIME_TYPE)
-	public Response linkSpatialParent(@QueryParam("context") String context,
-			@QueryParam("child") String child,
-			@QueryParam("parent") String parent,
-			@QueryParam("modifier") String modifier) {
+	public Response linkSpatialParent(@QueryParam(CONTEXT) String context,
+			@QueryParam(CHILD) String child, @QueryParam(PARENT) String parent,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setSpatialParent(context, child, parent, modifier);
+			mCoinsService.setSpatialParent(context, child, parent, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Setting spatial parent of <" + child + "> to <" + parent + "> failed").build();
+			return Response
+					.serverError()
+					.entity("Setting spatial parent of <" + child + "> to <"
+							+ parent + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -1845,57 +2084,66 @@ public class CoinsApiWebService {
 	 *            Child identifier
 	 * @param parent
 	 *            Parent identifier
-	 * @param modifier 
-	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_SPATIAL_CHILD)
 	@Consumes(MIME_TYPE)
-	public Response linkSpatialChild(@QueryParam("context") String context,
-			@QueryParam("child") String child,
-			@QueryParam("parent") String parent,
-			@QueryParam("modifier") String modifier) {
+	public Response linkSpatialChild(@QueryParam(CONTEXT) String context,
+			@QueryParam(CHILD) String child, @QueryParam(PARENT) String parent,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setSpatialChild(context, child, parent, modifier);
+			mCoinsService.setSpatialChild(context, child, parent, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Setting spatial child of <" + parent + "> to <" + child + "> failed").build();
+			return Response
+					.serverError()
+					.entity("Setting spatial child of <" + parent + "> to <"
+							+ child + "> failed").build();
 		}
 		return Response.ok().build();
 	}
-	
+
 	/**
-	 * Link an Explicit3DRepresentation to a <B>PhysicalObject</B>
-	 * A Physical Object can only have one shape 
+	 * Link an Explicit3DRepresentation to a <B>PhysicalObject</B> A Physical
+	 * Object can only have one shape
 	 * 
-	 * @param context Context / Graph
-	 * @param physicalobject id of <B>PhysicalObject</B>
-	 * @param shape id of Explicit3DRepresentation
+	 * @param context
+	 *            Context / Graph
+	 * @param physicalobject
+	 *            id of <B>PhysicalObject</B>
+	 * @param shape
+	 *            id of Explicit3DRepresentation
 	 * @param modifier
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_SHAPE)
 	@Consumes(MIME_TYPE)
-	public Response linkShape(@QueryParam("context") String context,
-			@QueryParam("physicalobject") String physicalobject,
-			@QueryParam("shape") String shape,
-			@QueryParam("modifier") String modifier) {
+	public Response linkShape(@QueryParam(CONTEXT) String context,
+			@QueryParam(PHYSICALOBJECT) String physicalobject,
+			@QueryParam(SHAPE) String shape,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.setShape(context, physicalobject, shape, modifier);
+			mCoinsService.setShape(context, physicalobject, shape, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Setting physical parent of <" + physicalobject + "> to <" + shape + "> failed").build();
+			return Response
+					.serverError()
+					.entity("Setting physical parent of <" + physicalobject
+							+ "> to <" + shape + "> failed").build();
 		}
 		return Response.ok().build();
 	}
 
 	/**
-	 * Add <B>NonFunctionalRequirement</B>(s) to <B>FunctionFulfillers</B>. Leaves previously
-	 * linked NonFunctionalRequirements untouched.
+	 * Add <B>NonFunctionalRequirement</B>(s) to <B>FunctionFulfillers</B>.
+	 * Leaves previously linked NonFunctionalRequirements untouched.
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -1910,23 +2158,26 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LINK_NON_FUNCTIONAL_REQUIREMENT)
 	@Consumes(MIME_TYPE)
-	public Response linkNonFunctionalRequirement(@QueryParam("context") String context,
-			@QueryParam("functionfulfiller") String functionfulfiller,
-			@QueryParam("nonfunctionalrequirement") String[] nonfunctionalrequirement,
-			@QueryParam("modifier") String modifier) {
+	public Response linkNonFunctionalRequirement(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
+			@QueryParam(NONFUNCTIONALREQUIREMENT) String[] nonfunctionalrequirement,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.linkNonFunctionalRequirement(context, functionfulfiller, nonfunctionalrequirement, modifier);
+			mCoinsService.linkNonFunctionalRequirement(context,
+					functionfulfiller, nonfunctionalrequirement, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Linking NonFunctionalRequirements failed").build();
+			return Response.serverError()
+					.entity("Linking NonFunctionalRequirements failed").build();
 		}
 		return Response.ok().build();
 	}
 
 	/**
-	 * Add Document(s) to <B>PhysicalObjects</B>. Leaves previously
-	 * linked Documents untouched.
+	 * Add Document(s) to <B>PhysicalObjects</B>. Leaves previously linked
+	 * Documents untouched.
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -1941,23 +2192,25 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LINK_DOCUMENT)
 	@Consumes(MIME_TYPE)
-	public Response linkDocument(@QueryParam("context") String context,
-			@QueryParam("physicalobject") String physicalobject,
-			@QueryParam("document") String[] document,
-			@QueryParam("modifier") String modifier) {
+	public Response linkDocument(@QueryParam(CONTEXT) String context,
+			@QueryParam(PHYSICALOBJECT) String physicalobject,
+			@QueryParam(DOCUMENT) String[] document,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.linkDocument(context, physicalobject, document, modifier);
+			mCoinsService.linkDocument(context, physicalobject, document,
+					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Linking Documents failed").build();
+			return Response.serverError().entity("Linking Documents failed")
+					.build();
 		}
 		return Response.ok().build();
 	}
 
 	/**
-	 * Link a Function to one of more <B>PhysicalObjects</B> by the fulfills property
-     * Leaves previously linked functions untouched
+	 * Link a Function to one of more <B>PhysicalObjects</B> by the fulfills
+	 * property Leaves previously linked functions untouched
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -1971,24 +2224,27 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LINK_FULFILLS)
 	@Consumes(MIME_TYPE)
-	public Response linkPhysicalObjectFulfills(@QueryParam("context") String context,
-			@QueryParam("physicalobject") String physicalobject,
-			@QueryParam("fulfills") String[] fulfills,
-			@QueryParam("modifier") String modifier) {
+	public Response linkPhysicalObjectFulfills(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(PHYSICALOBJECT) String physicalobject,
+			@QueryParam(FULFILLS) String[] fulfills,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.linkPhysicalObjectFulfills(context, physicalobject, fulfills, modifier);
+			mCoinsService.linkPhysicalObjectFulfills(context, physicalobject,
+					fulfills, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Linking functions failed").build();
+			return Response.serverError().entity("Linking functions failed")
+					.build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
-	
+
 	/**
-	 * Link a <B>FunctionFulfiller</B> to one or more functions by the fulFilledBy
-	 * property
-     * Leaves previously linked <B>FunctionFulfillers</B> untouched
+	 * Link a <B>FunctionFulfiller</B> to one or more functions by the
+	 * fulFilledBy property Leaves previously linked <B>FunctionFulfillers</B>
+	 * untouched
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -2002,43 +2258,52 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LINK_FULFILLED_BY)
 	@Consumes(MIME_TYPE)
-	public Response linkFunctionIsFulfilledBy(@QueryParam("context") String context,
-			@QueryParam("function") String function,
-			@QueryParam("isFulfilledBy") String[] isFulfilledBy,
-			@QueryParam("modifier") String modifier) {
+	public Response linkFunctionIsFulfilledBy(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(FUNCTION) String function,
+			@QueryParam(IS_FULFILLED_BY) String[] isFulfilledBy,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.linkFunctionIsFulfilledBy(context, function, isFulfilledBy, modifier);
+			mCoinsService.linkFunctionIsFulfilledBy(context, function,
+					isFulfilledBy, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Linking function fulfiller failed").build();
+			return Response.serverError()
+					.entity("Linking function fulfiller failed").build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
 
 	/**
 	 * Link a task to a <B>FunctionFulfiller</B> by the isAffectedBy property
-	 * @param context Context of Graph
-	 * @param functionfulfiller <B>FunctionFulfiller</B> id 
-	 * @param isAffectedBy id of <B>Task<B> that affects the <B>FunctionFulfiller</B>
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param functionfulfiller
+	 *            <B>FunctionFulfiller</B> id
+	 * @param isAffectedBy
+	 *            id of <B>Task<B> that affects the <B>FunctionFulfiller</B>
 	 * @param modifier
 	 * @return OK if success
 	 */
 	@POST
 	@Path(PATH_LINK_ISAFFECTEDBY)
 	@Consumes(MIME_TYPE)
-	public Response linkIsAffectedBy(@QueryParam("context") String context,
-			@QueryParam("functionfulfiller") String functionfulfiller,
-			@QueryParam("isAffectedBy") String isAffectedBy,
-			@QueryParam("modifier") String modifier) {
+	public Response linkIsAffectedBy(@QueryParam(CONTEXT) String context,
+			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
+			@QueryParam(IS_AFFECTED_BY) String isAffectedBy,
+			@QueryParam(MODIFIER) String modifier) {
 		try {
-			coinsService.linkIsAffectedBy(context, functionfulfiller, isAffectedBy, modifier);
+			mCoinsService.linkIsAffectedBy(context, functionfulfiller,
+					isAffectedBy, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Linking function fulfiller failed").build();
+			return Response.serverError()
+					.entity("Linking function fulfiller failed").build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
 
 	/**
@@ -2050,8 +2315,9 @@ public class CoinsApiWebService {
 	@GET
 	@Path(PATH_VALIDATEALL)
 	@Produces(MIME_TYPE)
-	public Response validateAll(@QueryParam("context") String context) {
-		List<String> result = coinsService.validate(context, ValidationAspect.ALL);
+	public Response validateAll(@QueryParam(CONTEXT) String context) {
+		List<String> result = mCoinsService.validate(context,
+				ValidationAspect.ALL);
 		return Response.ok().entity(result).build();
 	}
 
@@ -2061,28 +2327,125 @@ public class CoinsApiWebService {
 	 * @param context
 	 *            The Context or Graph to be validated
 	 * @param aspect
-	 *            The aspect to be validated
-	 *            <B>PhysicalParent<\B> Check for duplicate physical parents
+	 *            The aspect to be validated <B>PhysicalParent<\B> Check for
+	 *            duplicate physical parents
 	 * @return the validation result
 	 */
 	@GET
 	@Path(PATH_VALIDATE)
 	@Produces(MIME_TYPE)
-	public Response validate(@QueryParam("context") String context, @QueryParam("aspect") String aspect) {
+	public Response validate(@QueryParam(CONTEXT) String context,
+			@QueryParam("aspect") String aspect) {
 		for (ValidationAspect as : ValidationAspect.values()) {
 			if (as.name().equalsIgnoreCase(aspect)) {
-				List<String> result = coinsService.validate(context, as);
-				return Response.ok().entity(result).build();				
+				List<String> result = mCoinsService.validate(context, as);
+				return Response.ok().entity(result).build();
 			}
 		}
-		return Response.serverError().entity("Unknown validation aspect " + aspect).build();
+		return Response.serverError()
+				.entity("Unknown validation aspect " + aspect).build();
 	}
 
 	/**
-	 * Insert an attribute of type String
-	 * This method ignores the fact that duplicate entries may result if it is executed
-	 * No validation on attribute names is done either
-	 * The modification date is not updated
+	 * Create a new <B>Terminal</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param modelURI
+	 *            The URI of the model
+	 * @param locator
+	 *            Identifier of the locator
+	 * @param name
+	 *            The name of the <B>Terminal</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param layerindex
+	 *            Layer index
+	 * @param creator
+	 *            Identifier of the <B>PersonOrOrganisation</B> that created the
+	 *            terminal
+	 * @return The id of the created <B>Terminal</B>
+	 */
+	@POST
+	@Path(PATH_TERMINAL)
+	@Consumes(MIME_TYPE)
+	public Response createTerminal(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(LOCATOR) String locator,
+			@QueryParam(LAYERINDEX) int layerindex,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createTerminal(context, modelURI, name,
+					userID, locator, layerindex, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the Terminal")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Terminal</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>Terminal</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Terminal</B> formatted the way specified by means of the
+	 *         output
+	 */
+	@GET
+	@Path(PATH_TERMINAL)
+	@Consumes(MIME_TYPE)
+	public Response getTerminal(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getTerminalQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>Terminal</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Terminal</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_TERMINAL)
+	@Consumes(MIME_TYPE)
+	public Response deleteTerminal(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteTerminal(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Terminal").build();
+	}
+
+	/**
+	 * Insert an attribute of type String This method ignores the fact that
+	 * duplicate entries may result if it is executed No validation on attribute
+	 * names is done either The modification date is not updated
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -2097,25 +2460,24 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_ADD_ATTRIBUTE_STRING)
 	@Consumes(MIME_TYPE)
-	public Response addAttributeString(@QueryParam("context") String context,
-			@QueryParam("object") String object,
-			@QueryParam("name") String name,
-			@QueryParam("value") String value) {
+	public Response addAttributeString(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) String value) {
 		try {
-			coinsService.addAttributeString(context, object, name, value);
+			mCoinsService.addAttributeString(context, object, name, value);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Adding attribute failed").build();
+			return Response.serverError().entity("Adding attribute failed")
+					.build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
 
 	/**
-	 * Insert an attribute of type Float
-	 * This method ignores the fact that duplicate entries may result if it is executed
-	 * No validation on attribute names is done either
-	 * The modification date is not updated
+	 * Insert an attribute of type Float This method ignores the fact that
+	 * duplicate entries may result if it is executed No validation on attribute
+	 * names is done either The modification date is not updated
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -2130,25 +2492,24 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_ADD_ATTRIBUTE_FLOAT)
 	@Consumes(MIME_TYPE)
-	public Response addAttributeFloat(@QueryParam("context") String context,
-			@QueryParam("object") String object,
-			@QueryParam("name") String name,
-			@QueryParam("value") Double value) {
+	public Response addAttributeFloat(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) Double value) {
 		try {
-			coinsService.addAttributeFloat(context, object, name, value);
+			mCoinsService.addAttributeFloat(context, object, name, value);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Adding attribute failed").build();
+			return Response.serverError().entity("Adding attribute failed")
+					.build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
 
 	/**
-	 * Insert an attribute of type Resource (URL)
-	 * This method ignores the fact that duplicate entries may result if it is executed
-	 * No validation on attribute names is done either
-	 * The modification date is not updated
+	 * Insert an attribute of type Resource (URL) This method ignores the fact
+	 * that duplicate entries may result if it is executed No validation on
+	 * attribute names is done either The modification date is not updated
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -2163,25 +2524,24 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_ADD_ATTRIBUTE_RESOURCE)
 	@Consumes(MIME_TYPE)
-	public Response addAttributeResource(@QueryParam("context") String context,
-			@QueryParam("object") String object,
-			@QueryParam("name") String name,
-			@QueryParam("value") String value) {
+	public Response addAttributeResource(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) String value) {
 		try {
-			coinsService.addAttributeResource(context, object, name, value);
+			mCoinsService.addAttributeResource(context, object, name, value);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Adding attribute failed").build();
+			return Response.serverError().entity("Adding attribute failed")
+					.build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
 
 	/**
-	 * Insert an attribute of type Integer
-	 * This method ignores the fact that duplicate entries may result if it is executed
-	 * No validation on attribute names is done either
-	 * The modification date is not updated
+	 * Insert an attribute of type Integer This method ignores the fact that
+	 * duplicate entries may result if it is executed No validation on attribute
+	 * names is done either The modification date is not updated
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -2196,26 +2556,25 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_ADD_ATTRIBUTE_INTEGER)
 	@Consumes(MIME_TYPE)
-	public Response addAttributeInteger(@QueryParam("context") String context,
-			@QueryParam("object") String object,
-			@QueryParam("name") String name,
-			@QueryParam("value") int value) {
+	public Response addAttributeInteger(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) int value) {
 		try {
-			coinsService.addAttributeInt(context, object, name, value);
+			mCoinsService.addAttributeInt(context, object, name, value);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Adding attribute failed").build();
+			return Response.serverError().entity("Adding attribute failed")
+					.build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
 
 	/**
-	 * Insert an attribute of type Date
-	 * This method ignores the fact that duplicate entries may result if it is executed
-	 * No validation on attribute names is done either
-	 * The modification date is not updated
-	 * Formatting the date in the correct format is left to the user
+	 * Insert an attribute of type Date This method ignores the fact that
+	 * duplicate entries may result if it is executed No validation on attribute
+	 * names is done either The modification date is not updated Formatting the
+	 * date in the correct format is left to the user
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -2230,17 +2589,17 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_ADD_ATTRIBUTE_DATE)
 	@Consumes(MIME_TYPE)
-	public Response addAttributeDate(@QueryParam("context") String context,
-			@QueryParam("object") String object,
-			@QueryParam("name") String name,
-			@QueryParam("value") String value) {
+	public Response addAttributeDate(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) String value) {
 		try {
-			coinsService.addAttributeDate(context, object, name, value);
+			mCoinsService.addAttributeDate(context, object, name, value);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Adding attribute failed").build();
+			return Response.serverError().entity("Adding attribute failed")
+					.build();
 		}
-		return Response.ok().build();		
+		return Response.ok().build();
 	}
 }

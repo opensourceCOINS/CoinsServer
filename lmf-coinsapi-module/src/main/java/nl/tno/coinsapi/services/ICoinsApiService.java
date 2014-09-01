@@ -811,4 +811,37 @@ public interface ICoinsApiService {
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
 
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteTerminal(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return the query
+	 */
+	public String getTerminalQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param locator
+	 * @param layerindex
+	 * @param creator
+	 * @return the id of the created terminal
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public String createTerminal(String context, String modelURI, String name,
+			String userID, String locator, int layerindex, String creator)
+					throws InvalidArgumentException, MalformedQueryException,
+					UpdateExecutionException, MarmottaException;
+
 }
