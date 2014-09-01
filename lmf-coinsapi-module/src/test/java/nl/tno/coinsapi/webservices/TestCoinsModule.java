@@ -5,6 +5,9 @@ import static com.jayway.restassured.RestAssured.given;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+
+import nl.tno.coinsapi.util.TestUtil;
 
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
 import org.apache.marmotta.platform.core.exception.MarmottaException;
@@ -27,26 +30,26 @@ public class TestCoinsModule {
 
 	private static final int OK = 200;
 
-	private static JettyMarmotta marmotta;
+	private static JettyMarmotta mMarmotta;
 
 	private final String MODEL_URI = "http://www.coinsweb.nl/testcase/zitbank.owl";
 
-	private static String context;
+	private static String mContext;
 
-	private static String creatorId;
+	private static String mCreatorId;
 
 	/**
 	 * Setting up Marmotta test service and RestAssured
 	 */
 	@BeforeClass
 	public static void setUp() {
-		marmotta = new JettyMarmotta("/marmotta", CoinsApiWebService.class,
+		mMarmotta = new JettyMarmotta("/marmotta", CoinsApiWebService.class,
 				ExportWebService.class);
 
 		RestAssured.baseURI = "http://localhost";
-		RestAssured.port = marmotta.getPort();
-		RestAssured.basePath = marmotta.getContext();
-		context = RestAssured.baseURI + ":" + RestAssured.port
+		RestAssured.port = mMarmotta.getPort();
+		RestAssured.basePath = mMarmotta.getContext();
+		mContext = RestAssured.baseURI + ":" + RestAssured.port
 				+ RestAssured.basePath;
 	}
 
@@ -55,7 +58,7 @@ public class TestCoinsModule {
 	 */
 	@AfterClass
 	public static void tearDown() {
-		marmotta.shutdown();
+		mMarmotta.shutdown();
 	}
 
 	/**
@@ -73,7 +76,7 @@ public class TestCoinsModule {
 			UpdateExecutionException, MarmottaException {
 
 		ResponseBody body = given()
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.expect()
 				.statusCode(OK)
@@ -84,7 +87,7 @@ public class TestCoinsModule {
 		// POST PersonOrOrganisation (creator/modifier)
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", "Pietje Puk")
 				.expect()
@@ -93,7 +96,7 @@ public class TestCoinsModule {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_PERSON_OR_ORGANISATION)
 				.body();
-		creatorId = body.asString();
+		mCreatorId = body.asString();
 
 		// PhysicalObjects
 		String zitBankId = addPhysicalObject("Zitbank", "B1", 0);
@@ -141,10 +144,10 @@ public class TestCoinsModule {
 		// locator
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", "Tmp_Locator")
-				.queryParam("creator", creatorId)
+				.queryParam("creator", mCreatorId)
 				.queryParam("primaryOrientation", tmpPrmOrientation)
 				.queryParam("secondaryOrientation", tmpSecOrientation)
 				.queryParam("translation", tmpTranslation)
@@ -168,10 +171,10 @@ public class TestCoinsModule {
 				new String[] {}, "2010-09-01T15:13:04.000Z",
 				"2010-09-01T15:13:04.000Z");
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("physiscalobject", ligger)
 				.queryParam("isAffectedBy", t001)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -179,10 +182,10 @@ public class TestCoinsModule {
 						+ CoinsApiWebService.PATH_LINK_ISAFFECTEDBY).body();
 		// Set function fulfiller
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("function", biedenZitgelegenheid)
 				.queryParam("isFulfilledBy", zitSysteemId)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -190,30 +193,30 @@ public class TestCoinsModule {
 						+ CoinsApiWebService.PATH_LINK_FULFILLED_BY).body();
 		// Set physical parents
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("child", zitSysteemId)
 				.queryParam("parent", zitBankId)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("child", ligger)
 				.queryParam("parent", zitSysteemId)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("child", fundatieSysteemId)
 				.queryParam("parent", zitBankId)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -221,10 +224,10 @@ public class TestCoinsModule {
 						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
 		// Link nr1 and nr2 to zitbank
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("physicalobject", zitBankId)
 				.queryParam("nonfunctionalrequirement", nr1, nr2)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -233,10 +236,10 @@ public class TestCoinsModule {
 				.body();
 		// Link documents to zitbank
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("physicalobject", zitBankId)
 				.queryParam("document", d0001, d0002)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -244,10 +247,10 @@ public class TestCoinsModule {
 						+ CoinsApiWebService.PATH_LINK_DOCUMENT).body();
 		// Zitbank fulfills voorziening om te kunnen zitten
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("physicalobject", zitBankId)
 				.queryParam("fulfills", voorzieningZittenId)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -255,10 +258,10 @@ public class TestCoinsModule {
 						+ CoinsApiWebService.PATH_LINK_FULFILLS).body();
 		// Hechten aan bodem is fulfilled by Fundatiesysteem
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("function", hechtenAanBodemId)
 				.queryParam("isFulfilledBy", fundatieSysteemId)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -266,28 +269,30 @@ public class TestCoinsModule {
 						+ CoinsApiWebService.PATH_LINK_FULFILLED_BY).body();
 		// Set shape
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("physicalobject", steunLinksId)
 				.queryParam("shape", explicit3DSteunLinks)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_LINK_SHAPE).body();
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("child", fundatieSysteemId)
 				.queryParam("parent", steunLinksId, steunRechtsId)
-				.queryParam("modifier", creatorId)
+				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
-
+		
+		validate();
+		
 		body = given().queryParam("format", "application/rdf+xml")
-				.queryParam("context", context).expect().statusCode(OK).when()
+				.queryParam("context", mContext).expect().statusCode(OK).when()
 				.get("export/download").body();
 		String owl = body.asString();
 		write(owl);
@@ -303,15 +308,32 @@ public class TestCoinsModule {
 		Assert.assertTrue(owl.contains("cbimfs:nonFunctionalRequirement"));
 	}
 
+	private void validate() {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VALIDATEALL).body();
+		List<String> result = TestUtil.getStringList(body);
+		if (result.size() != 1) {
+			System.err.println(result);
+		}
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("OK", result.get(0));
+	}
+	
 	private String addRequirement(String name, String userId,
 			String requirementOf, int layerIndex) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
 				.queryParam("layerIndex", layerIndex)
-				.queryParam("creator", creatorId)
+				.queryParam("creator", mCreatorId)
 				.queryParam("requirementOf", requirementOf)
 				.queryParam("userID", userId)
 				.expect()
@@ -326,11 +348,11 @@ public class TestCoinsModule {
 			String type) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
 				.queryParam("layerIndex", 1)
-				.queryParam("creator", creatorId)
+				.queryParam("creator", mCreatorId)
 				.queryParam("nonFunctionalRequirementType", type)
 				.queryParam("userID", userId)
 				.expect()
@@ -345,10 +367,10 @@ public class TestCoinsModule {
 	private String addDocument(String name, String userId) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
-				.queryParam("creator", creatorId)
+				.queryParam("creator", mCreatorId)
 				.queryParam("userID", userId)
 				.expect()
 				.statusCode(OK)
@@ -361,11 +383,11 @@ public class TestCoinsModule {
 	private String addFunction(String name, String userId, int layerIndex) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
 				.queryParam("layerIndex", layerIndex)
-				.queryParam("creator", creatorId)
+				.queryParam("creator", mCreatorId)
 				.queryParam("userID", userId)
 				.expect()
 				.statusCode(OK)
@@ -378,11 +400,11 @@ public class TestCoinsModule {
 	private String addPhysicalObject(String name, String userId, int layerIndex) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
 				.queryParam("layerIndex", layerIndex)
-				.queryParam("creator", creatorId)
+				.queryParam("creator", mCreatorId)
 				.queryParam("userID", userId)
 				.expect()
 				.statusCode(OK)
@@ -397,10 +419,10 @@ public class TestCoinsModule {
 			String documentUri) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam(MODEL_URI)
 				.queryParam("name", name)
-				.queryParam("creator", creatorId)
+				.queryParam("creator", mCreatorId)
 				.queryParam("documentType", documentType)
 				.queryParam("documentAliasFilePath", documentAliasFilePath)
 				.queryParam("documentUri", documentUri)
@@ -416,9 +438,9 @@ public class TestCoinsModule {
 	private String addVector(String pName, double x, double y, double z) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", context)
+				.queryParam("context", mContext)
 				.queryParam("modelURI", MODEL_URI).queryParam("name", pName)
-				.queryParam("creator", creatorId).queryParam("xCoordinate", x)
+				.queryParam("creator", mCreatorId).queryParam("xCoordinate", x)
 				.queryParam("yCoordinate", y).queryParam("zCoordinate", z)
 				.expect().statusCode(OK).when()
 				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VECTOR)
@@ -432,10 +454,10 @@ public class TestCoinsModule {
 		if (affects.length == 0) {
 			body = given()
 					.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-					.queryParam("context", context)
+					.queryParam("context", mContext)
 					.queryParam("modelURI", MODEL_URI)
 					.queryParam("name", name)
-					.queryParam("creator", creatorId)
+					.queryParam("creator", mCreatorId)
 					.queryParam("userID", userId)
 					.queryParam("taskType", taskType)
 					.queryParam("startDatePlanned", startDatePlanned)
@@ -448,10 +470,10 @@ public class TestCoinsModule {
 		} else {
 			body = given()
 					.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-					.queryParam("context", context)
+					.queryParam("context", mContext)
 					.queryParam("modelURI", MODEL_URI)
 					.queryParam("name", name)
-					.queryParam("creator", creatorId)
+					.queryParam("creator", mCreatorId)
 					.queryParam("userID", userId)
 					.queryParam("taskType", taskType)
 					.queryParam("affects", affects)

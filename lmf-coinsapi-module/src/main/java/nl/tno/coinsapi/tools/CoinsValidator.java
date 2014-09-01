@@ -191,9 +191,11 @@ public abstract class CoinsValidator {
 			result.add(new ResourceRelation("cbim:primaryOrientation", "cbim:Vector"));
 			result.add(new ResourceRelation("cbim:secondaryOrientation", "cbim:Vector"));
 			result.add(new ResourceRelation("cbim:translation", "cbim:Vector"));
+			result.add(new ResourceRelation("cbim:firstParameter", "cbim:Parameter"));
+			result.add(new ResourceRelation("cbim:nextParameter", "cbim:Parameter"));
 			result.add(new ResourceRelation("cbim:documentUri", null));
 
-
+			
 			result.add(new LiteralRelation("cbim:endDateActual", "http://www.w3.org/2001/XMLSchema#dateTime"));
 			result.add(new LiteralRelation("cbim:startDate", "http://www.w3.org/2001/XMLSchema#dateTime"));
 			result.add(new LiteralRelation("cbim:startDateActual", "http://www.w3.org/2001/XMLSchema#dateTime"));

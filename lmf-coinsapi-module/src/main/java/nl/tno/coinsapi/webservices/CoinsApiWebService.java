@@ -128,15 +128,21 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_LINK_PHYSICAL_PARENT = "/link/physicalparent";
 	/**
-	 * Application/json
+	 * Add a physical child relation 
 	 */
-	public static final String MIME_TYPE = "application/json";
-
+	public static final String PATH_LINK_PHYSICAL_CHILD = "/link/physicalchild";
+	/**
+	 * Edit spatial parent relation 
+	 */
+	public static final String PATH_LINK_SPATIAL_PARENT = "/link/spatialparent";
+	/**
+	 * Add a spatial child relation 
+	 */
+	public static final String PATH_LINK_SPATIAL_CHILD = "/link/spatialchild";	
 	/**
 	 * Link NonFunctionalRequirements to a PhysicalObject
 	 */
 	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = "/link/nonfunctionalrequirement";
-
 	/**
 	 * Link Documents to a PhysicalObject 
 	 */
@@ -161,6 +167,16 @@ public class CoinsApiWebService {
 	 * A Physical object affected by a task 
 	 */
 	public static final String PATH_LINK_ISAFFECTEDBY = "/link/isaffectedby";
+
+	/**
+	 * Add an Explicit3DRepresentation to a parameter 
+	 */
+	public static final String PATH_LINK_FIRST_PARAMETER = "/link/firstparameter";	
+
+	/**
+	 * Add a parameter to the next one 
+	 */
+	public static final String PATH_LINK_NEXT_PARAMETER = "/link/nextparameter";	
 
 	/**
 	 * Validate 
@@ -201,6 +217,19 @@ public class CoinsApiWebService {
 	 * Add attribute date
 	 */
 	public static final String PATH_ADD_ATTRIBUTE_DATE = PATH_ADD_ATTRIBUTE + "/date";
+
+	/**
+	 * Add a space object
+	 */
+	public static final String PATH_SPACE = "/space";
+	/**
+	 * Parameter
+	 */
+	public static final String PATH_PARAMETER = "/parameter";
+	/**
+	 * Application/json
+	 */
+	public static final String MIME_TYPE = "application/json";
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -614,6 +643,92 @@ public class CoinsApiWebService {
 			return Response.ok().build();
 		}
 		return Response.serverError().entity("Cannot delete PhysicalObject")
+				.build();
+	}
+
+	/**
+	 * Create a new <B>Space</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Space</B>
+	 * @param layerIndex
+	 *            The layer index of the <B>Space</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>Space</B>
+	 * @return The id of the created <B>Space</B>
+	 */
+	@POST
+	@Path(PATH_SPACE)
+	@Consumes(MIME_TYPE)
+	public Response createSpace(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,			
+			@QueryParam("name") String name,
+			@QueryParam("layerIndex") int layerIndex,
+			@QueryParam("userID") String userID,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createSpace(context, modelURI, name, layerIndex, userID, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the PhysicalObject")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Space</B>
+	 * 
+	 * @param context The context or graph
+	 * @param id The id of the <B>Space</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Space</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_SPACE)
+	@Consumes(MIME_TYPE)
+	public Response getSpace(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getSpaceQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>Space</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Space</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_SPACE)
+	@Consumes(MIME_TYPE)
+	public Response deleteSpace(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteSpace(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Space")
 				.build();
 	}
 	
@@ -1460,7 +1575,7 @@ public class CoinsApiWebService {
 	 * Get a <B>CataloguePart</B>
 	 * 
 	 * @param context context or graph
-	 * @param id The id of the <B>CataloguePartt</B>
+	 * @param id The id of the <B>CataloguePart</B>
 	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
 	 * @param request
 	 * @return the <B>CataloguePart</B> formatted the way specified by means of the output
@@ -1472,6 +1587,159 @@ public class CoinsApiWebService {
 			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
 		String query = coinsService.getCataloguePartQuery(context, id);
 		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Create a new <B>Parameter</B>
+	 * 
+	 * @param context 
+	 *            The context or graph
+	 * @param modelURI
+	 * 			  The URI of the model
+	 * @param name
+	 *            The name of the <B>Parameter</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param defaultValue 
+	 *            The default value
+	 * @param creator
+	 *            URI referring to the user that created this <B>Amount</B>
+	 * @return The id of the created <B>Amount</B>
+	 */
+	@POST
+	@Path(PATH_PARAMETER)
+	@Consumes(MIME_TYPE)
+	public Response createParameter(@QueryParam("context") String context,
+			@QueryParam("modelURI") String modelURI,
+			@QueryParam("name") String name,
+			@QueryParam("userID") String userID,
+			@QueryParam("defaultValue") String defaultValue,
+			@QueryParam("creator") String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = configurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = coinsService.createParameter(context, modelURI,
+					name, userID, defaultValue, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the parameter part")
+				.build();
+	}
+
+	/**
+	 * Delete a <B>Parameter</B>
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Parameter</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_PARAMETER)
+	@Consumes(MIME_TYPE)
+	public Response deleteParameter(@QueryParam("context") String context,
+			@QueryParam("id") String id) {
+		if (coinsService.deleteParameter(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Parameter")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Parameter</B>
+	 * 
+	 * @param context context or graph
+	 * @param id The id of the <B>Parameter</B>
+	 * @param output The way the output should be formatted (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Parameter</B> formatted the way specified by means of the output
+	 */
+	@GET
+	@Path(PATH_PARAMETER)
+	@Consumes(MIME_TYPE)
+	public Response getParameter(@QueryParam("context") String context,
+			@QueryParam("id") String id, @QueryParam("output") String output, @Context HttpServletRequest request) {		
+		String query = coinsService.getParameterQuery(context, id);
+		return sparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Add a <B>Parameter</P> to an <B>Explicit3DRepresentation</B> object via the
+	 * cbim:firstParameter relation.
+	 * Only one parameter is allowed in this relation so any old firstParameter relation will be
+	 * overwritten
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param explicit3DRepresentation
+	 *            Identifier of the <B>Explicit3DRepresenation</B> object
+	 * @param firstParameter
+	 *            Identifier of first parameter 
+	 * @param modifier 
+	 *            Identifier of PersonOrOrganisation that modifies the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_FIRST_PARAMETER)
+	@Consumes(MIME_TYPE)
+	public Response linkFirstParameter(@QueryParam("context") String context,
+			@QueryParam("explicit3DRepresentation") String explicit3DRepresentation,
+			@QueryParam("firstParameter") String firstParameter,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.setFirstParameter(context, explicit3DRepresentation, firstParameter, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Setting first parameter of <" + explicit3DRepresentation + "> to <" + firstParameter + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Add a <B>Parameter</P> to another <B>Parameter</B> object via the
+	 * cbim:nextParameter relation.
+	 * Only one parameter is allowed in this relation so any old nextParameter relation will be
+	 * overwritten
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param parameter
+	 *            Identifier of <B>Parameter</B>
+	 * @param nextParameter
+	 *            Identifier of next <B>Parameter</B>
+	 * @param modifier 
+	 *            Identifier of PersonOrOrganisation that modifies the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_NEXT_PARAMETER)
+	@Consumes(MIME_TYPE)
+	public Response linkNextParameter(@QueryParam("context") String context,
+			@QueryParam("parameter") String parameter,
+			@QueryParam("nextParameter") String nextParameter,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.setNextParameter(context, parameter, nextParameter, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Setting next parameter of <" + parameter + "> to <" + nextParameter + "> failed").build();
+		}
+		return Response.ok().build();
 	}
 
 	/**
@@ -1502,6 +1770,98 @@ public class CoinsApiWebService {
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response.serverError().entity("Setting physical parent of <" + child + "> to <" + parent + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+	
+	/**
+	 * Add a Physical child relation.
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param child
+	 *            Child identifier
+	 * @param parent
+	 *            Parent identifier
+	 * @param modifier 
+	 *            Identifier of PersonOrOrganisation that modifies the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_PHYSICAL_CHILD)
+	@Consumes(MIME_TYPE)
+	public Response linkPhysicalChild(@QueryParam("context") String context,
+			@QueryParam("child") String child,
+			@QueryParam("parent") String parent,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.setPysicalChild(context, child, parent, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Setting physical child of <" + parent + "> to <" + child + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Add a Spatial parent relation. A child can only have one Spatial parent
+	 * so if a physical parent relation already exists, it will be modified.
+	 * Otherwise a new one will be added.
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param child
+	 *            Child identifier
+	 * @param parent
+	 *            Parent identifier
+	 * @param modifier 
+	 *            Identifier of PersonOrOrganisation that modifies the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_SPATIAL_PARENT)
+	@Consumes(MIME_TYPE)
+	public Response linkSpatialParent(@QueryParam("context") String context,
+			@QueryParam("child") String child,
+			@QueryParam("parent") String parent,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.setSpatialParent(context, child, parent, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Setting spatial parent of <" + child + "> to <" + parent + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Add a Spatial child relation.
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param child
+	 *            Child identifier
+	 * @param parent
+	 *            Parent identifier
+	 * @param modifier 
+	 *            Identifier of PersonOrOrganisation that modifies the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_SPATIAL_CHILD)
+	@Consumes(MIME_TYPE)
+	public Response linkSpatialChild(@QueryParam("context") String context,
+			@QueryParam("child") String child,
+			@QueryParam("parent") String parent,
+			@QueryParam("modifier") String modifier) {
+		try {
+			coinsService.setSpatialChild(context, child, parent, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Setting spatial child of <" + parent + "> to <" + child + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -1883,5 +2243,4 @@ public class CoinsApiWebService {
 		}
 		return Response.ok().build();		
 	}
-
 }
