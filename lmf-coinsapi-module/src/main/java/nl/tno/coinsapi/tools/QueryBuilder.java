@@ -8,6 +8,8 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.marmotta.platform.core.exception.MarmottaException;
+
 import nl.tno.coinsapi.services.ICoinsDateConversion;
 
 /**
@@ -55,8 +57,12 @@ public abstract class QueryBuilder {
 
 	/**
 	 * @param pId
+	 * @throws MarmottaException 
 	 */
-	public void setId(String pId) {
+	public void setId(String pId) throws MarmottaException {
+		if (pId == null) {
+			throw new MarmottaException("Id must not be null");
+		}
 		mId = pId;
 	}
 

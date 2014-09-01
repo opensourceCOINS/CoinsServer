@@ -610,16 +610,17 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public void linkNonFunctionalRequirement(String context,
-			String physicalobject, String[] nonfunctionalrequirement,
+			String functionfulfiller, String[] nonfunctionalrequirement,
 			String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException {
 		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
 		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
 		builder.addGraph(getFullContext(context));
-		builder.setId(physicalobject);
+		builder.setId(functionfulfiller);
 		for (String nfr : nonfunctionalrequirement) {
-			builder.addAttributeLink("cbim:nonFunctionalRequirement", nfr);
+			builder.addAttributeLink("cbimfs:nonFunctionalRequirement", nfr);
 		}
 		builder.addAttributeDate("cbim:modificationDate", new Date());
 		builder.addAttributeLink("cbim:modifier", modifier);
@@ -629,7 +630,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder = new UpdateQueryBuilder(dateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
-		builder.setId(physicalobject);
+		builder.setId(functionfulfiller);
 		builder.addAttributeDate("cbim:modificationDate", new Date());
 		builder.addAttributeLink("cbim:modifier", modifier);
 		sparqlService.update(QueryLanguage.SPARQL, builder.build());
@@ -739,7 +740,7 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
-	public void linkIsAffectedBy(String context, String physicalobject,
+	public void linkIsAffectedBy(String context, String functionfulfiller,
 			String isAffectedBy, String modifier)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
@@ -747,7 +748,7 @@ public class CoinsApiService implements ICoinsApiService {
 		QueryBuilder builder = new InsertQueryBuilder(dateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
-		builder.setId(physicalobject);
+		builder.setId(functionfulfiller);
 		builder.addAttributeLink("cbim:isAffectedBy", isAffectedBy);
 		builder.addAttributeDate("cbim:modificationDate", new Date());
 		builder.addAttributeLink("cbim:modifier", modifier);
@@ -756,7 +757,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder = new UpdateQueryBuilder(dateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
-		builder.setId(physicalobject);
+		builder.setId(functionfulfiller);
 		builder.addAttributeLink("cbim:isAffectedBy", isAffectedBy);
 		builder.addAttributeDate("cbim:modificationDate", new Date());
 		builder.addAttributeLink("cbim:modifier", modifier);		

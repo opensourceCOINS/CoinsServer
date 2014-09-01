@@ -511,7 +511,7 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param physicalobject
+	 * @param functionfulfiller
 	 * @param nonfunctionalrequirement
 	 * @param modifier
 	 * @throws InvalidArgumentException
@@ -520,7 +520,7 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void linkNonFunctionalRequirement(String context,
-			String physicalobject, String[] nonfunctionalrequirement,
+			String functionfulfiller, String[] nonfunctionalrequirement,
 			String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
@@ -587,7 +587,7 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param physicalobject
+	 * @param functionfulfiller
 	 * @param isAffectedBy
 	 * @param modifier
 	 * @throws InvalidArgumentException
@@ -595,7 +595,7 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public void linkIsAffectedBy(String context, String physicalobject,
+	public void linkIsAffectedBy(String context, String functionfulfiller,
 			String isAffectedBy, String modifier)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;

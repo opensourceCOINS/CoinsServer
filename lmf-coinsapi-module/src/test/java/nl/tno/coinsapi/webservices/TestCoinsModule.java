@@ -172,7 +172,7 @@ public class TestCoinsModule {
 				"2010-09-01T15:13:04.000Z");
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("physiscalobject", ligger)
+				.queryParam("functionfulfiller", ligger)
 				.queryParam("isAffectedBy", t001)
 				.queryParam("modifier", mCreatorId)
 				.expect()
@@ -225,7 +225,7 @@ public class TestCoinsModule {
 		// Link nr1 and nr2 to zitbank
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("physicalobject", zitBankId)
+				.queryParam("functionfulfiller", zitBankId)
 				.queryParam("nonfunctionalrequirement", nr1, nr2)
 				.queryParam("modifier", mCreatorId)
 				.expect()

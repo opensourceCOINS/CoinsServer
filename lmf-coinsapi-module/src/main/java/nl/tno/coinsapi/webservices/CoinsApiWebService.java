@@ -556,7 +556,7 @@ public class CoinsApiWebService {
 			e.printStackTrace();
 		}
 		return Response.serverError()
-				.entity("Something went wrong when creating the PersonOrOrganisation")
+				.entity("Something went wrong when setting the Description")
 				.build();
 	}
 	
@@ -692,7 +692,7 @@ public class CoinsApiWebService {
 			e.printStackTrace();
 		}
 		return Response.serverError()
-				.entity("Something went wrong when creating the PhysicalObject")
+				.entity("Something went wrong when creating the Space")
 				.build();
 	}
 
@@ -963,7 +963,7 @@ public class CoinsApiWebService {
 			e.printStackTrace();
 		}
 		return Response.serverError()
-				.entity("Something went wrong when creating the requirement")
+				.entity("Something went wrong when creating the Explicit3dRepresentation")
 				.build();
 	}
 	
@@ -1193,7 +1193,7 @@ public class CoinsApiWebService {
 	 * @param name
 	 *            The name of the <B>Task</B>
 	 * @param affects 
-	 *            List of URIs of the PhysicalObjects this task affects
+	 *            List of URIs of the <B>FunctionFulfillers</B> this task affects
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param taskType
@@ -1292,9 +1292,9 @@ public class CoinsApiWebService {
 	 * @param modelURI
 	 * 			  The URI of the model
 	 * @param name
-	 *            The name of the <B>Requirement</B>
+	 *            The name of the <B>NonFunctionalRequirement</B>
 	 * @param layerIndex
-	 *            The layer index of the <B>Requirement</B>
+	 *            The layer index of the <B>NonFunctionalRequirement</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param creator
@@ -1689,7 +1689,7 @@ public class CoinsApiWebService {
 	 * @param firstParameter
 	 *            Identifier of first parameter 
 	 * @param modifier 
-	 *            Identifier of PersonOrOrganisation that modifies the object
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
 	 * @return OK if success
 	 */
 	@POST
@@ -1722,7 +1722,7 @@ public class CoinsApiWebService {
 	 * @param nextParameter
 	 *            Identifier of next <B>Parameter</B>
 	 * @param modifier 
-	 *            Identifier of PersonOrOrganisation that modifies the object
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
 	 * @return OK if success
 	 */
 	@POST
@@ -1754,7 +1754,7 @@ public class CoinsApiWebService {
 	 * @param parent
 	 *            Parent identifier
 	 * @param modifier 
-	 *            Identifier of PersonOrOrganisation that modifies the object
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
 	 * @return OK if success
 	 */
 	@POST
@@ -1784,7 +1784,7 @@ public class CoinsApiWebService {
 	 * @param parent
 	 *            Parent identifier
 	 * @param modifier 
-	 *            Identifier of PersonOrOrganisation that modifies the object
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
 	 * @return OK if success
 	 */
 	@POST
@@ -1816,7 +1816,7 @@ public class CoinsApiWebService {
 	 * @param parent
 	 *            Parent identifier
 	 * @param modifier 
-	 *            Identifier of PersonOrOrganisation that modifies the object
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
 	 * @return OK if success
 	 */
 	@POST
@@ -1846,7 +1846,7 @@ public class CoinsApiWebService {
 	 * @param parent
 	 *            Parent identifier
 	 * @param modifier 
-	 *            Identifier of PersonOrOrganisation that modifies the object
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the object
 	 * @return OK if success
 	 */
 	@POST
@@ -1867,11 +1867,11 @@ public class CoinsApiWebService {
 	}
 	
 	/**
-	 * Link an Explicit3DRepresentation to a PhysicalObject
+	 * Link an Explicit3DRepresentation to a <B>PhysicalObject</B>
 	 * A Physical Object can only have one shape 
 	 * 
 	 * @param context Context / Graph
-	 * @param physicalobject id of PhysicalObject
+	 * @param physicalobject id of <B>PhysicalObject</B>
 	 * @param shape id of Explicit3DRepresentation
 	 * @param modifier
 	 * @return OK if success
@@ -1894,15 +1894,15 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Add NonFunctionalRequirement(s) to PhysicalObjects. Leaves previously
+	 * Add <B>NonFunctionalRequirement</B>(s) to <B>FunctionFulfillers</B>. Leaves previously
 	 * linked NonFunctionalRequirements untouched.
 	 * 
 	 * @param context
 	 *            Context or Graph
-	 * @param physicalobject
-	 *            id of Physical object
+	 * @param functionfulfiller
+	 *            id of <B>FunctionFulfiller</B>
 	 * @param nonfunctionalrequirement
-	 *            list of NonFunctionalRequirement id's
+	 *            list of <B>NonFunctionalRequirement</B> id's
 	 * @param modifier
 	 *            who did this modification
 	 * @return OK if success
@@ -1911,11 +1911,11 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_NON_FUNCTIONAL_REQUIREMENT)
 	@Consumes(MIME_TYPE)
 	public Response linkNonFunctionalRequirement(@QueryParam("context") String context,
-			@QueryParam("physicalobject") String physicalobject,
+			@QueryParam("functionfulfiller") String functionfulfiller,
 			@QueryParam("nonfunctionalrequirement") String[] nonfunctionalrequirement,
 			@QueryParam("modifier") String modifier) {
 		try {
-			coinsService.linkNonFunctionalRequirement(context, physicalobject, nonfunctionalrequirement, modifier);
+			coinsService.linkNonFunctionalRequirement(context, functionfulfiller, nonfunctionalrequirement, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
@@ -1925,13 +1925,13 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Add Document(s) to PhysicalObjects. Leaves previously
+	 * Add Document(s) to <B>PhysicalObjects</B>. Leaves previously
 	 * linked Documents untouched.
 	 * 
 	 * @param context
 	 *            Context or Graph
 	 * @param physicalobject
-	 *            id of Physical object
+	 *            id of <B>PhysicalObject</B>
 	 * @param document
 	 *            list of Document id's
 	 * @param modifier
@@ -1950,19 +1950,19 @@ public class CoinsApiWebService {
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
-			return Response.serverError().entity("Linking NonFunctionalRequirements failed").build();
+			return Response.serverError().entity("Linking Documents failed").build();
 		}
 		return Response.ok().build();
 	}
 
 	/**
-	 * Link a Function to one of more PhysicalObjects by the fulfills property
+	 * Link a Function to one of more <B>PhysicalObjects</B> by the fulfills property
      * Leaves previously linked functions untouched
 	 * 
 	 * @param context
 	 *            Context or Graph
 	 * @param physicalobject
-	 *            PhysicalObject Id
+	 *            <B>PhysicalObject</B> Id
 	 * @param fulfills
 	 *            List containing one or more Function ids
 	 * @param modifier
@@ -1986,16 +1986,16 @@ public class CoinsApiWebService {
 	}
 	
 	/**
-	 * Link a PhysicalObject to one or more functions by the fulFilledBy
+	 * Link a <B>FunctionFulfiller</B> to one or more functions by the fulFilledBy
 	 * property
-     * Leaves previously linked function fulfillers untouched
+     * Leaves previously linked <B>FunctionFulfillers</B> untouched
 	 * 
 	 * @param context
 	 *            Context or Graph
 	 * @param function
 	 *            Function Id
 	 * @param isFulfilledBy
-	 *            List containing one or more Physical Object ids
+	 *            List containing one or more <B>FunctionFulfiller</B> ids
 	 * @param modifier
 	 * @return OK if success
 	 */
@@ -2017,10 +2017,10 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Link a task to a <B>PhysicalObject</B> by the isAffectedBy property
+	 * Link a task to a <B>FunctionFulfiller</B> by the isAffectedBy property
 	 * @param context Context of Graph
-	 * @param physicalobject <B>PhysicalObject</B> id 
-	 * @param isAffectedBy id of <B>Task<B> that affects the <B>PhysicalObject</B>
+	 * @param functionfulfiller <B>FunctionFulfiller</B> id 
+	 * @param isAffectedBy id of <B>Task<B> that affects the <B>FunctionFulfiller</B>
 	 * @param modifier
 	 * @return OK if success
 	 */
@@ -2028,11 +2028,11 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_ISAFFECTEDBY)
 	@Consumes(MIME_TYPE)
 	public Response linkIsAffectedBy(@QueryParam("context") String context,
-			@QueryParam("physicalobject") String physicalobject,
+			@QueryParam("functionfulfiller") String functionfulfiller,
 			@QueryParam("isAffectedBy") String isAffectedBy,
 			@QueryParam("modifier") String modifier) {
 		try {
-			coinsService.linkIsAffectedBy(context, physicalobject, isAffectedBy, modifier);
+			coinsService.linkIsAffectedBy(context, functionfulfiller, isAffectedBy, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
