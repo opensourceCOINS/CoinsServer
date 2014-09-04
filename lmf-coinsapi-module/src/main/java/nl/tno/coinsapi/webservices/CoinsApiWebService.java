@@ -20,7 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import nl.tno.coinsapi.services.IBimFileService;
+import nl.tno.coinsapi.services.ICoinsDocFileService;
 import nl.tno.coinsapi.services.ICoinsApiService;
 import nl.tno.coinsapi.services.ICoinsApiService.ValidationAspect;
 
@@ -202,9 +202,9 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_CATALOGUE_PART = "/cataloguepart";
 	/**
-	 * References to BIM documents from COINS containers
+	 * References to documents from COINS containers
 	 */
-	public static final String PATH_DOCUMENT_REFERENCE = "/bim";
+	public static final String PATH_DOCUMENT_REFERENCE = "/doc";
 	/**
 	 * Initialize the context
 	 */
@@ -333,7 +333,7 @@ public class CoinsApiWebService {
 	private ICoinsApiService mCoinsService;
 
 	@Inject
-	private IBimFileService mFileServer;
+	private ICoinsDocFileService mFileServer;
 
 	@Inject
 	private PrefixService mPrefixService;
@@ -1586,7 +1586,7 @@ public class CoinsApiWebService {
 	@GET
 	@Path(PATH_DOCUMENT_REFERENCE + "/{filename}")
 	@Consumes(MIME_TYPE)
-	public Response getBimDocument(@PathParam(FILENAME) String pFileName) {
+	public Response getCoinsDocument(@PathParam(FILENAME) String pFileName) {
 		byte[] file = null;
 		try {
 			file = mFileServer.getFile(pFileName);
@@ -1612,9 +1612,9 @@ public class CoinsApiWebService {
 	@GET
 	@Path(PATH_DOCUMENT_REFERENCE + "/{context}/{filename}")
 	@Consumes(MIME_TYPE)
-	public Response getBimDocumentContext(@PathParam(CONTEXT) String pContext,
+	public Response getCoinsDocumentContext(@PathParam(CONTEXT) String pContext,
 			@PathParam(FILENAME) String pFileName) {
-		return getBimDocument(pContext + "/" + pFileName);
+		return getCoinsDocument(pContext + "/" + pFileName);
 	}
 
 	/**

@@ -120,14 +120,14 @@ public class TestCoinsImporter {
 			Assert.assertEquals("Een zeer eenvoudige casus.ifc",
 					items[5 + 3 * i].trim());
 			Assert.assertTrue(items[4 + 3 * i].trim().endsWith(
-					"coinsapi/bim/" + context
+					"coinsapi/doc/" + context
 							+ "Een%20zeer%20eenvoudige%20casus.ifc"));
 		}
 		response = given()
 				.expect()
 				.statusCode(OK)
 				.when()
-				.get("coinsapi/bim/" + context
+				.get("coinsapi/doc/" + context
 						+ "Een zeer eenvoudige casus.ifc");
 		InputStream s = response.asInputStream();
 		StringBuilder sb = new StringBuilder();

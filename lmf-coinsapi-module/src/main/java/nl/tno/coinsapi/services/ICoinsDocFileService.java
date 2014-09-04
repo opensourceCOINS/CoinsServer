@@ -7,9 +7,9 @@ import java.net.URISyntaxException;
 import org.openrdf.model.URI;
 
 /**
- * Interface for BIM file server
+ * Interface for Coins Container file server
  */
-public interface IBimFileService {
+public interface ICoinsDocFileService {
 
 	/**
 	 * @param pFileName
@@ -28,14 +28,20 @@ public interface IBimFileService {
 
 	/**
 	 * @param pContext
-	 * @return the path to the BIM documents
+	 * @return the path to the Coins documents
 	 */
 	public String getDocsPath(URI pContext);
 
 	/**
-	 * @param pContext
+	 * @param pCompleteUri
 	 * @return the context part of a complete URI
 	 */
-	public String getContextPart(URI pContext);
+	public String getContextPart(URI pCompleteUri);
+
+	/**
+	 * @param pUri
+	 * @return the local file
+	 */
+	public File getLocalFile(String pUri);
 
 }

@@ -3,18 +3,24 @@ package nl.tno.coinsapi.services;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.inject.Inject;
 
+import nl.tno.coinsapi.webservices.CoinsApiWebService;
+
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 
 import com.google.common.io.Files;
 
 /**
  * Service for storing and retrieving BIM files 
  */
-public class BimFileService implements IBimFileService {
+public class DocFileService implements ICoinsDocFileService {
 
 	/**
 	 * Coins documents path
@@ -26,7 +32,10 @@ public class BimFileService implements IBimFileService {
 	
 	@Override
 	public byte[] getFile(String pFileName) throws IOException {
-		File file = new File(mConfigurationService.getStringConfiguration(DOCS_FOLDER) + File.separator + pFileName);
+		File file = new File(pFileName);
+		if (!file.exists()) {
+			file = new File(mConfigurationService.getStringConfiguration(DOCS_FOLDER) + File.separator + pFileName);
+		}
 		if (file.exists()) {
 			return createByteArray(file);
 		}
@@ -72,7 +81,7 @@ public class BimFileService implements IBimFileService {
 
 	public String getContextPart(URI pContext) {
 		String base = mConfigurationService.getBaseUri();
-		String context = pContext.stringValue();
+		String context = pContext.toString();
 		if (context.length() <= base.length()) {
 			return "";
 		}
@@ -81,9 +90,31 @@ public class BimFileService implements IBimFileService {
 			if (result.startsWith("context")) {
 				return result.substring(8);
 			}
+			String apiPrefix = CoinsApiWebService.PATH
+					+ CoinsApiWebService.PATH_DOCUMENT_REFERENCE;
+			if (result.startsWith(apiPrefix)) {
+				result = result.substring(apiPrefix.length() + 1);
+			}
 			return result;
 		}
-		return "";		
+		
+		return "";
+	}
+
+	@Override
+	public File getLocalFile(String pUri) {
+		URI uri = new URIImpl(pUri);
+		String fileName = getDocsPath(new URIImpl(uri.getNamespace())) + File.separator + pUri.substring(pUri.lastIndexOf('/')+1);
+		// FileName may contain %20 etc...
+		try {
+			URL u = new URL("file:////" + fileName);
+			fileName = u.toURI().getPath();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return new File(fileName);
 	}
 
 }

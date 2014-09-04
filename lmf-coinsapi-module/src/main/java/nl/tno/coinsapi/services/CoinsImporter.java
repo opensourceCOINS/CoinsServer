@@ -41,7 +41,7 @@ import org.openrdf.query.UpdateExecutionException;
 import org.slf4j.Logger;
 
 /**
- * Importer specific for COINS containters
+ * Importer specific for COINS containers
  */
 @ApplicationScoped
 public class CoinsImporter implements Importer {
@@ -64,7 +64,7 @@ public class CoinsImporter implements Importer {
 	private SparqlService mSparqlService;
 	
 	@Inject
-	private IBimFileService mFileServer;
+	private ICoinsDocFileService mFileServer;
 	
 	private static long mTaskCounter = 0;
 
