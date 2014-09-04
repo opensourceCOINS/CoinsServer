@@ -350,7 +350,7 @@ public class CoinsApiWebService {
 	@GET
 	@Produces(MIME_TYPE)
 	public Response getVersion() {
-		return Response.ok().entity("0.1 premature").build();
+		return Response.ok().entity("v0.1").build();
 	}
 
 	/**
