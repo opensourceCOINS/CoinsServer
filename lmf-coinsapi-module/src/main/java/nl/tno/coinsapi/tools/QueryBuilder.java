@@ -142,6 +142,17 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
+	public void addAttributeBoolean(String pName, boolean pValue) {
+		mAttributes.add(new Item(pName, "\"" + pValue + "\"^^<http://www.w3.org/2001/XMLSchema#boolean>"));
+		
+	}
+
+	/**
+	 * Add an attribute
+	 * 
+	 * @param pName
+	 * @param pValue
+	 */
 	public void addAttributeDouble(String pName, double pValue) {
 		mAttributes.add(new Item(pName, "\""+ DOUBLE_NUMBER_FORMAT.format(pValue) + "\"^^<http://www.w3.org/2001/XMLSchema#float>"));
 	}

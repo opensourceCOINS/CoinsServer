@@ -15,19 +15,67 @@ public interface ICoinsApiService {
 	/**
 	 * What do we want to validate
 	 */
-	/**
-	 * @author kunnenj
-	 * 
-	 */
 	public enum ValidationAspect {
 		/**
 		 * All aspects that have been implemented
 		 */
 		ALL,
 		/**
-		 * Physical parents
+		 * Primary orientation <= 1
+		 */
+		PRIMARYORIENATION,
+		/**
+		 * Next parameter <= 1
+		 */
+		NEXTPARAMETER,
+		/**
+		 * Secondary orientation <= 1
+		 */
+		SECONDARYORIENTATION,
+		/**
+		 * Translation <= 1
+		 */
+		TRANSLATION,
+		/**
+		 * Minimum bounding box <= 1
+		 */
+		MINBOUNDINGBOX,
+		/**
+		 * Maximum bounding box <= 1
+		 */
+		MAXBOUNDINGBOX,
+		/**
+		 * Physical parents (<= 1)
 		 */
 		PHYSICALPARENT,
+		/**
+		 * Locators (<= 1)
+		 */
+		LOCATOR,
+		/**
+		 * First parameter (<= 1)
+		 */
+		FIRST_PARAMETER,
+		/**
+		 * Requirement of (<= 1)
+		 */
+		REQUIREMENT_OF,
+		/**
+		 * Super requirement (<= 1)
+		 */
+		SUPER_REQUIREMENT,
+		/**
+		 * Male terminal (<= 1)
+		 */
+		MALETERMINAL,
+		/**
+		 * Female terminal (<= 1)
+		 */
+		FEMALETERMINAL,
+		/**
+		 * Supertype (<= 1)
+		 */
+		SUPERTYPE,
 		/**
 		 * isFulfilledBy / fulfills
 		 */
@@ -527,6 +575,21 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
+	 * @param object
+	 * @param locator
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkLocator(String context, String object, String locator,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
 	 * @param physicalobject
 	 * @param document
 	 * @param modifier
@@ -841,6 +904,135 @@ public interface ICoinsApiService {
 	 */
 	public String createTerminal(String context, String modelURI, String name,
 			String userID, String locator, int layerindex, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param cbim_id
+	 * @param boundingBox
+	 * @param locator
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkBoundingBox(String context, String cbim_id,
+			String boundingBox, String locator, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param cbim_id
+	 * @param terminal
+	 * @param connection
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkTerminal(String context, String cbim_id, String terminal,
+			String connection, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return the connection query
+	 */
+	public String getConnectionQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteConnection(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param creator
+	 * @return the id of the connection
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public String createConnection(String context, String modelURI,
+			String name, String userID, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deletePropertyType(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return property type query
+	 */
+	public String getPropertyTypeQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param unit
+	 * @param valuedomain 
+	 * @param creator
+	 * @return id of the created property type
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public String createPropertyType(String context, String modelURI,
+			String name, String userID, String unit, String valuedomain, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if ok
+	 */
+	public boolean deletePropertyValue(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return property value query
+	 */
+	public String getPropertyValueQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param propertytype
+	 * @param value
+	 * @param creator
+	 * @return id of created property
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public String createPropertyValue(String context, String modelURI, String name,
+			String userID, String propertytype, String value, String creator)
 					throws InvalidArgumentException, MalformedQueryException,
 					UpdateExecutionException, MarmottaException;
 

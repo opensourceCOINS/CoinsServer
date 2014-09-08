@@ -134,7 +134,7 @@ public class TestCoinsValidator {
 		@SuppressWarnings("unchecked")
 		List<String> result2 = body.as(List.class);
 		Assert.assertEquals(1, result2.size());
-		Assert.assertTrue(result2.get(0).contains("multiple parents"));
+		Assert.assertTrue(result2.get(0).contains("cbim:physicalParent"));
 	}
 
 	/**

@@ -20,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import nl.tno.coinsapi.services.CoinsApiService;
 import nl.tno.coinsapi.services.ICoinsDocFileService;
 import nl.tno.coinsapi.services.ICoinsApiService;
 import nl.tno.coinsapi.services.ICoinsApiService.ValidationAspect;
@@ -130,6 +131,7 @@ public class CoinsApiWebService {
 			{ "owl", "http://www.w3.org/2002/07/owl#" },
 			{ "xsd", "http://www.w3.org/2001/XMLSchema#" },
 			{ "cbimfs", "http://www.coinsweb.nl/c-bim-fs.owl#" },
+			{ "cbimotl", "http://www.coinsweb.nl/cbim-otl-1.1.owl#" },
 			{ "cbim", "http://www.coinsweb.nl/c-bim.owl#" },
 			{ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" } };
 
@@ -202,6 +204,10 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_CATALOGUE_PART = "/cataloguepart";
 	/**
+	 * Connection 
+	 */
+	public static final String PATH_CONNECTION = "/connection";
+	/**
 	 * References to documents from COINS containers
 	 */
 	public static final String PATH_DOCUMENT_REFERENCE = "/doc";
@@ -229,6 +235,26 @@ public class CoinsApiWebService {
 	 * Link NonFunctionalRequirements to a PhysicalObject
 	 */
 	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = "/link/nonfunctionalrequirement";
+	
+	/**
+	 * Link a max bounding box to a locator 
+	 */
+	public static final String PATH_LINK_MAX_BOUNDING_BOX = "/link/maxboundingbox";
+	
+	/**
+	 * Link a min bounding box to a locator
+	 */
+	public static final String PATH_LINK_MIN_BOUNDING_BOX = "/link/minboundingbox";
+	
+	/**
+	 * Link a male terminal to a connection
+	 */
+	public static final String PATH_LINK_MALE_TERMINAL = "/link/maleterminal";
+	
+	/**
+	 * Link a female terminal to a connection
+	 */
+	public static final String PATH_LINK_FEMALE_TERMINAL = "/link/femaleterminal";
 	/**
 	 * Link Documents to a PhysicalObject
 	 */
@@ -248,6 +274,11 @@ public class CoinsApiWebService {
 	 * Link an Explicit3DRepresentation to a PhysicalObject
 	 */
 	public static final String PATH_LINK_SHAPE = "/link/shape";
+
+	/**
+	 * Link a Locator to an Amount/FunctionFulfiller/Terminal
+	 */
+	public static final String PATH_LINK_LOCATOR = "/link/locator";
 
 	/**
 	 * A Physical object affected by a task
@@ -322,9 +353,26 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_TERMINAL = "/terminal";
 	/**
+	 * Property type
+	 */
+	public static final String PATH_PROPERTY_TYPE = "/propertytype";
+	/**
+	 * Property value
+	 */
+	public static final String PATH_PROPERTY_VALUE = "/propertyvalue";
+	/**
 	 * Application/json
 	 */
 	public static final String MIME_TYPE = "application/json";
+
+	private static final String MIN_BOUNDING_BOX = "minboundingbox";
+	private static final String MAX_BOUNDING_BOX = "maxboundingbox";
+
+	private static final String UNIT = "unit";
+
+	private static final String VALUEDOMAIN = "valuedomain";
+
+	private static final String PROPERTYTYPE = "propertytype";
 
 	@Inject
 	private ConfigurationService mConfigurationService;
@@ -1612,7 +1660,8 @@ public class CoinsApiWebService {
 	@GET
 	@Path(PATH_DOCUMENT_REFERENCE + "/{context}/{filename}")
 	@Consumes(MIME_TYPE)
-	public Response getCoinsDocumentContext(@PathParam(CONTEXT) String pContext,
+	public Response getCoinsDocumentContext(
+			@PathParam(CONTEXT) String pContext,
 			@PathParam(FILENAME) String pFileName) {
 		return getCoinsDocument(pContext + "/" + pFileName);
 	}
@@ -1803,6 +1852,97 @@ public class CoinsApiWebService {
 		return mSparqlWebService.selectPostForm(query, output, request);
 	}
 
+	/**
+	 * Create a new <B>Connection</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param modelURI
+	 *            The URI of the model
+	 * @param name
+	 *            The name of the <B>Connection</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>Connection</B>
+	 * @return The id of the created <B>Connection</B>
+	 */
+	@POST
+	@Path(PATH_CONNECTION)
+	@Consumes(MIME_TYPE)
+	public Response createConnection(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createConnection(context, modelURI,
+					name, userID, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when creating the connection")
+				.build();
+	}
+
+	/**
+	 * Delete a <B>Connection</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Connection</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_CONNECTION)
+	@Consumes(MIME_TYPE)
+	public Response deleteConnection(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteConnection(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Connection")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Connection</B>
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param id
+	 *            The id of the <B>Connection</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Connection</B> formatted the way specified by means of
+	 *         the output
+	 */
+	@GET
+	@Path(PATH_CONNECTION)
+	@Consumes(MIME_TYPE)
+	public Response getConnection(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getConnectionQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+		
 	/**
 	 * Create a new <B>Parameter</B>
 	 * 
@@ -2307,6 +2447,158 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Link a locator to an <B>Amount/FunctionFulfiller/Terminal</B> by the
+	 * locator property
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param object
+	 *            <B>Amount/FunctionFulfiller/Terminal</B> id
+	 * @param locator
+	 *            id of <B>Locator<B> of the
+	 *            <B>Amount/FunctionFulfiller/Terminal</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_LOCATOR)
+	@Consumes(MIME_TYPE)
+	public Response linkLocator(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object,
+			@QueryParam(LOCATOR) String locator,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkLocator(context, object, locator, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking locator fulfiller failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link a minimum bounding box (<B>Vector</B>) to a <B>Locator</B>
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param locator
+	 *            id of the <B>Locator<B>
+	 * @param minBoundingBox
+	 *            if of the <B>Vector</B> representing the minimum bounding box 
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_MIN_BOUNDING_BOX)
+	@Consumes(MIME_TYPE)
+	public Response linkMinBoundingBox(@QueryParam(CONTEXT) String context,
+			@QueryParam(LOCATOR) String locator,
+			@QueryParam(MIN_BOUNDING_BOX) String minBoundingBox,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkBoundingBox(context, CoinsApiService.CBIM_MIN_BOUNDING_BOX, minBoundingBox, locator,  modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking min bounding box failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link a female <B>Terminal</B> to a <B>Connection</B>
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param connection
+	 *            id of the <B>Connection<B>
+	 * @param femaleTerminal
+	 *            if of the female <B>Terminal</B> 
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_FEMALE_TERMINAL)
+	@Consumes(MIME_TYPE)
+	public Response linkFemaleTerminal(@QueryParam(CONTEXT) String context,
+			@QueryParam(LOCATOR) String connection,
+			@QueryParam(MIN_BOUNDING_BOX) String femaleTerminal,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkTerminal(context, CoinsApiService.CBIM_FEMALE_TERMINAL, femaleTerminal, connection,  modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking female terminal failed").build();
+		}
+		return Response.ok().build();
+	}	
+
+	/**
+	 * Link a male <B>Terminal</B> to a <B>Connection</B>
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param connection
+	 *            id of the <B>Connection<B>
+	 * @param maleTerminal
+	 *            if of the male <B>Terminal</B> 
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_MALE_TERMINAL)
+	@Consumes(MIME_TYPE)
+	public Response linkMaleTerminal(@QueryParam(CONTEXT) String context,
+			@QueryParam(LOCATOR) String connection,
+			@QueryParam(MIN_BOUNDING_BOX) String maleTerminal,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkTerminal(context, CoinsApiService.CBIM_MALE_TERMINAL, maleTerminal, connection,  modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking male terminal failed").build();
+		}
+		return Response.ok().build();
+	}	
+
+	/**
+	 * Link a maximum bounding box (<B>Vector</B>) to a <B>Locator</B>
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param locator
+	 *            id of the <B>Locator<B>
+	 * @param maxBoundingBox
+	 *            if of the <B>Vector</B> representing the minimum bounding box 
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_MAX_BOUNDING_BOX)
+	@Consumes(MIME_TYPE)
+	public Response linkMaxBoundingBox(@QueryParam(CONTEXT) String context,
+			@QueryParam(LOCATOR) String locator,
+			@QueryParam(MAX_BOUNDING_BOX) String maxBoundingBox,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkBoundingBox(context, CoinsApiService.CBIM_MAX_BOUNDING_BOX, maxBoundingBox, locator,  modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking max bounding box failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
 	 * Validate the complete Coins model present in this context
 	 * 
 	 * @param context
@@ -2442,6 +2734,204 @@ public class CoinsApiWebService {
 		return Response.serverError().entity("Cannot delete Terminal").build();
 	}
 
+	/**
+	 * Create a new <B>PropertyType</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param modelURI
+	 *            The URI of the model
+	 * @param name
+	 *            The name of the <B>PropertyType</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param unit
+	 *            The unit (String) of this property type          
+	 * @param valuedomain 
+	 *            The valueDomain
+	 *            (cbim:XsdBoolean, cbim:XsdFloat, cbim:XsdString, cbim:XsdInt,
+	 *            cbimfs:CbimCataloguePart, cbimotl:XsdDateTime, cbimotl:CbimParameter) 
+	 * @param creator
+	 *            URI referring to the user that created this <B>PropertyType</B>
+	 * @return The id of the created <B>PropertyType</B>
+	 */
+	@POST
+	@Path(PATH_PROPERTY_TYPE)
+	@Consumes(MIME_TYPE)
+	public Response createPropertyType(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(UNIT) String unit,
+			@QueryParam(VALUEDOMAIN) String valuedomain,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createPropertyType(context, modelURI,
+					name, userID, unit, valuedomain, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when creating the PropertyType")
+				.build();
+	}
+
+	/**
+	 * Get a <B>PropertyType</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>PropertyType</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>PropertyType</B> formatted the way specified by means of
+	 *         the output
+	 */
+	@GET
+	@Path(PATH_PROPERTY_TYPE)
+	@Consumes(MIME_TYPE)
+	public Response getPropertyType(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getPropertyTypeQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>PropertyType</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>PropertyType</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_PROPERTY_TYPE)
+	@Consumes(MIME_TYPE)
+	public Response deletePropertyType(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deletePropertyType(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete PropertyType")
+				.build();
+	}
+
+	/**
+	 * Create a new <B>PropertyValue</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param modelURI
+	 *            The URI of the model
+	 * @param name
+	 *            The name of the <B>PropertyValue</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param propertytype
+	 *            ID referring to the <B>PropertyType</B>          
+	 * @param value
+	 *            Value of the property
+	 * @param creator
+	 *            URI referring to the user that created this <B>PropertyType</B>
+	 * @return The id of the created <B>PropertyType</B>
+	 */
+	@POST
+	@Path(PATH_PROPERTY_VALUE)
+	@Consumes(MIME_TYPE)
+	public Response createPropertyValue(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(PROPERTYTYPE) String propertytype,
+			@QueryParam(VALUE) String value,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createPropertyValue(context, modelURI,
+					name, userID, propertytype, value, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when creating the PropertyValue")
+				.build();
+	}
+
+	/**
+	 * Get a <B>PropertyValue</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>PropertyValue</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>PropertyValue</B> formatted the way specified by means of
+	 *         the output
+	 */
+	@GET
+	@Path(PATH_PROPERTY_VALUE)
+	@Consumes(MIME_TYPE)
+	public Response getPropertyValue(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getPropertyValueQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>PropertyValue</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>PropertyValue</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_PROPERTY_VALUE)
+	@Consumes(MIME_TYPE)
+	public Response deletePropertyValue(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deletePropertyValue(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete PropertyValue")
+				.build();
+	}
+		
 	/**
 	 * Insert an attribute of type String This method ignores the fact that
 	 * duplicate entries may result if it is executed No validation on attribute

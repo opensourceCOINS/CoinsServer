@@ -66,34 +66,9 @@ public abstract class CoinsValidator {
 		 */
 		public CoinsAllValidator() {
 			for (ValidationAspect aspect : ValidationAspect.values()) {
-				switch (aspect) {
-				case ALL:
-					break;
-				case FUNCTIONFULFILLERS:
-					mValidators.add(new CoinsFunctionFulfillerValidator());
-					break;
-				case PHYSICALPARENT:
-					mValidators.add(new CoinsPhysicalParentValidator());
-					break;
-				case LITERALS:
-					mValidators.add(new CoinsLiteralValidator());
-					break;
-				case PHYSICALOBJECT_PARENT_CHILD:
-					mValidators.add(new CoinsPhysicalObjectParentChildValidator());
-					break;
-				case SPACE_PARENT_CHILD:
-					mValidators.add(new CoinsSpaceParentChildValidator());
-					break;
-				case AFFECTS:
-					mValidators.add(new CoinsAffectsValidator());
-					break;
-				case REQUIREMENT:
-					mValidators.add(new CoinsRequirementValidator());
-					break;
-				case SITUATES:
-					mValidators.add(new CoinsSituatedValidator());
-					break;
-				}				
+				if (aspect!=ValidationAspect.ALL) {
+					mValidators.add(CoinsValidatorFactory.getValidator(aspect, mContext, mSparqlService));
+				}
 			}
 		}
 		
@@ -192,9 +167,12 @@ public abstract class CoinsValidator {
 			result.add(new ResourceRelation(CoinsApiService.CBIM_IS_AFFECTED_BY, CoinsApiService.CBIM_TASK));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_AMOUNT, CoinsApiService.CBIM_CATALOGUE_PART));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_SHAPE, CoinsApiService.CBIM_EXPLICIT3D_REPRESENTATION));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_MAX_BOUNDING_BOX, CoinsApiService.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_MIN_BOUNDING_BOX, CoinsApiService.CBIM_VECTOR));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_PRIMARY_ORIENTATION, CoinsApiService.CBIM_VECTOR));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_SECONDARY_ORIENTATION, CoinsApiService.CBIM_VECTOR));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_TRANSLATION, CoinsApiService.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsApiService.CBIM_LOCATOR_RELATION, CoinsApiService.CBIM_LOCATOR));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_FIRST_PARAMETER, CoinsApiService.CBIM_PARAMETER));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_NEXT_PARAMETER, CoinsApiService.CBIM_PARAMETER));
 			result.add(new ResourceRelation(CoinsApiService.CBIM_DOCUMENT_URI, null));
@@ -347,25 +325,29 @@ public abstract class CoinsValidator {
 		}
 	}
 	
-	/**
-	 * Physical Parent validator
-	 */
-	public static class CoinsPhysicalParentValidator extends CoinsValidator {
-		
+	protected static abstract class CoinsMaxCardinalityOneValidator extends CoinsValidator {
+
+		protected abstract String getPrefix();
+
+		protected abstract String getRelation();
+
 		@Override
 		public boolean validate() {
 			boolean isOk = true;
 			mErrors.clear();
-			Set<String> children = new HashSet<String>(); 
+			Set<String> children = new HashSet<String>();
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX ");
-			query.append(CoinsApiService.PREFIX_CBIM);
+			query.append(getPrefix());
 			query.append("\n\nSELECT ?child ?parent WHERE {\n\tGRAPH <");
 			query.append(mContext);
-			query.append("> {\n\t\t?child cbim:physicalParent ?parent }}");
+			query.append("> {\n\t\t?child ");
+			query.append(getRelation());
+			query.append(" ?parent }}");
 			List<Map<String, Value>> result = null;
 			try {
-				result = mSparqlService.query(QueryLanguage.SPARQL, query.toString());
+				result = mSparqlService.query(QueryLanguage.SPARQL,
+						query.toString());
 			} catch (MarmottaException e) {
 				e.printStackTrace();
 				mErrors.add("MarmottaException");
@@ -374,11 +356,252 @@ public abstract class CoinsValidator {
 			for (Map<String, Value> item : result) {
 				String child = item.get("child").stringValue();
 				if (!children.add(child)) {
-					mErrors.add("Object <" + child + "> has multiple parents.");
+					mErrors.add("Object <" + child
+							+ "> has multiple relations of type "
+							+ getRelation() + ".");
 					isOk = false;
 				}
 			}
 			return isOk;
+		}
+
+	}
+
+	/**
+	 * A requirement can be the requirement of at most one Function
+	 */
+	public static class CoinsRequirementOfValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_REQUIREMENT_OF;
+		}
+		
+	}
+
+	/**
+	 * A requirement can be the super requirement of at most one requirement
+	 */
+	public static class CoinsSuperRequirement extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIMFS;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIMFS_SUPER_REQUIREMENT;
+		}
+		
+	}
+
+	/**
+	 * A Connection can have at most one male terminal
+	 */
+	public static class CoinsMaleTerminalValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_MALE_TERMINAL;
+		}
+		
+	}
+
+	/**
+	 * A Connection can have at most one female terminal
+	 */
+	public static class CoinsFemaleTerminalValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_FEMALE_TERMINAL;
+		}
+		
+	}
+
+	/**
+	 * A CatalogPart can have at most one super type
+	 */
+	public static class CoinsSupertypeValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_SUPER_TYPE;
+		}
+		
+	}
+	
+	/**
+	 * An amount can have at most one locator
+	 */
+	public static class CoinsLocatorValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_LOCATOR_RELATION;
+		}
+		
+	}
+	
+	/**
+	 * An Explicit3DRepresentation can only have one first parameter
+	 */
+	public static class CoinsFirstParamaterValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_FIRST_PARAMETER;
+		}
+		
+	}
+
+	/**
+	 * A paramater can only have one next parameter
+	 */
+	public static class CoinsNextParamaterValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_NEXT_PARAMETER;
+		}
+		
+	}
+
+	/**
+	 * Locator can have at most one max bounding box
+	 */
+	public static class CoinsMaxBoundingBoxValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_MAX_BOUNDING_BOX;
+		}
+		
+	}
+
+	/**
+	 * Locator can have at most one min bounding box
+	 */
+	public static class CoinsMinBoundingBoxValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_MIN_BOUNDING_BOX;
+		}
+		
+	}
+
+	/**
+	 * Primary orientation <= 1
+	 */
+	public static class CoinsPrimaryOrientationValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_PRIMARY_ORIENTATION;
+		}
+		
+	}
+
+	/**
+	 * Secondary orientation <= 1
+	 */
+	public static class CoinsSecondaryOrientationValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_SECONDARY_ORIENTATION;
+		}
+		
+	}
+
+	/**
+	 * Translation <= 1
+	 */
+	public static class CoinsTranslationValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_TRANSLATION;
+		}
+		
+	}
+
+	/**
+	 * Only one or zero Physical parents allowed
+	 * Physical Parent validator
+	 */
+	public static class CoinsPhysicalParentValidator extends CoinsMaxCardinalityOneValidator {
+
+		@Override
+		protected String getPrefix() {
+			return CoinsApiService.PREFIX_CBIM;
+		}
+
+		@Override
+		protected String getRelation() {
+			return CoinsApiService.CBIM_PHYSICAL_PARENT;
 		}
 		
 	}
@@ -483,7 +706,7 @@ public abstract class CoinsValidator {
 			return "function fulfiller";
 		}
 		
-	}
+	}	
 	
 	/**
 	 * cbim:physicalParent

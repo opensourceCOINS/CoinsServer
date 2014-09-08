@@ -4,20 +4,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.inject.Inject;
 
 import nl.tno.coinsapi.tools.CoinsValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsAffectsValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsAllValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsFunctionFulfillerValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsLiteralValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalObjectParentChildValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalParentValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsRequirementValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsSituatedValidator;
-import nl.tno.coinsapi.tools.CoinsValidator.CoinsSpaceParentChildValidator;
+import nl.tno.coinsapi.tools.CoinsValidatorFactory;
 import nl.tno.coinsapi.tools.QueryBuilder;
 import nl.tno.coinsapi.tools.QueryBuilder.InsertQueryBuilder;
 import nl.tno.coinsapi.tools.QueryBuilder.UpdateQueryBuilder;
@@ -26,6 +19,7 @@ import org.apache.marmotta.platform.core.api.config.ConfigurationService;
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.apache.marmotta.platform.sparql.api.sparql.SparqlService;
+import org.openrdf.model.Value;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.UpdateExecutionException;
@@ -49,7 +43,7 @@ public class CoinsApiService implements ICoinsApiService {
 	 * cbim:Amount
 	 */
 	public static final String CBIM_AMOUNT = "cbim:Amount";
-
+	
 	/**
 	 * cbim:CataloguePart
 	 */
@@ -59,6 +53,11 @@ public class CoinsApiService implements ICoinsApiService {
 	 * cbim:cataloguePart
 	 */
 	public static final String CBIM_CATALOGUE_PART_RELATION = "cbim:cataloguePart";
+
+	/**
+	 * cbim:Connection 
+	 */
+	public static final String CBIM_CONNECTION = "cbim:Connection";
 
 	/**
 	 * cbim:creationDate
@@ -126,15 +125,20 @@ public class CoinsApiService implements ICoinsApiService {
 	public static final String CBIM_EXPLICIT3D_REPRESENTATION = "cbim:Explicit3DRepresentation";
 
 	/**
+	 * cbim:femaleTerminal 
+	 */
+	public static final String CBIM_FEMALE_TERMINAL = "cbim:femaleTerminal";
+
+	/**
 	 * cbim:firstParameter
 	 */
 	public static final String CBIM_FIRST_PARAMETER = "cbim:firstParameter";
-
+	
 	/**
 	 * cbim:fulfills
 	 */
 	public static final String CBIM_FULFILLS = "cbim:fulfills";
-	
+
 	/**
 	 * cbim:Function
 	 */
@@ -169,6 +173,26 @@ public class CoinsApiService implements ICoinsApiService {
 	 * cbim:Locator
 	 */
 	public static final String CBIM_LOCATOR = "cbim:Locator";
+
+	/**
+	 * cbim:Locator
+	 */
+	public static final String CBIM_LOCATOR_RELATION = "cbim:locator";
+	
+	/**
+	 * cbim:maleTerminal
+	 */
+	public static final String CBIM_MALE_TERMINAL = "cbim:maleTerminal";
+	
+	/**
+	 * Max bounding box
+	 */
+	public static final String CBIM_MAX_BOUNDING_BOX = "cbim:maxBoundingBox";
+
+	/**
+	 * Min bounding box 
+	 */
+	public static final String CBIM_MIN_BOUNDING_BOX = "cbim:minBoundingBox";
 
 	/**
 	 * cbim:modificationDate
@@ -221,15 +245,29 @@ public class CoinsApiService implements ICoinsApiService {
 	public static final String CBIM_PRIMARY_ORIENTATION = "cbim:primaryOrientation";
 
 	/**
+	 * cbim:PropertyType 
+	 */
+	public static final String CBIM_PROPERTY_TYPE = "cbim:PropertyType";
+
+	/**
+	 * cbim:propertyType 
+	 */
+	public static final String CBIM_PROPERTY_TYPE_RELATION = "cbim:propertyType";
+
+	/**
+	 * cbim:PropertyValue
+	 */
+	public static final String CBIM_PROPERTY_VALUE = "cbim:PropertyValue";
+
+	/**
 	 * cbim:releaseDate
 	 */
 	public static final String CBIM_RELEASE_DATE = "cbim:releaseDate";
-
+	
 	/**
 	 * cbim:Requirement
 	 */
 	public static final String CBIM_REQUIREMENT = "cbim:Requirement";
-
 	/**
 	 * cbim:requirementOf
 	 */
@@ -286,6 +324,11 @@ public class CoinsApiService implements ICoinsApiService {
 	public static final String CBIM_START_DATE_PLANNED = "cbim:startDatePlanned";
 
 	/**
+	 * cbim:superType
+	 */
+	public static final String CBIM_SUPER_TYPE = "cbim:superType";
+
+	/**
 	 * cbim:Task
 	 */
 	public static final String CBIM_TASK = "cbim:Task";
@@ -306,6 +349,11 @@ public class CoinsApiService implements ICoinsApiService {
 	public static final String CBIM_TRANSLATION = "cbim:translation";
 
 	/**
+	 * cbim:unit
+	 */
+	public static final String CBIM_UNIT = "cbim:unit";
+
+	/**
 	 * cbim:userID
 	 */
 	public static final String CBIM_USER_ID = "cbim:userID";
@@ -314,6 +362,16 @@ public class CoinsApiService implements ICoinsApiService {
 	 * cbim:value
 	 */
 	public static final String CBIM_VALUE = "cbim:value";
+	
+	/**
+	 * cbim:ValueDomain
+	 */
+	public static final String CBIM_VALUE_DOMAIN = "cbim:ValueDomain";
+
+	/**
+	 * cbim:valueDomain
+	 */
+	private static final String CBIM_VALUE_DOMAIN_REFERENCE = "cbim:valueDomain";
 
 	/**
 	 * cbim:Vector
@@ -334,7 +392,7 @@ public class CoinsApiService implements ICoinsApiService {
 	 * cbim:zCoordinate
 	 */
 	public static final String CBIM_Z_COORDINATE = "cbim:zCoordinate";
-	
+
 	/**
 	 * cbimfs:NonFunctionalRequirement
 	 */
@@ -351,10 +409,15 @@ public class CoinsApiService implements ICoinsApiService {
 	public static final String CBIMFS_NON_FUNCTIONAL_REQUIREMENT_TYPE = "cbimfs:nonFunctionalRequirementType";
 
 	/**
+	 * cbimfs:superRequirement 
+	 */
+	public static final String CBIMFS_SUPER_REQUIREMENT = "cbimfs:superRequirement";
+
+	/**
 	 * OK
 	 */
 	public static final String OK = "OK";
-
+	
 	/**
 	 * owl:imports
 	 */
@@ -374,15 +437,21 @@ public class CoinsApiService implements ICoinsApiService {
 
 	/**
 	 * PREFIX for sparql query
+	 * cbimotl: <http://www.coinsweb.nl/cbim-otl-1.1.owl#>
+	 */
+	public static final String PREFIX_CBIMOTL = "cbimotl: <http://www.coinsweb.nl/cbim-otl-1.1.owl#>";
+
+	/**
+	 * PREFIX for sparql query
 	 * owl: <http://www.w3.org/2002/07/owl#>
 	 */
 	public static final String PREFIX_OWL = "owl: <http://www.w3.org/2002/07/owl#>";
 
 	@Inject
-	private ICoinsDateConversion mDateConversion;
+	private ConfigurationService mConfigurationService;
 	
 	@Inject
-	private ConfigurationService mConfigurationService;
+	private ICoinsDateConversion mDateConversion;
 	
 	@Inject
 	private SparqlService mSparqlService;
@@ -498,6 +567,25 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
+	public String createConnection(String context, String modelURI,
+			String name, String userID, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(id);
+		builder.addAttributeString(CBIM_NAME, name);
+		builder.addAttributeString(CBIM_USER_ID, userID);
+		builder.addAttributeDate(CBIM_CREATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_CREATOR, creator);
+		builder.addAttributeString(A, CBIM_CONNECTION);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
 	public String createDocument(String context, String modelURI, String name,
 			String userID, String creator) throws MarmottaException,
 			InvalidArgumentException, MalformedQueryException,
@@ -607,7 +695,7 @@ public class CoinsApiService implements ICoinsApiService {
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
 	}
-
+	
 	@Override
 	public String createParameter(String context, String modelURI, String name,
 			String userID, String defaultValue, String creator)
@@ -643,7 +731,7 @@ public class CoinsApiService implements ICoinsApiService {
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
 	}
-	
+
 	@Override
 	public String createPhysicalObject(String context, String modelURI,
 			String name, int layerIndex, String userID, String creator)
@@ -660,6 +748,52 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeInteger(CBIM_LAYER_INDEX, layerIndex);
 		builder.addAttributeLink(CBIM_CREATOR, creator);		
 		builder.addAttributeString(A, CBIM_PHYSICAL_OBJECT);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public String createPropertyType(String context, String modelURI,
+			String name, String userID, String unit, String valuedomain, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addPrefix(PREFIX_CBIMOTL);
+		builder.addGraph(getFullContext(context));
+		builder.setId(id);
+		builder.addAttributeString(CBIM_NAME, name);
+		builder.addAttributeString(CBIM_USER_ID, userID);
+		builder.addAttributeString(CBIM_UNIT, unit);
+		builder.addAttributeLink(CBIM_VALUE_DOMAIN_REFERENCE, valuedomain);
+		builder.addAttributeDate(CBIM_CREATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_CREATOR, creator);
+		builder.addAttributeString(A, CBIM_PROPERTY_TYPE);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public String createPropertyValue(String context, String modelURI, String name,
+			String userID, String propertytype, String value, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addPrefix(PREFIX_CBIMFS);
+		builder.addPrefix(PREFIX_CBIMOTL);
+		builder.addGraph(getFullContext(context));
+		builder.setId(id);
+		builder.addAttributeString(CBIM_NAME, name);
+		builder.addAttributeString(CBIM_USER_ID, userID);
+		builder.addAttributeLink(CBIM_PROPERTY_TYPE_RELATION, propertytype);
+		setPropertyValue(builder, value, propertytype, context);
+		builder.addAttributeDate(CBIM_CREATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_CREATOR, creator);
+		builder.addAttributeString(A, CBIM_PROPERTY_VALUE);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
 	}
@@ -743,6 +877,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeDate(CBIM_CREATION_DATE, new Date());
 		builder.addAttributeInteger(CBIM_LAYER_INDEX, layerindex);
 		builder.addAttributeLink(CBIM_CREATOR, creator);
+		builder.addAttributeLink(CBIM_LOCATOR_RELATION, locator);
 		builder.addAttributeString(A, CBIM_TERMINAL);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
@@ -777,6 +912,11 @@ public class CoinsApiService implements ICoinsApiService {
 	@Override
 	public boolean deleteCataloguePart(String context, String id) {
 		return deleteItem(context, id, CBIM_CATALOGUE_PART, PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deleteConnection(String context, String id) {
+		return deleteItem(context, id, CBIM_CONNECTION, PREFIX_CBIM);
 	}
 
 	@Override
@@ -836,6 +976,16 @@ public class CoinsApiService implements ICoinsApiService {
 	public boolean deletePhysicalObject(String context, String id) {
 		return deleteItem(context, id, CBIM_PHYSICAL_OBJECT, PREFIX_CBIM);
 	}
+	
+	@Override
+	public boolean deletePropertyType(String context, String id) {
+		return deleteItem(context, id, CBIM_PROPERTY_TYPE, PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deletePropertyValue(String context, String id) {
+		return deleteItem(context, id, CBIM_PROPERTY_VALUE, PREFIX_CBIM);
+	}
 
 	@Override
 	public boolean deleteRequirement(String context, String id) {
@@ -856,7 +1006,7 @@ public class CoinsApiService implements ICoinsApiService {
 	public boolean deleteTerminal(String context, String id) {
 		return deleteItem(context, id, CBIM_TERMINAL, PREFIX_CBIM);
 	}
-	
+
 	@Override
 	public boolean deleteVector(String context, String id) {
 		return deleteItem(context, id, CBIM_VECTOR, PREFIX_CBIM);
@@ -866,10 +1016,15 @@ public class CoinsApiService implements ICoinsApiService {
 	public String getAmountQuery(String context, String id) {
 		return getSelectQuery(context, id, CBIM_AMOUNT, PREFIX_CBIM);
 	}
-
+	
 	@Override
 	public String getCataloguePartQuery(String context, String id) {
 		return getSelectQuery(context, id, CBIM_CATALOGUE_PART, PREFIX_CBIM);
+	}
+
+	@Override
+	public String getConnectionQuery(String context, String id) {
+		return getSelectQuery(context, id, CBIM_CONNECTION, PREFIX_CBIM);
 	}
 
 	@Override
@@ -889,6 +1044,9 @@ public class CoinsApiService implements ICoinsApiService {
 		if (pContext.startsWith("http")) {
 			return pContext;
 		}
+		if (mConfigurationService.getBaseContext().endsWith("/")) {
+			return mConfigurationService.getBaseContext() + pContext;
+		}
 		return mConfigurationService.getBaseContext() + "/" + pContext;
 	}
 
@@ -901,7 +1059,7 @@ public class CoinsApiService implements ICoinsApiService {
 	public String getLocatorQuery(String context, String id) {
 		return getSelectQuery(context, id, CBIM_LOCATOR, PREFIX_CBIM);
 	}
-	
+
 	@Override
 	public String getNonFunctionalRequirementQuery(String context, String id) {
 		return getSelectQuery(context, id, CBIMFS_NON_FUNCTIONAL_REQUIREMENT, PREFIX_CBIMFS);
@@ -920,6 +1078,16 @@ public class CoinsApiService implements ICoinsApiService {
 	@Override
 	public String getPhysicalObjectQuery(String context, String id) {
 		return getSelectQuery(context, id, CBIM_PHYSICAL_OBJECT, PREFIX_CBIM);
+	}
+
+	@Override
+	public String getPropertyTypeQuery(String context, String id) {
+		return getSelectQuery(context, id, CBIM_PROPERTY_TYPE, PREFIX_CBIM);
+	}
+
+	@Override
+	public String getPropertyValueQuery(String context, String id) {
+		return getSelectQuery(context, id, CBIM_PROPERTY_VALUE, PREFIX_CBIM);
 	}
 
 	@Override
@@ -985,6 +1153,31 @@ public class CoinsApiService implements ICoinsApiService {
 			return false;
 		}
 		return false;
+	}
+
+	@Override
+	public void linkBoundingBox(String context, String cbim_id,
+			String boundingBox, String locator, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(locator);
+		builder.addAttributeLink(cbim_id, boundingBox);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(locator);
+		builder.addAttributeLink(cbim_id, boundingBox);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 
 	@Override
@@ -1065,6 +1258,31 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
+	public void linkLocator(String context, String object, String locator,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(object);
+		builder.addAttributeLink(CBIM_LOCATOR_RELATION, locator);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(object);
+		builder.addAttributeLink(CBIM_LOCATOR_RELATION, locator);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
 	public void linkNonFunctionalRequirement(String context,
 			String functionfulfiller, String[] nonfunctionalrequirement,
 			String modifier) throws InvalidArgumentException,
@@ -1113,6 +1331,31 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
 		builder.setId(physicalobject);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void linkTerminal(String context, String cbim_id, String terminal,
+			String connection, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(connection);
+		builder.addAttributeLink(cbim_id, terminal);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(connection);
+		builder.addAttributeLink(cbim_id, terminal);
 		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
 		builder.addAttributeLink(CBIM_MODIFIER, modifier);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
@@ -1192,6 +1435,43 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
 		builder.addAttributeLink(CBIM_MODIFIER, modifier);		
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	private void setPropertyValue(InsertQueryBuilder pBuilder, String pValue,
+			String pPropertytype, String pContext) throws MarmottaException {
+		StringBuilder query = new StringBuilder();
+		query.append("PREFIX ");
+		query.append(PREFIX_CBIM);
+		query.append("\n\nSELECT ?valueType WHERE {\n\tGRAPH <");
+		query.append(getFullContext(pContext));
+		query.append("> {\n\t\t<");
+		query.append(pPropertytype);
+		query.append("> ?name ?valueType ;\n\t\t\ta cbim:PropertyType; cbim:valueDomain ?valueType \n\t}\n}");
+		List<Map<String, Value>> result = mSparqlService.query(
+				QueryLanguage.SPARQL, query.toString());
+		if (result.isEmpty()) {
+			pBuilder.addAttributeString(CBIM_VALUE, pValue);
+		} else {
+			String dataType = result.get(0).get("valueType").toString();
+			if (dataType.contains("XsdString")) {
+				pBuilder.addAttributeString(CBIM_VALUE, pValue);
+			} else if (dataType.contains("XsdBoolean")) {
+				pBuilder.addAttributeBoolean(CBIM_VALUE,
+						Boolean.parseBoolean(pValue));
+			} else if (dataType.contains("XsdFloat")) {
+				pBuilder.addAttributeDouble(CBIM_VALUE,
+						Double.parseDouble(pValue));
+			} else if (dataType.contains("XsdInt")) {
+				pBuilder.addAttributeInteger(CBIM_VALUE,
+						Integer.parseInt(pValue));
+			} else if (dataType.contains("CbimCataloguePart")
+					|| dataType.contains("CbimDocument")
+					|| dataType.contains("CbimParameter")) {
+				pBuilder.addAttributeLink(CBIM_VALUE, pValue);
+			} else if (dataType.contains("XsdDateTime")) {
+				pBuilder.addAttributeDate(CBIM_VALUE, pValue);
+			}
+		}		
 	}
 
 	@Override
@@ -1302,38 +1582,7 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public List<String> validate(String pContext, ValidationAspect aspect) {
-		CoinsValidator validator = null;
-		switch (aspect) {
-		case ALL:
-			validator = new CoinsAllValidator();
-			break;
-		case PHYSICALPARENT:
-			validator = new CoinsPhysicalParentValidator();
-			break;
-		case FUNCTIONFULFILLERS:
-			validator = new CoinsFunctionFulfillerValidator();
-			break;
-		case LITERALS:
-			validator = new CoinsLiteralValidator();
-			break;
-		case PHYSICALOBJECT_PARENT_CHILD:
-			validator = new CoinsPhysicalObjectParentChildValidator();
-			break;
-		case SPACE_PARENT_CHILD:
-			validator = new CoinsSpaceParentChildValidator();
-			break;
-		case AFFECTS:
-			validator = new CoinsAffectsValidator();
-			break;			
-		case SITUATES:
-			validator = new CoinsSituatedValidator();
-			break;			
-		case REQUIREMENT:
-			validator = new CoinsRequirementValidator();
-			break;			
-		}
-		validator.setContext(getFullContext(pContext));
-		validator.setSparqlService(mSparqlService);
+		CoinsValidator validator = CoinsValidatorFactory.getValidator(aspect, pContext, mSparqlService);
 		if (validator.validate()) {
 			List<String> result = new Vector<String>();
 			result.add(OK);
