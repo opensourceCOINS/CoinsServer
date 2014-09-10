@@ -25,6 +25,10 @@ public interface ICoinsApiService {
 		 */
 		PRIMARYORIENATION,
 		/**
+		 * CurentState/StateOf
+		 */
+		STATES,
+		/**
 		 * Next parameter <= 1
 		 */
 		NEXTPARAMETER,
@@ -990,7 +994,7 @@ public interface ICoinsApiService {
 	 * @param name
 	 * @param userID
 	 * @param unit
-	 * @param valuedomain 
+	 * @param valuedomain
 	 * @param creator
 	 * @return id of the created property type
 	 * @throws InvalidArgumentException
@@ -999,9 +1003,10 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public String createPropertyType(String context, String modelURI,
-			String name, String userID, String unit, String valuedomain, String creator)
-			throws InvalidArgumentException, MalformedQueryException,
-			UpdateExecutionException, MarmottaException;
+			String name, String userID, String unit, String valuedomain,
+			String creator) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
 
 	/**
 	 * @param context
@@ -1031,9 +1036,86 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createPropertyValue(String context, String modelURI, String name,
-			String userID, String propertytype, String value, String creator)
-					throws InvalidArgumentException, MalformedQueryException,
-					UpdateExecutionException, MarmottaException;
+	public String createPropertyValue(String context, String modelURI,
+			String name, String userID, String propertytype, String value,
+			String creator) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param creator
+	 * @return state id
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public String createState(String context, String modelURI, String name,
+			String userID, String creator) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return state query
+	 */
+	public String getStateQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteState(String context, String id);
+
+	/**
+	 * @param context
+	 * @param state
+	 * @param functionfulfiller
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setCurrentState(String context, String state,
+			String functionfulfiller, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param state
+	 * @param functionfulfiller
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setStateOf(String context, String state,
+			String functionfulfiller, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param state
+	 * @param previousstate
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setPreviousState(String context, String state,
+			String previousstate, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
 
 }

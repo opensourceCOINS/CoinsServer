@@ -688,7 +688,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return "cbim:isFulfilledBy";
+			return CoinsApiService.CBIM_IS_FULFILLED_BY;
 		}
 
 		@Override
@@ -698,7 +698,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return "cbim:fulfills";
+			return CoinsApiService.CBIM_FULFILLS;
 		}
 
 		@Override
@@ -716,7 +716,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return "cbim:physicalParent";
+			return CoinsApiService.CBIM_PHYSICAL_PARENT;
 		}
 
 		@Override
@@ -725,13 +725,41 @@ public abstract class CoinsValidator {
 		}
 
 		@Override
-		protected String getFrom() {			
-			return "cbim:physicalChild";
+		protected String getFrom() {
+			return CoinsApiService.CBIM_PHYSICAL_CHILD;
 		}
 
 		@Override
 		protected String getFromDescription() {
 			return "physical child";
+		}
+		
+	}
+	
+	/**
+	 * 	cbim:currentState
+	 * 	cbim:stateOf
+	 */
+	public static class CoinsCurrentStateStateOfValidator extends CoinsTwoWayRelationValidator {
+
+		@Override
+		protected String getTo() {
+			return CoinsApiService.CBIM_CURRENT_STATE;
+		}
+
+		@Override
+		protected String getToDescription() {
+			return "Current state";
+		}
+
+		@Override
+		protected String getFrom() {
+			return CoinsApiService.CBIM_STATE_OF;
+		}
+
+		@Override
+		protected String getFromDescription() {
+			return "state of";
 		}
 		
 	}
@@ -744,7 +772,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return "cbim:spatialParent";
+			return CoinsApiService.CBIM_SPATIAL_PARENT;
 		}
 
 		@Override
@@ -754,7 +782,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return "cbim:spatialChild";
+			return CoinsApiService.CBIM_SPATIAL_CHILD;
 		}
 
 		@Override
@@ -772,7 +800,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return "cbim:requirementOf";
+			return CoinsApiService.CBIM_REQUIREMENT_OF;
 		}
 
 		@Override
@@ -782,7 +810,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return "cbim:requirement";
+			return CoinsApiService.CBIM_REQUIREMENT;
 		}
 
 		@Override
@@ -800,7 +828,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return "cbim:isSituatedIn";
+			return CoinsApiService.CBIM_IS_SITUATED_IN;
 		}
 
 		@Override
@@ -810,7 +838,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return "cbim:situates";
+			return CoinsApiService.CBIM_SITUATES;
 		}
 
 		@Override
@@ -828,7 +856,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return "cbim:affects";
+			return CoinsApiService.CBIM_AFFECTS;
 		}
 
 		@Override
@@ -838,7 +866,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return "cbim:isAffectedBy";
+			return CoinsApiService.CBIM_IS_AFFECTED_BY;
 		}
 
 		@Override

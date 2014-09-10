@@ -33,365 +33,368 @@ public class CoinsApiService implements ICoinsApiService {
 	 * a
 	 */
 	public static final String A = "a";
-
+	/**
+	 * CBIM
+	 */
+	private static final String CBIM = "cbim"; 
 	/**
 	 * cbim:affects
 	 */
-	public static final String CBIM_AFFECTS = "cbim:affects";
+	public static final String CBIM_AFFECTS = CBIM + ":affects";
 
 	/**
 	 * cbim:Amount
 	 */
-	public static final String CBIM_AMOUNT = "cbim:Amount";
+	public static final String CBIM_AMOUNT = CBIM + ":Amount";
 	
 	/**
 	 * cbim:CataloguePart
 	 */
-	public static final String CBIM_CATALOGUE_PART = "cbim:CataloguePart";
+	public static final String CBIM_CATALOGUE_PART = CBIM + ":CataloguePart";
 
 	/**
 	 * cbim:cataloguePart
 	 */
-	public static final String CBIM_CATALOGUE_PART_RELATION = "cbim:cataloguePart";
+	public static final String CBIM_CATALOGUE_PART_RELATION = CBIM + ":cataloguePart";
 
 	/**
 	 * cbim:Connection 
 	 */
-	public static final String CBIM_CONNECTION = "cbim:Connection";
+	public static final String CBIM_CONNECTION = CBIM + ":Connection";
 
 	/**
 	 * cbim:creationDate
 	 */
-	public static final String CBIM_CREATION_DATE = "cbim:creationDate";
+	public static final String CBIM_CREATION_DATE = CBIM + ":creationDate";
 
 	/**
 	 * cbim:creator
 	 */
-	public static final String CBIM_CREATOR = "cbim:creator";
+	public static final String CBIM_CREATOR = CBIM + ":creator";
 
 	/**
 	 * cbim:defaultValue
 	 */
-	public static final String CBIM_DEFAULT_VALUE = "cbim:defaultValue";
+	public static final String CBIM_DEFAULT_VALUE = CBIM + ":defaultValue";
 
 	/**
 	 * cbim:description
 	 */
-	public static final String CBIM_DESCRIPTION = "cbim:description";
+	public static final String CBIM_DESCRIPTION = CBIM + ":description";
 
 	/**
 	 * cbim:Document
 	 */
-	public static final String CBIM_DOCUMENT = "cbim:Document";
+	public static final String CBIM_DOCUMENT = CBIM + ":Document";
 
 	/**
 	 * cbim:documentAliasFilePath
 	 */
-	public static final String CBIM_DOCUMENT_ALIAS_FILE_PATH = "cbim:documentAliasFilePath";
+	public static final String CBIM_DOCUMENT_ALIAS_FILE_PATH = CBIM + ":documentAliasFilePath";
 
 	/**
 	 * cbim:document
 	 */
-	public static final String CBIM_DOCUMENT_RELATION = "cbim:document";
+	public static final String CBIM_DOCUMENT_RELATION = CBIM + ":document";
 
 	/**
 	 * cbim:documentType
 	 */
-	public static final String CBIM_DOCUMENT_TYPE = "cbim:documentType";
+	public static final String CBIM_DOCUMENT_TYPE = CBIM + ":documentType";
 
 	/**
 	 * cbim:documentUri
 	 */
-	public static final String CBIM_DOCUMENT_URI = "cbim:documentUri";
+	public static final String CBIM_DOCUMENT_URI = CBIM + ":documentUri";
 
 	/**
 	 * cbim:endDate
 	 */
-	public static final String CBIM_END_DATE = "cbim:endDate";
+	public static final String CBIM_END_DATE = CBIM + ":endDate";
 
 	/**
 	 * cbim:endDataActual
 	 */
-	public static final String CBIM_END_DATE_ACTUAL = "cbim:endDataActual";
+	public static final String CBIM_END_DATE_ACTUAL = CBIM + ":endDataActual";
 
 	/**
 	 * cbim:endDatePlanned
 	 */
-	public static final String CBIM_END_DATE_PLANNED = "cbim:endDatePlanned";
+	public static final String CBIM_END_DATE_PLANNED = CBIM + ":endDatePlanned";
 
 	/**
 	 * cbim:Explicit3DRepresentation
 	 */
-	public static final String CBIM_EXPLICIT3D_REPRESENTATION = "cbim:Explicit3DRepresentation";
+	public static final String CBIM_EXPLICIT3D_REPRESENTATION = CBIM + ":Explicit3DRepresentation";
 
 	/**
 	 * cbim:femaleTerminal 
 	 */
-	public static final String CBIM_FEMALE_TERMINAL = "cbim:femaleTerminal";
+	public static final String CBIM_FEMALE_TERMINAL = CBIM + ":femaleTerminal";
 
 	/**
 	 * cbim:firstParameter
 	 */
-	public static final String CBIM_FIRST_PARAMETER = "cbim:firstParameter";
+	public static final String CBIM_FIRST_PARAMETER = CBIM + ":firstParameter";
 	
 	/**
 	 * cbim:fulfills
 	 */
-	public static final String CBIM_FULFILLS = "cbim:fulfills";
+	public static final String CBIM_FULFILLS = CBIM + ":fulfills";
 
 	/**
 	 * cbim:Function
 	 */
-	public static final String CBIM_FUNCTION = "cbim:Function";
+	public static final String CBIM_FUNCTION = CBIM + ":Function";
 
 	/**
 	 * cbim:FunctionFulfiller
 	 */
-	public static final String CBIM_FUNCTION_FULFILLER = "cbim:FunctionFulfiller";
+	public static final String CBIM_FUNCTION_FULFILLER = CBIM + ":FunctionFulfiller";
 
 	/**
 	 * cbim:isAffectedBy
 	 */
-	public static final String CBIM_IS_AFFECTED_BY = "cbim:isAffectedBy";
+	public static final String CBIM_IS_AFFECTED_BY = CBIM + ":isAffectedBy";
 
 	/**
 	 * cbim:isFulfilledBy
 	 */
-	public static final String CBIM_IS_FULFILLED_BY = "cbim:isFulfilledBy";
+	public static final String CBIM_IS_FULFILLED_BY = CBIM + ":isFulfilledBy";
 
 	/**
 	 * cbim:isSituatedIn
 	 */
-	public static final String CBIM_IS_SITUATED_IN = "cbim:isSituatedIn";
+	public static final String CBIM_IS_SITUATED_IN = CBIM + ":isSituatedIn";
 
 	/**
 	 * cbim:layerIndex
 	 */
-	public static final String CBIM_LAYER_INDEX = "cbim:layerIndex";
+	public static final String CBIM_LAYER_INDEX = CBIM + ":layerIndex";
 
 	/**
 	 * cbim:Locator
 	 */
-	public static final String CBIM_LOCATOR = "cbim:Locator";
+	public static final String CBIM_LOCATOR = CBIM + ":Locator";
 
 	/**
 	 * cbim:Locator
 	 */
-	public static final String CBIM_LOCATOR_RELATION = "cbim:locator";
+	public static final String CBIM_LOCATOR_RELATION = CBIM + ":locator";
 	
 	/**
 	 * cbim:maleTerminal
 	 */
-	public static final String CBIM_MALE_TERMINAL = "cbim:maleTerminal";
+	public static final String CBIM_MALE_TERMINAL = CBIM + ":maleTerminal";
 	
 	/**
 	 * Max bounding box
 	 */
-	public static final String CBIM_MAX_BOUNDING_BOX = "cbim:maxBoundingBox";
+	public static final String CBIM_MAX_BOUNDING_BOX = CBIM + ":maxBoundingBox";
 
 	/**
 	 * Min bounding box 
 	 */
-	public static final String CBIM_MIN_BOUNDING_BOX = "cbim:minBoundingBox";
+	public static final String CBIM_MIN_BOUNDING_BOX = CBIM + ":minBoundingBox";
 
 	/**
 	 * cbim:modificationDate
 	 */
-	public static final String CBIM_MODIFICATION_DATE = "cbim:modificationDate";
+	public static final String CBIM_MODIFICATION_DATE = CBIM + ":modificationDate";
 
 	/**
 	 * cbim:modifier 
 	 */
-	public static final String CBIM_MODIFIER = "cbim:modifier";
+	public static final String CBIM_MODIFIER = CBIM + ":modifier";
 
 	/**
 	 * cbim:name
 	 */
-	public static final String CBIM_NAME = "cbim:name";
+	public static final String CBIM_NAME = CBIM + ":name";
 
 	/**
 	 * cbim:nextParameter
 	 */
-	public static final String CBIM_NEXT_PARAMETER = "cbim:nextParameter";
+	public static final String CBIM_NEXT_PARAMETER = CBIM + ":nextParameter";
 
 	/**
 	 * cbim:Parameter
 	 */
-	public static final String CBIM_PARAMETER = "cbim:Parameter";
+	public static final String CBIM_PARAMETER = CBIM + ":Parameter";
 
 	/**
 	 * cbim:PersonOrOrganisation
 	 */
-	public static final String CBIM_PERSON_OR_ORGANISATION = "cbim:PersonOrOrganisation";
+	public static final String CBIM_PERSON_OR_ORGANISATION = CBIM + ":PersonOrOrganisation";
 
 	/**
 	 * cbim:physicalChild
 	 */
-	public static final String CBIM_PHYSICAL_CHILD = "cbim:physicalChild";
+	public static final String CBIM_PHYSICAL_CHILD = CBIM + ":physicalChild";
 
 	/**
 	 * cbim:PhysicalObject
 	 */
-	public static final String CBIM_PHYSICAL_OBJECT = "cbim:PhysicalObject";
+	public static final String CBIM_PHYSICAL_OBJECT = CBIM + ":PhysicalObject";
 
 	/**
 	 * cbim:physicalParent
 	 */
-	public static final String CBIM_PHYSICAL_PARENT = "cbim:physicalParent";
+	public static final String CBIM_PHYSICAL_PARENT = CBIM + ":physicalParent";
 
 	/**
 	 * cbim:primaryOrientation
 	 */
-	public static final String CBIM_PRIMARY_ORIENTATION = "cbim:primaryOrientation";
+	public static final String CBIM_PRIMARY_ORIENTATION = CBIM + ":primaryOrientation";
 
 	/**
 	 * cbim:PropertyType 
 	 */
-	public static final String CBIM_PROPERTY_TYPE = "cbim:PropertyType";
+	public static final String CBIM_PROPERTY_TYPE = CBIM + ":PropertyType";
 
 	/**
 	 * cbim:propertyType 
 	 */
-	public static final String CBIM_PROPERTY_TYPE_RELATION = "cbim:propertyType";
+	public static final String CBIM_PROPERTY_TYPE_RELATION = CBIM + ":propertyType";
 
 	/**
 	 * cbim:PropertyValue
 	 */
-	public static final String CBIM_PROPERTY_VALUE = "cbim:PropertyValue";
+	public static final String CBIM_PROPERTY_VALUE = CBIM + ":PropertyValue";
 
 	/**
 	 * cbim:releaseDate
 	 */
-	public static final String CBIM_RELEASE_DATE = "cbim:releaseDate";
+	public static final String CBIM_RELEASE_DATE = CBIM + ":releaseDate";
 	
 	/**
 	 * cbim:Requirement
 	 */
-	public static final String CBIM_REQUIREMENT = "cbim:Requirement";
+	public static final String CBIM_REQUIREMENT = CBIM + ":Requirement";
 	/**
 	 * cbim:requirementOf
 	 */
-	public static final String CBIM_REQUIREMENT_OF = "cbim:requirementOf";
+	public static final String CBIM_REQUIREMENT_OF = CBIM + ":requirementOf";
 
 	/**
 	 * cbim:requirement
 	 */
-	public static final String CBIM_REQUIREMENT_RELATION = "cbim:requirement";
+	public static final String CBIM_REQUIREMENT_RELATION = CBIM + ":requirement";
 
 	/**
 	 * cbim:secondaryOrientation
 	 */
-	public static final String CBIM_SECONDARY_ORIENTATION = "cbim:secondaryOrientation";
+	public static final String CBIM_SECONDARY_ORIENTATION = CBIM + ":secondaryOrientation";
 
 	/**
 	 * cbim:shape
 	 */
-	public static final String CBIM_SHAPE = "cbim:shape";
+	public static final String CBIM_SHAPE = CBIM + ":shape";
 
 	/**
 	 * cbim:situates 
 	 */
-	public static final String CBIM_SITUATES = "cbim:situates";
+	public static final String CBIM_SITUATES = CBIM + ":situates";
 
 	/**
 	 * cbim:Space
 	 */
-	public static final String CBIM_SPACE = "cbim:Space";
+	public static final String CBIM_SPACE = CBIM + ":Space";
 
 	/**
 	 * cbim:spatialChild
 	 */
-	public static final String CBIM_SPATIAL_CHILD = "cbim:spatialChild";
+	public static final String CBIM_SPATIAL_CHILD = CBIM + ":spatialChild";
 
 	/**
 	 * cbim:spatialParent 
 	 */
-	public static final String CBIM_SPATIAL_PARENT = "cbim:spatialParent";
+	public static final String CBIM_SPATIAL_PARENT = CBIM + ":spatialParent";
 
 	/**
 	 * cbim:startDate
 	 */
-	public static final String CBIM_START_DATE = "cbim:startDate";
+	public static final String CBIM_START_DATE = CBIM + ":startDate";
 
 	/**
 	 * cbim:startDateActual
 	 */
-	public static final String CBIM_START_DATE_ACTUAL = "cbim:startDateActual";
+	public static final String CBIM_START_DATE_ACTUAL = CBIM + ":startDateActual";
 
 	/**
 	 * cbim:startDatePlanned
 	 */
-	public static final String CBIM_START_DATE_PLANNED = "cbim:startDatePlanned";
+	public static final String CBIM_START_DATE_PLANNED = CBIM + ":startDatePlanned";
 
 	/**
 	 * cbim:superType
 	 */
-	public static final String CBIM_SUPER_TYPE = "cbim:superType";
+	public static final String CBIM_SUPER_TYPE = CBIM + ":superType";
 
 	/**
 	 * cbim:Task
 	 */
-	public static final String CBIM_TASK = "cbim:Task";
+	public static final String CBIM_TASK = CBIM + ":Task";
 
 	/**
 	 * cbim:TaskType
 	 */
-	public static final String CBIM_TASK_TYPE = "cbim:taskType";
+	public static final String CBIM_TASK_TYPE = CBIM + ":taskType";
 
 	/**
 	 * cbim:Terminal
 	 */
-	public static final String CBIM_TERMINAL = "cbim:Terminal";
+	public static final String CBIM_TERMINAL = CBIM + ":Terminal";
 
 	/**
 	 * cbim:translation
 	 */
-	public static final String CBIM_TRANSLATION = "cbim:translation";
+	public static final String CBIM_TRANSLATION = CBIM + ":translation";
 
 	/**
 	 * cbim:unit
 	 */
-	public static final String CBIM_UNIT = "cbim:unit";
+	public static final String CBIM_UNIT = CBIM + ":unit";
 
 	/**
 	 * cbim:userID
 	 */
-	public static final String CBIM_USER_ID = "cbim:userID";
+	public static final String CBIM_USER_ID = CBIM + ":userID";
 
 	/**
 	 * cbim:value
 	 */
-	public static final String CBIM_VALUE = "cbim:value";
+	public static final String CBIM_VALUE = CBIM + ":value";
 	
 	/**
 	 * cbim:ValueDomain
 	 */
-	public static final String CBIM_VALUE_DOMAIN = "cbim:ValueDomain";
+	public static final String CBIM_VALUE_DOMAIN = CBIM + ":ValueDomain";
 
 	/**
 	 * cbim:valueDomain
 	 */
-	private static final String CBIM_VALUE_DOMAIN_REFERENCE = "cbim:valueDomain";
+	private static final String CBIM_VALUE_DOMAIN_REFERENCE = CBIM + ":valueDomain";
 
 	/**
 	 * cbim:Vector
 	 */
-	public static final String CBIM_VECTOR = "cbim:Vector";
+	public static final String CBIM_VECTOR = CBIM + ":Vector";
 
 	/**
 	 * cbim:xCoordinate
 	 */
-	public static final String CBIM_X_COORDINATE = "cbim:xCoordinate";
+	public static final String CBIM_X_COORDINATE = CBIM + ":xCoordinate";
 
 	/**
 	 * cbim:yCoordinate
 	 */
-	public static final String CBIM_Y_COORDINATE = "cbim:yCoordinate";
+	public static final String CBIM_Y_COORDINATE = CBIM + ":yCoordinate";
 
 	/**
 	 * cbim:zCoordinate
 	 */
-	public static final String CBIM_Z_COORDINATE = "cbim:zCoordinate";
+	public static final String CBIM_Z_COORDINATE = CBIM + ":zCoordinate";
 
 	/**
 	 * cbimfs:NonFunctionalRequirement
@@ -427,7 +430,18 @@ public class CoinsApiService implements ICoinsApiService {
 	 * PREFIX for sparql query
 	 * cbim: <http://www.coinsweb.nl/c-bim.owl#>
 	 */
-	public static final String PREFIX_CBIM = "cbim: <http://www.coinsweb.nl/c-bim.owl#>";
+	public static final String PREFIX_CBIM1_0 = "cbim: <http://www.coinsweb.nl/c-bim.owl#>";
+
+	/**
+	 * PREFIX for sparql query
+	 * cbim: <http://www.coinsweb.nl/cbim-1.1.owl#>
+	 */
+	public static final String PREFIX_CBIM1_1 = "cbim: <http://www.coinsweb.nl/cbim-1.1.owl#>";
+
+	/**
+	 * PREFIX for sparql query
+	 */
+	public static final String PREFIX_CBIM = PREFIX_CBIM1_1;
 
 	/**
 	 * PREFIX for sparql query
@@ -455,6 +469,26 @@ public class CoinsApiService implements ICoinsApiService {
 	
 	@Inject
 	private SparqlService mSparqlService;
+
+	/**
+	 * cbim:State
+	 */
+	public static final String CBIM_STATE = CBIM + ":State";
+
+	/**
+	 * cbim:currentState
+	 */
+	public static final String CBIM_CURRENT_STATE = CBIM + ":currentState";
+
+	/**
+	 * cbim:stateOf
+	 */
+	public static final String CBIM_STATE_OF = CBIM + ":stateOf";
+
+	/**
+	 * cbim:previousState
+	 */
+	public static final String CBIM_PREVIOUS_STATE = CBIM + ":previousState";
 	
 	@Override
 	public void addAttributeDate(String context, String object, String name,
@@ -531,7 +565,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String userID, int value, String catalogPart, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -552,7 +586,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String name, String userID, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -571,7 +605,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String name, String userID, String creator)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -590,7 +624,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String userID, String creator) throws MarmottaException,
 			InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -610,7 +644,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String documentAliasFilePath, String documentUri, String creator)
 					throws MarmottaException, InvalidArgumentException,
 					MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -631,7 +665,7 @@ public class CoinsApiService implements ICoinsApiService {
 			int layerIndex, String userID, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -652,7 +686,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String translation, String creator) throws MarmottaException,
 			InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -674,7 +708,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String creator, String nonFunctionalRequirementType)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addPrefix(PREFIX_CBIMFS);
@@ -701,7 +735,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String userID, String defaultValue, String creator)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -720,7 +754,7 @@ public class CoinsApiService implements ICoinsApiService {
 	public String createPersonOrOrganisation(String context, String modelURI, String name)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -737,7 +771,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String name, int layerIndex, String userID, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -757,7 +791,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String name, String userID, String unit, String valuedomain, String creator)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addPrefix(PREFIX_CBIMFS);
@@ -780,7 +814,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String userID, String propertytype, String value, String creator)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addPrefix(PREFIX_CBIMFS);
@@ -801,7 +835,7 @@ public class CoinsApiService implements ICoinsApiService {
 	@Override
 	public String createRequirement(String context, String modelURI, String name,
 			int layerindex, String userId,String creator, String requirementOf) throws MarmottaException, InvalidArgumentException, MalformedQueryException, UpdateExecutionException {		
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();
+		String id = constructId(modelURI);
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -822,7 +856,7 @@ public class CoinsApiService implements ICoinsApiService {
 			int layerIndex, String userID, String creator)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -843,7 +877,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String startDatePlanned, String endDatePlanned, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -867,7 +901,7 @@ public class CoinsApiService implements ICoinsApiService {
 			String userID, String locator, int layerindex, String creator)
 					throws InvalidArgumentException, MalformedQueryException,
 					UpdateExecutionException, MarmottaException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();
+		String id = constructId(modelURI);
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -888,7 +922,7 @@ public class CoinsApiService implements ICoinsApiService {
 			Double xCoordinate, Double yCoordinate, Double zCoordinate,
 			String creator) throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException {
-		String id = modelURI + "#" + java.util.UUID.randomUUID().toString();		
+		String id = constructId(modelURI);		
 		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
 		builder.addPrefix(PREFIX_CBIM);
 		builder.addGraph(getFullContext(context));
@@ -1136,7 +1170,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addGraph(getFullContext(context));
 		builder.setId(modelUri);
 		builder.addAttributeString("owl:versionInfo", "Created with Marmotta COINS module");
-		builder.addAttributeLink(OWL_IMPORTS, "http://www.coinsweb.nl/c-bim.owl");
+		builder.addAttributeLink(OWL_IMPORTS, "http://www.coinsweb.nl/cbim-1.1.owl");
 		builder.addAttributeLink(OWL_IMPORTS, "http://www.coinsweb.nl/c-bim-fs.owl");
 		builder.addAttributeString(A, "owl:Ontology");
 		
@@ -1446,7 +1480,11 @@ public class CoinsApiService implements ICoinsApiService {
 		query.append(getFullContext(pContext));
 		query.append("> {\n\t\t<");
 		query.append(pPropertytype);
-		query.append("> ?name ?valueType ;\n\t\t\ta cbim:PropertyType; cbim:valueDomain ?valueType \n\t}\n}");
+		query.append("> ?name ?valueType ;\n\t\t\ta ");
+		query.append(CBIM_PROPERTY_TYPE);
+		query.append("; ");
+		query.append(CBIM_VALUE_DOMAIN_REFERENCE);
+		query.append(" ?valueType \n\t}\n}");
 		List<Map<String, Value>> result = mSparqlService.query(
 				QueryLanguage.SPARQL, query.toString());
 		if (result.isEmpty()) {
@@ -1589,6 +1627,114 @@ public class CoinsApiService implements ICoinsApiService {
 			return result;
 		}
 		return validator.getValidationErrors();
+	}
+
+	@Override
+	public String createState(String context, String modelURI, String name,
+			String userID, String creator) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		String id = constructId(modelURI);		
+		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(id);
+		builder.addAttributeString(CBIM_NAME, name);
+		builder.addAttributeString(CBIM_USER_ID, userID);
+		builder.addAttributeDate(CBIM_CREATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_CREATOR, creator);
+		builder.addAttributeString(A, CBIM_STATE);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+	
+	private String constructId(String modelURI) {
+		return modelURI + "#m" + java.util.UUID.randomUUID().toString();
+	}
+
+	@Override
+	public String getStateQuery(String context, String id) {
+		return getSelectQuery(context, id, CBIM_STATE, PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deleteState(String context, String id) {
+		return deleteItem(context, id, CBIM_STATE, PREFIX_CBIM);
+	}
+
+	@Override
+	public void setCurrentState(String context, String state,
+			String functionfulfiller, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(functionfulfiller);
+		builder.addAttributeLink(CBIM_CURRENT_STATE, state);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(functionfulfiller);
+		builder.addAttributeLink(CBIM_CURRENT_STATE, state);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);		
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void setStateOf(String context, String state,
+			String functionfulfiller, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(state);
+		builder.addAttributeLink(CBIM_STATE_OF, functionfulfiller);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(state);
+		builder.addAttributeLink(CBIM_STATE_OF, functionfulfiller);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);		
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void setPreviousState(String context, String state,
+			String previousstate, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		// TODO one query?
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(state);
+		builder.addAttributeLink(CBIM_PREVIOUS_STATE, previousstate);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(state);
+		builder.addAttributeLink(CBIM_PREVIOUS_STATE, previousstate);
+		builder.addAttributeDate(CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeLink(CBIM_MODIFIER, modifier);		
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 
 }

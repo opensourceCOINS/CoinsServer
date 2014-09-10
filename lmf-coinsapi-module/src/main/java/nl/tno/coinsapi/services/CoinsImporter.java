@@ -58,18 +58,18 @@ public class CoinsImporter implements Importer {
 	private TaskManagerService mTaskManagerService;
 
 	@Inject
-	private ImportService mImportService;	
-	
+	private ImportService mImportService;
+
 	@Inject
 	private SparqlService mSparqlService;
-	
+
 	@Inject
 	private ICoinsDocFileService mFileServer;
-	
+
 	private static long mTaskCounter = 0;
 
 	private List<String> mAcceptTypes;
-	
+
 	@Override
 	public String getName() {
 		return "ccr";
@@ -168,7 +168,7 @@ public class CoinsImporter implements Importer {
 					}
 				}
 				deleteFolder(new File(tempFolder));
-				
+
 				updateReferences(pContext);
 			}
 		} catch (IOException e) {
@@ -180,56 +180,21 @@ public class CoinsImporter implements Importer {
 	}
 
 	private void updateReferences(URI pContext) {
-		File folder = new File(mFileServer.getDocsPath(pContext));
-		if (!folder.exists()) {
-			return;
-		}
-		String[] files = folder.list();
-		if (files == null) {
-			return;
-		}
-		Set<String> fileSet = new HashSet<String>();
-		for (String s : files) {
-			fileSet.add(s);
-		}
-		try {
-			String query = "PREFIX cbim: <http://www.coinsweb.nl/c-bim.owl#>\n\n"
-					+ "SELECT * WHERE { GRAPH <"+pContext+"> {\n"
-					+ "?object cbim:documentUri ?documentUri .\n"
-					+ "?object cbim:documentAliasFilePath ?documentAliasFilePath .\n"
-					+ "?object a cbim:Explicit3DRepresentation .\n}}";
-			List<Map<String, Value>> result = mSparqlService.query(QueryLanguage.SPARQL, query);
-			for (Map<String, Value> item : result) {
-				String fileName = item.get("documentAliasFilePath").stringValue();
-				String oldUri = item.get("documentUri").stringValue();
-				if (oldUri.contains("http")) {
-					oldUri = "\"" + oldUri + "\"";
-				}
-				else {
-					// Usually it is no URI
-					oldUri = "\"" + oldUri + "\"^^<http://www.w3.org/2001/XMLSchema#string>";
-				}
-				if (fileSet.contains(fileName)) {
-					query = "PREFIX cbim: <http://www.coinsweb.nl/c-bim.owl#>\n\n"
-							+ "WITH <"
-							+ pContext
-							+ "> \nDELETE { ?object cbim:documentUri "
-							+ oldUri
-							+ " } \nINSERT { ?object cbim:documentUri <"
-							+ composeUrl(fileName, pContext)
-							+ "> } \nWHERE\n { ?object a cbim:Explicit3DRepresentation .\n ?object cbim:documentUri "
-							+ oldUri + "\n}";
-					try {
-						mSparqlService.update(QueryLanguage.SPARQL, query);
-					} catch (InvalidArgumentException | MalformedQueryException
-							| UpdateExecutionException e) {
-						e.printStackTrace();
-					}
-				}				
+		// Update references for both version 1.0 and 1.1
+		new ReferenceUpdater(pContext, mSparqlService, mFileServer,
+				mConfigurationService) {
+			@Override
+			protected String getBIMPrefix() {
+				return CoinsApiService.PREFIX_CBIM1_0;
 			}
-		} catch (MarmottaException e) {
-			e.printStackTrace();
-		}
+		}.execute();
+		new ReferenceUpdater(pContext, mSparqlService, mFileServer,
+				mConfigurationService) {
+			@Override
+			protected String getBIMPrefix() {
+				return CoinsApiService.PREFIX_CBIM1_1;
+			}
+		}.execute();
 	}
 
 	private void deleteFolder(File pFolder) {
@@ -253,32 +218,16 @@ public class CoinsImporter implements Importer {
 		if (pFile.getName().endsWith("owl")) {
 			try {
 				FileInputStream fis = new FileInputStream(pFile);
-				result = mImportService.importData(fis, "application/rdf+xml", pUser, pContext);
+				result = mImportService.importData(fis, "application/rdf+xml",
+						pUser, pContext);
 				fis.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-		else {
+		} else {
 			mFileServer.importFile(pFile, pContext);
 		}
 		return result;
-	}
-	
-	private String composeUrl(String fileName, URI pContext) {
-		try {
-			fileName = (new File(fileName)).getName();
-			fileName = (new File(fileName)).toURI().toURL().getFile();
-			fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-			String path = mConfigurationService.getBaseUri()
-					+ CoinsApiWebService.PATH
-					+ CoinsApiWebService.PATH_DOCUMENT_REFERENCE + "/"
-					+ mFileServer.getContextPart(pContext) + fileName;
-			return path;
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		return "error";
 	}
 
 	@Override
@@ -288,7 +237,7 @@ public class CoinsImporter implements Importer {
 	}
 
 	/**
-	 * Registering Coins importer 
+	 * Registering Coins importer
 	 */
 	@PostConstruct
 	public void initialise() {
@@ -299,6 +248,119 @@ public class CoinsImporter implements Importer {
 
 		mLog.info(" - available parsers: {}",
 				Arrays.toString(mAcceptTypes.toArray()));
+	}
+
+	protected abstract static class ReferenceUpdater {
+
+		private final URI mContext;
+		private final SparqlService mSparqlService;
+		private final ICoinsDocFileService mFileServer;
+		private final ConfigurationService mConfigurationService;
+
+		/**
+		 * @param pContext
+		 * @param pSparqlService
+		 * @param pFileServer
+		 * @param pConfigurationService
+		 */
+		public ReferenceUpdater(URI pContext, SparqlService pSparqlService,
+				ICoinsDocFileService pFileServer,
+				ConfigurationService pConfigurationService) {
+			mSparqlService = pSparqlService;
+			mContext = pContext;
+			mFileServer = pFileServer;
+			mConfigurationService = pConfigurationService;
+		}
+
+		protected abstract String getBIMPrefix();
+
+		/**
+		 * 
+		 */
+		public void execute() {
+			File folder = new File(mFileServer.getDocsPath(mContext));
+			if (!folder.exists()) {
+				return;
+			}
+			String[] files = folder.list();
+			if (files == null) {
+				return;
+			}
+			Set<String> fileSet = new HashSet<String>();
+			for (String s : files) {
+				fileSet.add(s);
+			}
+			try {
+				String query = "PREFIX " + getBIMPrefix()
+						+ "\n\nSELECT * WHERE { GRAPH <" + mContext + "> {\n"
+						+ "?object " + CoinsApiService.CBIM_DOCUMENT_URI
+						+ " ?documentUri .\n" + "?object "
+						+ CoinsApiService.CBIM_DOCUMENT_ALIAS_FILE_PATH
+						+ " ?documentAliasFilePath .\n" + "?object a "
+						+ CoinsApiService.CBIM_EXPLICIT3D_REPRESENTATION
+						+ " .\n}}";
+				List<Map<String, Value>> result = mSparqlService.query(
+						QueryLanguage.SPARQL, query);
+				for (Map<String, Value> item : result) {
+					String fileName = item.get("documentAliasFilePath")
+							.stringValue();
+					String oldUri = item.get("documentUri").stringValue();
+					if (oldUri.contains("http")) {
+						oldUri = "\"" + oldUri + "\"";
+					} else {
+						// Usually it is no URI
+						oldUri = "\""
+								+ oldUri
+								+ "\"^^<http://www.w3.org/2001/XMLSchema#string>";
+					}
+					if (fileSet.contains(fileName)) {
+						query = "PREFIX "
+								+ getBIMPrefix()
+								+ "\n\nWITH <"
+								+ mContext
+								+ "> \nDELETE { ?object "
+								+ CoinsApiService.CBIM_DOCUMENT_URI
+								+ " "
+								+ oldUri
+								+ " } \nINSERT { ?object "
+								+ CoinsApiService.CBIM_DOCUMENT_URI
+								+ " <"
+								+ composeUrl(fileName, mContext)
+								+ "> } \nWHERE\n { ?object a "
+								+ CoinsApiService.CBIM_EXPLICIT3D_REPRESENTATION
+								+ " .\n ?object "
+								+ CoinsApiService.CBIM_DOCUMENT_URI + " "
+								+ oldUri + "\n}";
+						try {
+							mSparqlService.update(QueryLanguage.SPARQL, query);
+						} catch (InvalidArgumentException
+								| MalformedQueryException
+								| UpdateExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			} catch (MarmottaException e) {
+				e.printStackTrace();
+			}
+		}
+
+		private String composeUrl(String fileName, URI pContext) {
+			try {
+				fileName = (new File(fileName)).getName();
+				fileName = (new File(fileName)).toURI().toURL().getFile();
+				fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+				String path = mConfigurationService.getBaseUri()
+						+ CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_DOCUMENT_REFERENCE + "/"
+						+ mFileServer.getContextPart(pContext) + fileName;
+				return path;
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+			return "error";
+		}
+
 	}
 
 }

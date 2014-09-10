@@ -164,6 +164,10 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_PERSON_OR_ORGANISATION = "/personorganisation";
 	/**
+	 * State
+	 */
+	public static final String PATH_STATE = "/state";
+	/**
 	 * Description
 	 */
 	public static final String PATH_DESCRIPTION = "/description";
@@ -286,6 +290,19 @@ public class CoinsApiWebService {
 	public static final String PATH_LINK_ISAFFECTEDBY = "/link/isaffectedby";
 
 	/**
+	 * currentState of FunctionFulfiller
+	 */
+	public static final String PATH_LINK_CURRENT_STATE = "/link/currentstate";
+	/**
+	 * previous state of function state 
+	 */
+	public static final String PATH_LINK_PREVIOUS_STATE = "/link/previousstate";
+	/**
+	 * State stateOf FunctionFulfiller
+	 */
+	public static final String PATH_LINK_STATE_OF = "/link/stateof";
+
+	/**
 	 * Add an Explicit3DRepresentation to a parameter
 	 */
 	public static final String PATH_LINK_FIRST_PARAMETER = "/link/firstparameter";
@@ -373,6 +390,10 @@ public class CoinsApiWebService {
 	private static final String VALUEDOMAIN = "valuedomain";
 
 	private static final String PROPERTYTYPE = "propertytype";
+
+	private static final String STATE = "state";
+
+	private static final String PREVIOUSSTATE = "previousstate";
 
 	@Inject
 	private ConfigurationService mConfigurationService;
@@ -734,6 +755,99 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Create a new <B>State</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param modelURI
+	 *            The URI of the model
+	 * @param name
+	 *            The name of the <B>PhysicalObject</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this
+	 *            <B>State</B>
+	 * @return The id of the created <B>State</B>
+	 */
+	@POST
+	@Path(PATH_STATE)
+	@Consumes(MIME_TYPE)
+	public Response createState(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createState(context, modelURI,
+					name, userID, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when creating the PhysicalObject")
+				.build();
+	}
+
+	/**
+	 * Get a <B>State</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>State</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>State</B> formatted the way specified by means of
+	 *         the output
+	 */
+	@GET
+	@Path(PATH_STATE)
+	@Consumes(MIME_TYPE)
+	public Response getState(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getStateQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>State</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>State</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_STATE)
+	@Consumes(MIME_TYPE)
+	public Response deleteState(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteState(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete State")
+				.build();
+	}	
+		
+	/**
 	 * Create a new <B>PhysicalObject</B>
 	 * 
 	 * @param context
@@ -827,8 +941,8 @@ public class CoinsApiWebService {
 		}
 		return Response.serverError().entity("Cannot delete PhysicalObject")
 				.build();
-	}
-
+	}	
+	
 	/**
 	 * Create a new <B>Space</B>
 	 * 
@@ -2277,6 +2391,117 @@ public class CoinsApiWebService {
 					.serverError()
 					.entity("Setting physical parent of <" + physicalobject
 							+ "> to <" + shape + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Set the current <B>State</B> of a <B>FunctionFulfiller</B>
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param state
+	 *            Identifier of the <B>State</B> object
+	 * @param functionfulfiller
+	 *            Identifier of <B>FunctionFulfiller</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_CURRENT_STATE)
+	@Consumes(MIME_TYPE)
+	public Response linkCurrentState(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(STATE) String state,
+			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setCurrentState(context, state,
+					functionfulfiller, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Setting current state of <"
+							+ functionfulfiller + "> to <"
+							+ state + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Set the previous <B>State</B> of a <B>State</B>
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param state
+	 *            Identifier of the <B>State</B> object
+	 * @param previousstate
+	 *            Identifier of <B>PreviousState</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_PREVIOUS_STATE)
+	@Consumes(MIME_TYPE)
+	public Response linkPreviousState(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(STATE) String state,
+			@QueryParam(PREVIOUSSTATE) String previousstate,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setPreviousState(context, state,
+					previousstate, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Setting previsous state of <"
+							+ state + "> to <"
+							+ previousstate + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Set the stateOf property of a <B>State</B> to a <B>FunctionFulfiller</B>
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param state
+	 *            Identifier of the <B>State</B> object
+	 * @param functionfulfiller
+	 *            Identifier of <B>FunctionFulfiller</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_STATE_OF)
+	@Consumes(MIME_TYPE)
+	public Response linkStateOf(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(STATE) String state,
+			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setStateOf(context, state,
+					functionfulfiller, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Setting state of <"
+							+ state + "> to <"
+							+ functionfulfiller + "> failed").build();
 		}
 		return Response.ok().build();
 	}

@@ -3,6 +3,7 @@ package nl.tno.coinsapi.tools;
 import nl.tno.coinsapi.services.ICoinsApiService.ValidationAspect;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAffectsValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAllValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsCurrentStateStateOfValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsFemaleTerminalValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsFirstParamaterValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsFunctionFulfillerValidator;
@@ -37,11 +38,15 @@ public class CoinsValidatorFactory {
 	 * @param pSparqlService
 	 * @return a validator for this aspect
 	 */
-	public static CoinsValidator getValidator(ValidationAspect pAspect, String pContext, SparqlService pSparqlService) {
+	public static CoinsValidator getValidator(ValidationAspect pAspect,
+			String pContext, SparqlService pSparqlService) {
 		CoinsValidator validator = null;
 		switch (pAspect) {
 		case ALL:
 			validator = new CoinsAllValidator();
+			break;
+		case STATES:
+			validator = new CoinsCurrentStateStateOfValidator();
 			break;
 		case MAXBOUNDINGBOX:
 			validator = new CoinsMaxBoundingBoxValidator();

@@ -150,10 +150,10 @@ public class CoinsWriter implements RDFWriter {
 		retrieveFileName(pStatement.getSubject().toString());
 		if (pStatement.getPredicate() != null
 				&& pStatement.getPredicate().getNamespace()
-						.equals("http://www.coinsweb.nl/c-bim.owl#")
+						.contains("http://www.coinsweb.nl/c-bim")
 				&& pStatement.getPredicate().getLocalName()
 						.equals("documentUri")) {
-			if (pStatement.getObject() instanceof Resource) {				
+			if (pStatement.getObject() instanceof Resource) {
 				mDocumentUrls.add(pStatement.getObject().toString());
 			}
 		}
