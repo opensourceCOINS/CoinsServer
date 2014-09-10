@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import nl.tno.coinsapi.services.CoinsApiService;
-import nl.tno.coinsapi.services.ICoinsApiService.ValidationAspect;
+import nl.tno.coinsapi.CoinsFormat;
 
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.apache.marmotta.platform.sparql.api.sparql.SparqlService;
@@ -110,19 +109,15 @@ public abstract class CoinsValidator {
 	 */
 	public static class CoinsLiteralValidator extends CoinsValidator {
 		
-		private static final String HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT = "http://www.w3.org/2001/XMLSchema#int";
-		private static final String HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING = "http://www.w3.org/2001/XMLSchema#string";
-		private static final String HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME = "http://www.w3.org/2001/XMLSchema#dateTime";
-
 		@Override
 		public boolean validate() {
 			boolean isOk = true;
 			mErrors.clear();
 			StringBuilder queryBuilder = new StringBuilder();
 			queryBuilder.append("PREFIX ");
-			queryBuilder.append(CoinsApiService.PREFIX_CBIM);
+			queryBuilder.append(CoinsFormat.PREFIX_CBIM);
 			queryBuilder.append("\nPREFIX ");
-			queryBuilder.append(CoinsApiService.PREFIX_CBIMFS);
+			queryBuilder.append(CoinsFormat.PREFIX_CBIMFS);
 			queryBuilder.append("\n\nSELECT ?object ?value WHERE {\n\tGRAPH <");
 			queryBuilder.append(mContext);
 			queryBuilder.append("> {\n\t\t?object %s ?value }}");
@@ -151,47 +146,51 @@ public abstract class CoinsValidator {
 		
 		private List<Relation> getRelations() {
 			List<Relation> result = new Vector<Relation>();
-			result.add(new ResourceRelation(CoinsApiService.CBIM_CREATOR, CoinsApiService.CBIM_PERSON_OR_ORGANISATION));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_MODIFIER, CoinsApiService.CBIM_PERSON_OR_ORGANISATION));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_SPATIAL_CHILD, CoinsApiService.CBIM_SPACE));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_SPATIAL_PARENT, CoinsApiService.CBIM_SPACE));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_PHYSICAL_PARENT, CoinsApiService.CBIM_PHYSICAL_OBJECT));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_PHYSICAL_CHILD, CoinsApiService.CBIM_PHYSICAL_OBJECT));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_IS_FULFILLED_BY, CoinsApiService.CBIM_FUNCTION_FULFILLER));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_FULFILLS, CoinsApiService.CBIM_FUNCTION));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_REQUIREMENT_OF, CoinsApiService.CBIM_FUNCTION));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_REQUIREMENT_RELATION, CoinsApiService.CBIM_REQUIREMENT));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_IS_SITUATED_IN, CoinsApiService.CBIM_SPACE));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_SITUATES, CoinsApiService.CBIM_PHYSICAL_OBJECT));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_AFFECTS, CoinsApiService.CBIM_FUNCTION_FULFILLER));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_IS_AFFECTED_BY, CoinsApiService.CBIM_TASK));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_AMOUNT, CoinsApiService.CBIM_CATALOGUE_PART));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_SHAPE, CoinsApiService.CBIM_EXPLICIT3D_REPRESENTATION));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_MAX_BOUNDING_BOX, CoinsApiService.CBIM_VECTOR));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_MIN_BOUNDING_BOX, CoinsApiService.CBIM_VECTOR));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_PRIMARY_ORIENTATION, CoinsApiService.CBIM_VECTOR));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_SECONDARY_ORIENTATION, CoinsApiService.CBIM_VECTOR));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_TRANSLATION, CoinsApiService.CBIM_VECTOR));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_LOCATOR_RELATION, CoinsApiService.CBIM_LOCATOR));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_FIRST_PARAMETER, CoinsApiService.CBIM_PARAMETER));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_NEXT_PARAMETER, CoinsApiService.CBIM_PARAMETER));
-			result.add(new ResourceRelation(CoinsApiService.CBIM_DOCUMENT_URI, null));
-
+			result.add(new ResourceRelation(CoinsFormat.CBIM_CREATOR, CoinsFormat.CBIM_PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_MODIFIER, CoinsFormat.CBIM_PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_SPATIAL_CHILD, CoinsFormat.CBIM_SPACE));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_SPATIAL_PARENT, CoinsFormat.CBIM_SPACE));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_PHYSICAL_PARENT, CoinsFormat.CBIM_PHYSICAL_OBJECT));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_PHYSICAL_CHILD, CoinsFormat.CBIM_PHYSICAL_OBJECT));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_IS_FULFILLED_BY, CoinsFormat.CBIM_FUNCTION_FULFILLER));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_FULFILLS, CoinsFormat.CBIM_FUNCTION));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_REQUIREMENT_OF, CoinsFormat.CBIM_FUNCTION));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_REQUIREMENT_RELATION, CoinsFormat.CBIM_REQUIREMENT));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_IS_SITUATED_IN, CoinsFormat.CBIM_SPACE));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_SITUATES, CoinsFormat.CBIM_PHYSICAL_OBJECT));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_AFFECTS, CoinsFormat.CBIM_FUNCTION_FULFILLER));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_IS_AFFECTED_BY, CoinsFormat.CBIM_TASK));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_AMOUNT, CoinsFormat.CBIM_CATALOGUE_PART));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_SHAPE, CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_MAX_BOUNDING_BOX, CoinsFormat.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_MIN_BOUNDING_BOX, CoinsFormat.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_PRIMARY_ORIENTATION, CoinsFormat.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_SECONDARY_ORIENTATION, CoinsFormat.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_TRANSLATION, CoinsFormat.CBIM_VECTOR));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_LOCATOR_RELATION, CoinsFormat.CBIM_LOCATOR));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_FIRST_PARAMETER, CoinsFormat.CBIM_PARAMETER));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_NEXT_PARAMETER, CoinsFormat.CBIM_PARAMETER));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_PERFORMANCE_RELATION, CoinsFormat.CBIM_PERFORMANCE));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_PERFORMANCE_OF, CoinsFormat.CBIM_STATE, CoinsFormat.CBIM_FUNCTION_FULFILLER));
+			//result.add(new ResourceRelation(CoinsFormat.CBIM_DOCUMENT_URI));
 			
-			result.add(new LiteralRelation(CoinsApiService.CBIM_END_DATE_ACTUAL, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_START_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_START_DATE_ACTUAL, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_START_DATE_PLANNED, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_END_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_END_DATE_PLANNED, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_RELEASE_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_CREATION_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_MODIFICATION_DATE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_NAME, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_DOCUMENT_TYPE, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_DOCUMENT_ALIAS_FILE_PATH, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_USER_ID, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
-			result.add(new LiteralRelation(CoinsApiService.CBIM_LAYER_INDEX, HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_END_DATE_ACTUAL, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_START_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_START_DATE_ACTUAL, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_START_DATE_PLANNED, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_END_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_END_DATE_PLANNED, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_RELEASE_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_CREATION_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_MODIFICATION_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_NAME, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_DOCUMENT_TYPE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_DOCUMENT_ALIAS_FILE_PATH, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_USER_ID, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_LAYER_INDEX, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_X_COORDINATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_Y_COORDINATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_Z_COORDINATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
 			for (Relation rel : result) {
 				if (rel instanceof ResourceRelation) {
 					ResourceRelation relation = (ResourceRelation)rel;
@@ -250,13 +249,23 @@ public abstract class CoinsValidator {
 		
 		private static class ResourceRelation extends Relation {
 
-			private final String mDataType;
+			private final String[] mDataTypes;
 			private String mContext = null;
 			private SparqlService mSparqlService = null;
 			
-			public ResourceRelation(String pRelation, String pDataType) {
+			public ResourceRelation(String pRelation, String... pDataTypes) {
 				super(pRelation);
-				mDataType = pDataType;
+				List<String> dataTypeList = new Vector<String>();
+				for (String dt : pDataTypes) {
+					if (dt.equals(CoinsFormat.CBIM_FUNCTION_FULFILLER)) {
+						dataTypeList.add(CoinsFormat.CBIM_PHYSICAL_OBJECT);
+						dataTypeList.add(CoinsFormat.CBIM_SPACE);
+					}
+					else {
+						dataTypeList.add(dt);
+					}
+				}
+				mDataTypes = dataTypeList.toArray(new String[dataTypeList.size()]);
 			}
 
 			private void setContext(String pContext) {
@@ -268,24 +277,21 @@ public abstract class CoinsValidator {
 			}
 			
 			private String[] getDataTypes() {
-				if (mDataType.equals(CoinsApiService.CBIM_FUNCTION_FULFILLER)) {
-					return new String[] {CoinsApiService.CBIM_PHYSICAL_OBJECT, CoinsApiService.CBIM_SPACE};
-				}
-				return new String[] {mDataType};
+				return mDataTypes;
 			}
 			
 			@Override
 			public String check(Value pObject, Value pValue) {
 				if (pValue instanceof Resource) {
-					if (mDataType==null) {
+					if (mDataTypes==null) {
 						// No check on reference
 						return null;
 					}
 					StringBuilder query = new StringBuilder();
 					query.append("PREFIX ");
-					query.append(CoinsApiService.PREFIX_CBIM);
+					query.append(CoinsFormat.PREFIX_CBIM);
 					query.append("\nPREFIX ");
-					query.append(CoinsApiService.PREFIX_CBIMFS);
+					query.append(CoinsFormat.PREFIX_CBIMFS);
 					query.append("\nSELECT (COUNT(?value) as ?counter) WHERE {\n\tGRAPH <");
 					query.append(mContext);
 					query.append("> {\n");
@@ -313,7 +319,7 @@ public abstract class CoinsValidator {
 					for (Map<String, Value> item : result) {
 						Value v = item.get("counter");
 						if (v.stringValue().equals("0")) {
-							return pObject.stringValue() + " : " + getRelation() + " should refer to <" + mDataType + ">. No values of that type found.";
+							return pObject.stringValue() + " : " + getRelation() + " should refer to <" + mDataTypes + ">. No values of that type found.";
 						}
 					}
 
@@ -374,12 +380,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_REQUIREMENT_OF;
+			return CoinsFormat.CBIM_REQUIREMENT_OF;
 		}
 		
 	}
@@ -391,12 +397,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIMFS;
+			return CoinsFormat.PREFIX_CBIMFS;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIMFS_SUPER_REQUIREMENT;
+			return CoinsFormat.CBIMFS_SUPER_REQUIREMENT;
 		}
 		
 	}
@@ -408,12 +414,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_MALE_TERMINAL;
+			return CoinsFormat.CBIM_MALE_TERMINAL;
 		}
 		
 	}
@@ -425,12 +431,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_FEMALE_TERMINAL;
+			return CoinsFormat.CBIM_FEMALE_TERMINAL;
 		}
 		
 	}
@@ -442,12 +448,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_SUPER_TYPE;
+			return CoinsFormat.CBIM_SUPER_TYPE;
 		}
 		
 	}
@@ -459,12 +465,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_LOCATOR_RELATION;
+			return CoinsFormat.CBIM_LOCATOR_RELATION;
 		}
 		
 	}
@@ -476,12 +482,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_FIRST_PARAMETER;
+			return CoinsFormat.CBIM_FIRST_PARAMETER;
 		}
 		
 	}
@@ -493,12 +499,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_NEXT_PARAMETER;
+			return CoinsFormat.CBIM_NEXT_PARAMETER;
 		}
 		
 	}
@@ -510,12 +516,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_MAX_BOUNDING_BOX;
+			return CoinsFormat.CBIM_MAX_BOUNDING_BOX;
 		}
 		
 	}
@@ -527,12 +533,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_MIN_BOUNDING_BOX;
+			return CoinsFormat.CBIM_MIN_BOUNDING_BOX;
 		}
 		
 	}
@@ -544,12 +550,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_PRIMARY_ORIENTATION;
+			return CoinsFormat.CBIM_PRIMARY_ORIENTATION;
 		}
 		
 	}
@@ -561,12 +567,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_SECONDARY_ORIENTATION;
+			return CoinsFormat.CBIM_SECONDARY_ORIENTATION;
 		}
 		
 	}
@@ -578,12 +584,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_TRANSLATION;
+			return CoinsFormat.CBIM_TRANSLATION;
 		}
 		
 	}
@@ -596,12 +602,12 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getPrefix() {
-			return CoinsApiService.PREFIX_CBIM;
+			return CoinsFormat.PREFIX_CBIM;
 		}
 
 		@Override
 		protected String getRelation() {
-			return CoinsApiService.CBIM_PHYSICAL_PARENT;
+			return CoinsFormat.CBIM_PHYSICAL_PARENT;
 		}
 		
 	}
@@ -615,7 +621,7 @@ public abstract class CoinsValidator {
 			Set<String> couples = new HashSet<String>();
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX ");
-			query.append(CoinsApiService.PREFIX_CBIM);
+			query.append(CoinsFormat.PREFIX_CBIM);
 			query.append("\n\nSELECT ?function ?fulfiller WHERE {\n\tGRAPH <");
 			query.append(mContext);
 			query.append("> {\n\t\t?function ");
@@ -635,7 +641,7 @@ public abstract class CoinsValidator {
 			}
 			query = new StringBuilder();
 			query.append("PREFIX ");
-			query.append(CoinsApiService.PREFIX_CBIM);
+			query.append(CoinsFormat.PREFIX_CBIM);
 			query.append("\n\nSELECT ?function ?fulfiller WHERE {\n\tGRAPH <");
 			query.append(mContext);
 			query.append("> {\n\t\t?fulfiller ");
@@ -688,7 +694,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return CoinsApiService.CBIM_IS_FULFILLED_BY;
+			return CoinsFormat.CBIM_IS_FULFILLED_BY;
 		}
 
 		@Override
@@ -698,7 +704,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return CoinsApiService.CBIM_FULFILLS;
+			return CoinsFormat.CBIM_FULFILLS;
 		}
 
 		@Override
@@ -716,7 +722,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return CoinsApiService.CBIM_PHYSICAL_PARENT;
+			return CoinsFormat.CBIM_PHYSICAL_PARENT;
 		}
 
 		@Override
@@ -726,7 +732,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return CoinsApiService.CBIM_PHYSICAL_CHILD;
+			return CoinsFormat.CBIM_PHYSICAL_CHILD;
 		}
 
 		@Override
@@ -744,7 +750,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return CoinsApiService.CBIM_CURRENT_STATE;
+			return CoinsFormat.CBIM_CURRENT_STATE;
 		}
 
 		@Override
@@ -754,7 +760,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return CoinsApiService.CBIM_STATE_OF;
+			return CoinsFormat.CBIM_STATE_OF;
 		}
 
 		@Override
@@ -772,7 +778,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return CoinsApiService.CBIM_SPATIAL_PARENT;
+			return CoinsFormat.CBIM_SPATIAL_PARENT;
 		}
 
 		@Override
@@ -782,7 +788,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return CoinsApiService.CBIM_SPATIAL_CHILD;
+			return CoinsFormat.CBIM_SPATIAL_CHILD;
 		}
 
 		@Override
@@ -800,7 +806,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return CoinsApiService.CBIM_REQUIREMENT_OF;
+			return CoinsFormat.CBIM_REQUIREMENT_OF;
 		}
 
 		@Override
@@ -810,7 +816,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return CoinsApiService.CBIM_REQUIREMENT;
+			return CoinsFormat.CBIM_REQUIREMENT_RELATION;
 		}
 
 		@Override
@@ -828,7 +834,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return CoinsApiService.CBIM_IS_SITUATED_IN;
+			return CoinsFormat.CBIM_IS_SITUATED_IN;
 		}
 
 		@Override
@@ -838,7 +844,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return CoinsApiService.CBIM_SITUATES;
+			return CoinsFormat.CBIM_SITUATES;
 		}
 
 		@Override
@@ -856,7 +862,7 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getTo() {
-			return CoinsApiService.CBIM_AFFECTS;
+			return CoinsFormat.CBIM_AFFECTS;
 		}
 
 		@Override
@@ -866,12 +872,40 @@ public abstract class CoinsValidator {
 
 		@Override
 		protected String getFrom() {
-			return CoinsApiService.CBIM_IS_AFFECTED_BY;
+			return CoinsFormat.CBIM_IS_AFFECTED_BY;
 		}
 
 		@Override
 		protected String getFromDescription() {
 			return "task";
+		}
+		
+	}
+	
+	/**
+	 * cbim:performance
+	 * cbim:performanceOf
+	 */
+	public static class CoinsPerformanceValidator extends CoinsTwoWayRelationValidator {
+
+		@Override
+		protected String getTo() {
+			return CoinsFormat.CBIM_PERFORMANCE_OF;
+		}
+
+		@Override
+		protected String getToDescription() {
+			return "State/Funcionfulfuller";
+		}
+
+		@Override
+		protected String getFrom() {
+			return CoinsFormat.CBIM_PERFORMANCE_RELATION;
+		}
+
+		@Override
+		protected String getFromDescription() {
+			return "performance";
 		}
 		
 	}

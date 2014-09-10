@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import nl.tno.coinsapi.CoinsFormat;
 import nl.tno.coinsapi.webservices.CoinsApiWebService;
 
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
@@ -185,14 +186,14 @@ public class CoinsImporter implements Importer {
 				mConfigurationService) {
 			@Override
 			protected String getBIMPrefix() {
-				return CoinsApiService.PREFIX_CBIM1_0;
+				return CoinsFormat.PREFIX_CBIM1_0;
 			}
 		}.execute();
 		new ReferenceUpdater(pContext, mSparqlService, mFileServer,
 				mConfigurationService) {
 			@Override
 			protected String getBIMPrefix() {
-				return CoinsApiService.PREFIX_CBIM1_1;
+				return CoinsFormat.PREFIX_CBIM1_1;
 			}
 		}.execute();
 	}
@@ -293,11 +294,11 @@ public class CoinsImporter implements Importer {
 			try {
 				String query = "PREFIX " + getBIMPrefix()
 						+ "\n\nSELECT * WHERE { GRAPH <" + mContext + "> {\n"
-						+ "?object " + CoinsApiService.CBIM_DOCUMENT_URI
+						+ "?object " + CoinsFormat.CBIM_DOCUMENT_URI
 						+ " ?documentUri .\n" + "?object "
-						+ CoinsApiService.CBIM_DOCUMENT_ALIAS_FILE_PATH
+						+ CoinsFormat.CBIM_DOCUMENT_ALIAS_FILE_PATH
 						+ " ?documentAliasFilePath .\n" + "?object a "
-						+ CoinsApiService.CBIM_EXPLICIT3D_REPRESENTATION
+						+ CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION
 						+ " .\n}}";
 				List<Map<String, Value>> result = mSparqlService.query(
 						QueryLanguage.SPARQL, query);
@@ -319,17 +320,17 @@ public class CoinsImporter implements Importer {
 								+ "\n\nWITH <"
 								+ mContext
 								+ "> \nDELETE { ?object "
-								+ CoinsApiService.CBIM_DOCUMENT_URI
+								+ CoinsFormat.CBIM_DOCUMENT_URI
 								+ " "
 								+ oldUri
 								+ " } \nINSERT { ?object "
-								+ CoinsApiService.CBIM_DOCUMENT_URI
+								+ CoinsFormat.CBIM_DOCUMENT_URI
 								+ " <"
 								+ composeUrl(fileName, mContext)
 								+ "> } \nWHERE\n { ?object a "
-								+ CoinsApiService.CBIM_EXPLICIT3D_REPRESENTATION
+								+ CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION
 								+ " .\n ?object "
-								+ CoinsApiService.CBIM_DOCUMENT_URI + " "
+								+ CoinsFormat.CBIM_DOCUMENT_URI + " "
 								+ oldUri + "\n}";
 						try {
 							mSparqlService.update(QueryLanguage.SPARQL, query);

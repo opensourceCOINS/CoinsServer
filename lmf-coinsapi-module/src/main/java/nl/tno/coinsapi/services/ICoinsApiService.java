@@ -2,6 +2,8 @@ package nl.tno.coinsapi.services;
 
 import java.util.List;
 
+import nl.tno.coinsapi.tools.ValidationAspect;
+
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.openrdf.query.MalformedQueryException;
@@ -11,104 +13,6 @@ import org.openrdf.query.UpdateExecutionException;
  * Interface to CoinsApiService used for managing COINS objects
  */
 public interface ICoinsApiService {
-
-	/**
-	 * What do we want to validate
-	 */
-	public enum ValidationAspect {
-		/**
-		 * All aspects that have been implemented
-		 */
-		ALL,
-		/**
-		 * Primary orientation <= 1
-		 */
-		PRIMARYORIENATION,
-		/**
-		 * CurentState/StateOf
-		 */
-		STATES,
-		/**
-		 * Next parameter <= 1
-		 */
-		NEXTPARAMETER,
-		/**
-		 * Secondary orientation <= 1
-		 */
-		SECONDARYORIENTATION,
-		/**
-		 * Translation <= 1
-		 */
-		TRANSLATION,
-		/**
-		 * Minimum bounding box <= 1
-		 */
-		MINBOUNDINGBOX,
-		/**
-		 * Maximum bounding box <= 1
-		 */
-		MAXBOUNDINGBOX,
-		/**
-		 * Physical parents (<= 1)
-		 */
-		PHYSICALPARENT,
-		/**
-		 * Locators (<= 1)
-		 */
-		LOCATOR,
-		/**
-		 * First parameter (<= 1)
-		 */
-		FIRST_PARAMETER,
-		/**
-		 * Requirement of (<= 1)
-		 */
-		REQUIREMENT_OF,
-		/**
-		 * Super requirement (<= 1)
-		 */
-		SUPER_REQUIREMENT,
-		/**
-		 * Male terminal (<= 1)
-		 */
-		MALETERMINAL,
-		/**
-		 * Female terminal (<= 1)
-		 */
-		FEMALETERMINAL,
-		/**
-		 * Supertype (<= 1)
-		 */
-		SUPERTYPE,
-		/**
-		 * isFulfilledBy / fulfills
-		 */
-		FUNCTIONFULFILLERS,
-		/**
-		 * Literal object validation
-		 */
-		LITERALS,
-		/**
-		 * physicalParent/physicalChild
-		 */
-		PHYSICALOBJECT_PARENT_CHILD,
-		/**
-		 * spatialChild/spationParent
-		 */
-		SPACE_PARENT_CHILD,
-		/**
-		 * affects/isAffectedBy
-		 */
-		AFFECTS,
-		/**
-		 * situates/isSituatedBy
-		 */
-		SITUATES,
-		/**
-		 * requirement/requirementOf
-		 */
-		REQUIREMENT;
-	}
 
 	/**
 	 * @param context
@@ -1115,6 +1019,97 @@ public interface ICoinsApiService {
 	 */
 	public void setPreviousState(String context, String state,
 			String previousstate, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return deleted performance
+	 */
+	public boolean deletePerformance(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return performance query
+	 */
+	public String getPerformanceQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param modelURI
+	 * @param name
+	 * @param userID
+	 * @param creator
+	 * @return id of new performance
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createPerformance(String context, String modelURI,
+			String name, String userID, String creator) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @param layerindex
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setLayerIndex(String context, String id, int layerindex,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param performance
+	 * @param propertyvalue
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkPropertyValue(String context, String performance,
+			String propertyvalue, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param performance
+	 * @param performanceof
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkPerformanceOf(String context, String performance,
+			String performanceof, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param performance
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkPerformance(String context, String object,
+			String performance, String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
 

@@ -20,10 +20,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import nl.tno.coinsapi.services.CoinsApiService;
-import nl.tno.coinsapi.services.ICoinsDocFileService;
+import nl.tno.coinsapi.CoinsFormat;
 import nl.tno.coinsapi.services.ICoinsApiService;
-import nl.tno.coinsapi.services.ICoinsApiService.ValidationAspect;
+import nl.tno.coinsapi.services.ICoinsDocFileService;
+import nl.tno.coinsapi.tools.ValidationAspect;
 
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
 import org.apache.marmotta.platform.core.api.prefix.PrefixService;
@@ -200,6 +200,10 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_TASK = "/task";
 	/**
+	 * Performance
+	 */
+	public static final String PATH_PERFORMANCE = "/performance";
+	/**
 	 * Amount
 	 */
 	public static final String PATH_AMOUNT = "/amount";
@@ -208,7 +212,7 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_CATALOGUE_PART = "/cataloguepart";
 	/**
-	 * Connection 
+	 * Connection
 	 */
 	public static final String PATH_CONNECTION = "/connection";
 	/**
@@ -220,13 +224,25 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_INITIALIZE_CONTEXT = "/initializecontext";
 	/**
+	 * Set the layerindex
+	 */
+	public static final String PATH_LAYERINDEX = "/layerindex";
+	/**
 	 * Edit physical parent relation
 	 */
 	public static final String PATH_LINK_PHYSICAL_PARENT = "/link/physicalparent";
 	/**
+	 * Link a property value to Performance
+	 */
+	public static final String PATH_LINK_PROPERTY_VALUE = "/link/propertyvalue";
+	/**
 	 * Add a physical child relation
 	 */
 	public static final String PATH_LINK_PHYSICAL_CHILD = "/link/physicalchild";
+	/**
+	 * Performance of State/FunctionFulfiller
+	 */
+	public static final String PATH_LINK_PERFORMANCEOF = "/link/performanceof";
 	/**
 	 * Edit spatial parent relation
 	 */
@@ -239,22 +255,22 @@ public class CoinsApiWebService {
 	 * Link NonFunctionalRequirements to a PhysicalObject
 	 */
 	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = "/link/nonfunctionalrequirement";
-	
+
 	/**
-	 * Link a max bounding box to a locator 
+	 * Link a max bounding box to a locator
 	 */
 	public static final String PATH_LINK_MAX_BOUNDING_BOX = "/link/maxboundingbox";
-	
+
 	/**
 	 * Link a min bounding box to a locator
 	 */
 	public static final String PATH_LINK_MIN_BOUNDING_BOX = "/link/minboundingbox";
-	
+
 	/**
 	 * Link a male terminal to a connection
 	 */
 	public static final String PATH_LINK_MALE_TERMINAL = "/link/maleterminal";
-	
+
 	/**
 	 * Link a female terminal to a connection
 	 */
@@ -294,9 +310,13 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_LINK_CURRENT_STATE = "/link/currentstate";
 	/**
-	 * previous state of function state 
+	 * previous state of function state
 	 */
 	public static final String PATH_LINK_PREVIOUS_STATE = "/link/previousstate";
+	/**
+	 * Link Performance
+	 */
+	public static final String PATH_LINK_PERFORMANCE = "/link/performance";	
 	/**
 	 * State stateOf FunctionFulfiller
 	 */
@@ -377,6 +397,7 @@ public class CoinsApiWebService {
 	 * Property value
 	 */
 	public static final String PATH_PROPERTY_VALUE = "/propertyvalue";
+	
 	/**
 	 * Application/json
 	 */
@@ -394,6 +415,12 @@ public class CoinsApiWebService {
 	private static final String STATE = "state";
 
 	private static final String PREVIOUSSTATE = "previousstate";
+
+	private static final String PERFORMANCE = "performance";
+
+	private static final String PROPERTYVALUE = "propertyvalue";
+
+	private static final String PERFORMANCEOF = "performanceof";
 
 	@Inject
 	private ConfigurationService mConfigurationService;
@@ -755,6 +782,42 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Set the layer index of an object
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The identifier of the object
+	 * @param layerindex
+	 *            The layer index
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_LAYERINDEX)
+	@Consumes(MIME_TYPE)
+	public Response setLayerIndex(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(LAYERINDEX) int layerindex,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setLayerIndex(context, id, layerindex, modifier);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when setting the Layerindex")
+				.build();
+	}
+
+	/**
 	 * Create a new <B>State</B>
 	 * 
 	 * @param context
@@ -766,8 +829,7 @@ public class CoinsApiWebService {
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param creator
-	 *            URI referring to the user that created this
-	 *            <B>State</B>
+	 *            URI referring to the user that created this <B>State</B>
 	 * @return The id of the created <B>State</B>
 	 */
 	@POST
@@ -775,8 +837,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response createState(@QueryParam(CONTEXT) String context,
 			@QueryParam(MODEL_URI) String modelURI,
-			@QueryParam(NAME) String name,
-			@QueryParam(USER_ID) String userID,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
@@ -786,8 +847,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createState(context, modelURI,
-					name, userID, creator);
+			identifier = mCoinsService.createState(context, modelURI, name,
+					userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -815,8 +876,8 @@ public class CoinsApiWebService {
 	 *            The way the output should be formatted
 	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>State</B> formatted the way specified by means of
-	 *         the output
+	 * @return the <B>State</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_STATE)
@@ -843,10 +904,9 @@ public class CoinsApiWebService {
 		if (mCoinsService.deleteState(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete State")
-				.build();
-	}	
-		
+		return Response.serverError().entity("Cannot delete State").build();
+	}
+
 	/**
 	 * Create a new <B>PhysicalObject</B>
 	 * 
@@ -941,8 +1001,8 @@ public class CoinsApiWebService {
 		}
 		return Response.serverError().entity("Cannot delete PhysicalObject")
 				.build();
-	}	
-	
+	}
+
 	/**
 	 * Create a new <B>Space</B>
 	 * 
@@ -2008,8 +2068,7 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response
-				.serverError()
+		return Response.serverError()
 				.entity("Something went wrong when creating the connection")
 				.build();
 	}
@@ -2044,8 +2103,8 @@ public class CoinsApiWebService {
 	 *            The way the output should be formatted
 	 *            (json/xml/csv/html/tabs)
 	 * @param request
-	 * @return the <B>Connection</B> formatted the way specified by means of
-	 *         the output
+	 * @return the <B>Connection</B> formatted the way specified by means of the
+	 *         output
 	 */
 	@GET
 	@Path(PATH_CONNECTION)
@@ -2056,7 +2115,7 @@ public class CoinsApiWebService {
 		String query = mCoinsService.getConnectionQuery(context, id);
 		return mSparqlWebService.selectPostForm(query, output, request);
 	}
-		
+
 	/**
 	 * Create a new <B>Parameter</B>
 	 * 
@@ -2185,6 +2244,113 @@ public class CoinsApiWebService {
 					.entity("Setting first parameter of <"
 							+ explicit3DRepresentation + "> to <"
 							+ firstParameter + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link a property value to <B>Performance</B> via cbimfs:propertyValue
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param performance
+	 *            Identifier of the <B>Performance</B> object
+	 * @param propertyvalue
+	 *            Identifier of <B>PropertyValue</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_PROPERTY_VALUE)
+	@Consumes(MIME_TYPE)
+	public Response linkPropertyValue(@QueryParam(CONTEXT) String context,
+			@QueryParam(PERFORMANCE) String performance,
+			@QueryParam(PROPERTYVALUE) String propertyvalue,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkPropertyValue(context, performance,
+					propertyvalue, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Setting property value of <" + performance
+							+ "> to <" + propertyvalue + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link <B>Performance</B> to <B>State</B> or <B>FunctionFulfiller</B> via
+	 * cbim:performanceOf
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param performance
+	 *            Identifier of the <B>Performance</B> object
+	 * @param performanceof
+	 *            Identifier of <B>State</B> or <B>FunctionFulfiller</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_PERFORMANCEOF)
+	@Consumes(MIME_TYPE)
+	public Response linkPerformanceOf(@QueryParam(CONTEXT) String context,
+			@QueryParam(PERFORMANCE) String performance,
+			@QueryParam(PERFORMANCEOF) String performanceof,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkPerformanceOf(context, performance,
+					performanceof, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Setting performanceOf <" + performance + "> to <"
+							+ performanceof + "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link <B>State</B> or <B>FunctionFulfiller</B> to <B>Performance</B> via
+	 * cbim:performance
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param object 
+	 *            Identifier of <B>State</B> or <B>FunctionFulfiller</B>
+	 * @param performance
+	 *            Identifier of the <B>Performance</B> object
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_PERFORMANCE)
+	@Consumes(MIME_TYPE)
+	public Response linkPerformance(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object,
+			@QueryParam(PERFORMANCE) String performance,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkPerformance(context, object, performance,
+					modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Setting performance of <" + object + "> to <"
+							+ performance + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2412,22 +2578,20 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LINK_CURRENT_STATE)
 	@Consumes(MIME_TYPE)
-	public Response linkCurrentState(
-			@QueryParam(CONTEXT) String context,
+	public Response linkCurrentState(@QueryParam(CONTEXT) String context,
 			@QueryParam(STATE) String state,
 			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setCurrentState(context, state,
-					functionfulfiller, modifier);
+			mCoinsService.setCurrentState(context, state, functionfulfiller,
+					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
-					.entity("Setting current state of <"
-							+ functionfulfiller + "> to <"
-							+ state + "> failed").build();
+					.entity("Setting current state of <" + functionfulfiller
+							+ "> to <" + state + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2449,21 +2613,19 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LINK_PREVIOUS_STATE)
 	@Consumes(MIME_TYPE)
-	public Response linkPreviousState(
-			@QueryParam(CONTEXT) String context,
+	public Response linkPreviousState(@QueryParam(CONTEXT) String context,
 			@QueryParam(STATE) String state,
 			@QueryParam(PREVIOUSSTATE) String previousstate,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setPreviousState(context, state,
-					previousstate, modifier);
+			mCoinsService.setPreviousState(context, state, previousstate,
+					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
-					.entity("Setting previsous state of <"
-							+ state + "> to <"
+					.entity("Setting previsous state of <" + state + "> to <"
 							+ previousstate + "> failed").build();
 		}
 		return Response.ok().build();
@@ -2486,21 +2648,19 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_LINK_STATE_OF)
 	@Consumes(MIME_TYPE)
-	public Response linkStateOf(
-			@QueryParam(CONTEXT) String context,
+	public Response linkStateOf(@QueryParam(CONTEXT) String context,
 			@QueryParam(STATE) String state,
 			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setStateOf(context, state,
-					functionfulfiller, modifier);
+			mCoinsService.setStateOf(context, state, functionfulfiller,
+					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
-					.entity("Setting state of <"
-							+ state + "> to <"
+					.entity("Setting state of <" + state + "> to <"
 							+ functionfulfiller + "> failed").build();
 		}
 		return Response.ok().build();
@@ -2711,7 +2871,7 @@ public class CoinsApiWebService {
 	 * @param locator
 	 *            id of the <B>Locator<B>
 	 * @param minBoundingBox
-	 *            if of the <B>Vector</B> representing the minimum bounding box 
+	 *            if of the <B>Vector</B> representing the minimum bounding box
 	 * @param modifier
 	 * @return OK if success
 	 */
@@ -2723,7 +2883,9 @@ public class CoinsApiWebService {
 			@QueryParam(MIN_BOUNDING_BOX) String minBoundingBox,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkBoundingBox(context, CoinsApiService.CBIM_MIN_BOUNDING_BOX, minBoundingBox, locator,  modifier);
+			mCoinsService.linkBoundingBox(context,
+					CoinsFormat.CBIM_MIN_BOUNDING_BOX, minBoundingBox, locator,
+					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
@@ -2741,7 +2903,7 @@ public class CoinsApiWebService {
 	 * @param connection
 	 *            id of the <B>Connection<B>
 	 * @param femaleTerminal
-	 *            if of the female <B>Terminal</B> 
+	 *            if of the female <B>Terminal</B>
 	 * @param modifier
 	 * @return OK if success
 	 */
@@ -2753,7 +2915,9 @@ public class CoinsApiWebService {
 			@QueryParam(MIN_BOUNDING_BOX) String femaleTerminal,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkTerminal(context, CoinsApiService.CBIM_FEMALE_TERMINAL, femaleTerminal, connection,  modifier);
+			mCoinsService.linkTerminal(context,
+					CoinsFormat.CBIM_FEMALE_TERMINAL, femaleTerminal,
+					connection, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
@@ -2761,7 +2925,7 @@ public class CoinsApiWebService {
 					.entity("Linking female terminal failed").build();
 		}
 		return Response.ok().build();
-	}	
+	}
 
 	/**
 	 * Link a male <B>Terminal</B> to a <B>Connection</B>
@@ -2771,7 +2935,7 @@ public class CoinsApiWebService {
 	 * @param connection
 	 *            id of the <B>Connection<B>
 	 * @param maleTerminal
-	 *            if of the male <B>Terminal</B> 
+	 *            if of the male <B>Terminal</B>
 	 * @param modifier
 	 * @return OK if success
 	 */
@@ -2783,7 +2947,8 @@ public class CoinsApiWebService {
 			@QueryParam(MIN_BOUNDING_BOX) String maleTerminal,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkTerminal(context, CoinsApiService.CBIM_MALE_TERMINAL, maleTerminal, connection,  modifier);
+			mCoinsService.linkTerminal(context, CoinsFormat.CBIM_MALE_TERMINAL,
+					maleTerminal, connection, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
@@ -2791,7 +2956,7 @@ public class CoinsApiWebService {
 					.entity("Linking male terminal failed").build();
 		}
 		return Response.ok().build();
-	}	
+	}
 
 	/**
 	 * Link a maximum bounding box (<B>Vector</B>) to a <B>Locator</B>
@@ -2801,7 +2966,7 @@ public class CoinsApiWebService {
 	 * @param locator
 	 *            id of the <B>Locator<B>
 	 * @param maxBoundingBox
-	 *            if of the <B>Vector</B> representing the minimum bounding box 
+	 *            if of the <B>Vector</B> representing the minimum bounding box
 	 * @param modifier
 	 * @return OK if success
 	 */
@@ -2813,7 +2978,9 @@ public class CoinsApiWebService {
 			@QueryParam(MAX_BOUNDING_BOX) String maxBoundingBox,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkBoundingBox(context, CoinsApiService.CBIM_MAX_BOUNDING_BOX, maxBoundingBox, locator,  modifier);
+			mCoinsService.linkBoundingBox(context,
+					CoinsFormat.CBIM_MAX_BOUNDING_BOX, maxBoundingBox, locator,
+					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
@@ -2861,6 +3028,97 @@ public class CoinsApiWebService {
 		}
 		return Response.serverError()
 				.entity("Unknown validation aspect " + aspect).build();
+	}
+
+	/**
+	 * Create a new <B>Performance</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param modelURI
+	 *            The URI of the model
+	 * @param name
+	 *            The name of the <B>Performance</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            Identifier of the <B>PersonOrOrganisation</B> that created the
+	 *            terminal
+	 * @return The id of the created <B>Performance</B>
+	 */
+	@POST
+	@Path(PATH_PERFORMANCE)
+	@Consumes(MIME_TYPE)
+	public Response createPerformance(@QueryParam(CONTEXT) String context,
+			@QueryParam(MODEL_URI) String modelURI,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createPerformance(context, modelURI,
+					name, userID, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the Performance")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Performance</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>Performance</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Performance</B> formatted the way specified by means of
+	 *         the output
+	 */
+	@GET
+	@Path(PATH_PERFORMANCE)
+	@Consumes(MIME_TYPE)
+	public Response getPerformance(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getPerformanceQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>Terminal</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Terminal</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_PERFORMANCE)
+	@Consumes(MIME_TYPE)
+	public Response deletePerformance(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deletePerformance(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Performance")
+				.build();
 	}
 
 	/**
@@ -2971,13 +3229,14 @@ public class CoinsApiWebService {
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param unit
-	 *            The unit (String) of this property type          
-	 * @param valuedomain 
-	 *            The valueDomain
-	 *            (cbim:XsdBoolean, cbim:XsdFloat, cbim:XsdString, cbim:XsdInt,
-	 *            cbimfs:CbimCataloguePart, cbimotl:XsdDateTime, cbimotl:CbimParameter) 
+	 *            The unit (String) of this property type
+	 * @param valuedomain
+	 *            The valueDomain (cbim:XsdBoolean, cbim:XsdFloat,
+	 *            cbim:XsdString, cbim:XsdInt, cbimfs:CbimCataloguePart,
+	 *            cbimotl:XsdDateTime, cbimotl:CbimParameter)
 	 * @param creator
-	 *            URI referring to the user that created this <B>PropertyType</B>
+	 *            URI referring to the user that created this
+	 *            <B>PropertyType</B>
 	 * @return The id of the created <B>PropertyType</B>
 	 */
 	@POST
@@ -2985,8 +3244,7 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response createPropertyType(@QueryParam(CONTEXT) String context,
 			@QueryParam(MODEL_URI) String modelURI,
-			@QueryParam(NAME) String name,
-			@QueryParam(USER_ID) String userID,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(UNIT) String unit,
 			@QueryParam(VALUEDOMAIN) String valuedomain,
 			@QueryParam(CREATOR) String creator) {
@@ -3010,8 +3268,7 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response
-				.serverError()
+		return Response.serverError()
 				.entity("Something went wrong when creating the PropertyType")
 				.build();
 	}
@@ -3071,11 +3328,12 @@ public class CoinsApiWebService {
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param propertytype
-	 *            ID referring to the <B>PropertyType</B>          
+	 *            ID referring to the <B>PropertyType</B>
 	 * @param value
 	 *            Value of the property
 	 * @param creator
-	 *            URI referring to the user that created this <B>PropertyType</B>
+	 *            URI referring to the user that created this
+	 *            <B>PropertyType</B>
 	 * @return The id of the created <B>PropertyType</B>
 	 */
 	@POST
@@ -3083,11 +3341,9 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response createPropertyValue(@QueryParam(CONTEXT) String context,
 			@QueryParam(MODEL_URI) String modelURI,
-			@QueryParam(NAME) String name,
-			@QueryParam(USER_ID) String userID,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(PROPERTYTYPE) String propertytype,
-			@QueryParam(VALUE) String value,
-			@QueryParam(CREATOR) String creator) {
+			@QueryParam(VALUE) String value, @QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -3108,8 +3364,7 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response
-				.serverError()
+		return Response.serverError()
 				.entity("Something went wrong when creating the PropertyValue")
 				.build();
 	}
@@ -3156,7 +3411,7 @@ public class CoinsApiWebService {
 		return Response.serverError().entity("Cannot delete PropertyValue")
 				.build();
 	}
-		
+
 	/**
 	 * Insert an attribute of type String This method ignores the fact that
 	 * duplicate entries may result if it is executed No validation on attribute

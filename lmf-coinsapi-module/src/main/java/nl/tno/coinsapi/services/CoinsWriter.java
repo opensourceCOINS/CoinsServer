@@ -11,6 +11,8 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import nl.tno.coinsapi.CoinsFormat;
+
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.apache.marmotta.platform.core.util.CDIContext;
 import org.openrdf.model.Resource;

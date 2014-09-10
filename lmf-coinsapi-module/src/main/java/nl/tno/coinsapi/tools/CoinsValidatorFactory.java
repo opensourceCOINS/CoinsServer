@@ -1,6 +1,5 @@
 package nl.tno.coinsapi.tools;
 
-import nl.tno.coinsapi.services.ICoinsApiService.ValidationAspect;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAffectsValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAllValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsCurrentStateStateOfValidator;
@@ -13,6 +12,7 @@ import nl.tno.coinsapi.tools.CoinsValidator.CoinsMaleTerminalValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsMaxBoundingBoxValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsMinBoundingBoxValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsNextParamaterValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsPerformanceValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalObjectParentChildValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsPhysicalParentValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsPrimaryOrientationValidator;
@@ -44,6 +44,9 @@ public class CoinsValidatorFactory {
 		switch (pAspect) {
 		case ALL:
 			validator = new CoinsAllValidator();
+			break;
+		case PERFORMANCE:
+			validator = new CoinsPerformanceValidator();
 			break;
 		case STATES:
 			validator = new CoinsCurrentStateStateOfValidator();

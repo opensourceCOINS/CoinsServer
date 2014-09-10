@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 
+import nl.tno.coinsapi.CoinsFormat;
 import nl.tno.coinsapi.services.ICoinsDateConversion;
 
 /**
@@ -17,20 +18,50 @@ import nl.tno.coinsapi.services.ICoinsDateConversion;
  */
 public abstract class QueryBuilder {
 
+	/**
+	 * Field type
+	 */
+	public enum FieldType {
+		/**
+		 * String
+		 */
+		STRING,
+		/**
+		 * Resource
+		 */
+		RESOURCE,
+		/**
+		 * Integer
+		 */
+		INT,
+		/**
+		 * Double/Float
+		 */
+		DOUBLE,
+		/**
+		 * Date
+		 */
+		DATE,
+		/**
+		 * Boolean
+		 */
+		BOOLEAN;
+	}
+
 	protected List<String> mPrefixes = new Vector<String>();
 	private Set<String> mPrefixKeys = new HashSet<String>();
 	protected String mGraph;
 	protected String mId;
 	protected List<Item> mAttributes = new Vector<Item>();
-	protected final ICoinsDateConversion mDateConversion; 
+	protected final ICoinsDateConversion mDateConversion;
 
 	protected static NumberFormat DOUBLE_NUMBER_FORMAT;
-	
+
 	protected QueryBuilder(ICoinsDateConversion pDateConversion) {
 		super();
 		mDateConversion = pDateConversion;
 	}
-	
+
 	/**
 	 * Add a prefix
 	 * 
@@ -43,7 +74,7 @@ public abstract class QueryBuilder {
 	}
 
 	/**
-	 * @param pDateConversion 
+	 * @param pDateConversion
 	 * @return a query
 	 */
 	public abstract String build();
@@ -57,7 +88,7 @@ public abstract class QueryBuilder {
 
 	/**
 	 * @param pId
-	 * @throws MarmottaException 
+	 * @throws MarmottaException
 	 */
 	public void setId(String pId) throws MarmottaException {
 		if (pId == null) {
@@ -67,18 +98,59 @@ public abstract class QueryBuilder {
 	}
 
 	/**
+	 * Add an attribute of a certain type
+	 * 
+	 * @param pName
+	 * @param pValue
+	 * @param pType
+	 */
+	public void addAttribute(String pName, String pValue, FieldType pType) {
+		switch (pType) {
+		case BOOLEAN:
+			mAttributes.add(new TypedItem(pName, pValue,
+					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_BOOLEAN));
+			break;
+		case DATE:
+			mAttributes.add(new TypedItem(pName, pValue,
+					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			break;
+		case DOUBLE:
+			mAttributes.add(new TypedItem(pName, pValue,
+					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
+			break;
+		case INT:
+			mAttributes.add(new TypedItem(pName, pValue,
+					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT));
+			break;
+		case RESOURCE:
+			if (isPrefixedValue(pValue)) {
+				mAttributes.add(new Item(pName, pValue));
+			} else {
+				mAttributes.add(new Item(pName, "<" + pValue + ">"));
+			}
+			break;
+		case STRING:
+			mAttributes.add(new TypedItem(pName, pValue,
+					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			break;
+		}
+	}
+
+	/**
+	 * @param pValue
+	 */
+	public void addAttributeType(String pValue) {
+		mAttributes.add(new Item("a", pValue));
+	}
+
+	/**
 	 * Add an attribute
 	 * 
 	 * @param pName
 	 * @param pValue
 	 */
 	public void addAttributeString(String pName, String pValue) {
-		if (pName.equals("a")) {
-			mAttributes.add(new Item(pName, pValue));
-		}
-		else {			
-			mAttributes.add(new Item(pName, "\"" + pValue + "\"^^<http://www.w3.org/2001/XMLSchema#string>"));
-		}
+		addAttribute(pName, pValue, FieldType.STRING);
 	}
 
 	/**
@@ -88,20 +160,7 @@ public abstract class QueryBuilder {
 	 * @param pValue
 	 */
 	public void addAttributeLink(String pName, String pValue) {
-		if (isPrefixedValue(pValue)) {
-			mAttributes.add(new Item(pName, pValue));			
-		}
-		else {			
-			mAttributes.add(new Item(pName, "<" + pValue + ">"));
-		}
-	}
-
-	private boolean isPrefixedValue(String pValue) {
-		String items[] = pValue.split(":");
-		if (items.length == 2) {
-			return mPrefixKeys.contains(items[0]);
-		}
-		return false;
+		addAttribute(pName, pValue, FieldType.RESOURCE);
 	}
 
 	/**
@@ -111,8 +170,7 @@ public abstract class QueryBuilder {
 	 * @param pValue
 	 */
 	public void addAttributeDate(String pName, Date pValue) {
-		mAttributes.add(new Item(pName, "\"" + mDateConversion.toString(pValue)
-				+ "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
+		addAttribute(pName, mDateConversion.toString(pValue), FieldType.DATE);
 	}
 
 	/**
@@ -122,8 +180,7 @@ public abstract class QueryBuilder {
 	 * @param pValue
 	 */
 	public void addAttributeDate(String pName, String pValue) {
-		mAttributes.add(new Item(pName, "\"" + pValue
-				+ "\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"));
+		addAttribute(pName, pValue, FieldType.DATE);
 	}
 
 	/**
@@ -133,7 +190,7 @@ public abstract class QueryBuilder {
 	 * @param pValue
 	 */
 	public void addAttributeInteger(String pName, int pValue) {
-		mAttributes.add(new Item(pName, "\"" + pValue + "\"^^<http://www.w3.org/2001/XMLSchema#int>"));
+		addAttribute(pName, String.valueOf(pValue), FieldType.INT);
 	}
 
 	/**
@@ -143,8 +200,7 @@ public abstract class QueryBuilder {
 	 * @param pValue
 	 */
 	public void addAttributeBoolean(String pName, boolean pValue) {
-		mAttributes.add(new Item(pName, "\"" + pValue + "\"^^<http://www.w3.org/2001/XMLSchema#boolean>"));
-		
+		addAttribute(pName, String.valueOf(pValue), FieldType.BOOLEAN);
 	}
 
 	/**
@@ -154,12 +210,20 @@ public abstract class QueryBuilder {
 	 * @param pValue
 	 */
 	public void addAttributeDouble(String pName, double pValue) {
-		mAttributes.add(new Item(pName, "\""+ DOUBLE_NUMBER_FORMAT.format(pValue) + "\"^^<http://www.w3.org/2001/XMLSchema#float>"));
+		addAttribute(pName, DOUBLE_NUMBER_FORMAT.format(pValue),
+				FieldType.DOUBLE);
 	}
 
-	protected void appendValue(StringBuilder stringBuilder,
-			Item item) {
+	protected void appendValue(StringBuilder stringBuilder, Item item) {
 		stringBuilder.append(item.getValue());
+	}
+
+	private boolean isPrefixedValue(String pValue) {
+		String items[] = pValue.split(":");
+		if (items.length == 2) {
+			return mPrefixKeys.contains(items[0]);
+		}
+		return false;
 	}
 
 	/**
@@ -218,26 +282,17 @@ public abstract class QueryBuilder {
 	/**
 	 * Query builder for update queries
 	 * 
-	 * Resulting in a query similar to
-	 * PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-	 * PREFIX ex: <http://example.org/> 
+	 * Resulting in a query similar to PREFIX rdf:
+	 * <http://www.w3.org/1999/02/22-rdf-syntax-ns#> PREFIX ex:
+	 * <http://example.org/>
 	 * 
-	 * DELETE {ex:subject1 ex:title ?t ;
-	 *                     ex:description ?d ; 
-	 *                     rdf:type ?c . 
-	 *        }
-	 * INSERT {ex:subject1 ex:title "foo" ;
-	 *                     ex:description "bar" ;
-	 *                     rdf:type ex:FooBar .  
-	 * }
-	 * WHERE  { 
-	 *         ex:subject1 ex:title ?t ;
-	 *                     ex:description ?d ;
-	 *                     rdf:type ?c . 
-	 * }
-	 *
-	 * Note that this query only works if all fields (title/description/type) must be present
-	 * before modification is possible...
+	 * DELETE {ex:subject1 ex:title ?t ; ex:description ?d ; rdf:type ?c . }
+	 * INSERT {ex:subject1 ex:title "foo" ; ex:description "bar" ; rdf:type
+	 * ex:FooBar . } WHERE { ex:subject1 ex:title ?t ; ex:description ?d ;
+	 * rdf:type ?c . }
+	 * 
+	 * Note that this query only works if all fields (title/description/type)
+	 * must be present before modification is possible...
 	 */
 	public static class UpdateQueryBuilder extends QueryBuilder {
 
@@ -300,33 +355,41 @@ public abstract class QueryBuilder {
 			result.append(". }");
 			return result.toString();
 		}
-		
+
 		private String composeVariableName(Item item) {
 			int index = item.getName().indexOf(':');
-			if (index==-1) {
+			if (index == -1) {
 				index = item.getName().indexOf('#');
 			}
 			return item.getName().substring(index + 1);
 		}
 	}
-	
+
+	private static class TypedItem extends Item {
+
+		public TypedItem(String pName, String pValue, String pType) {
+			super(pName, "\"" + pValue + "\"^^<" + pType + ">");
+		}
+
+	}
+
 	private static class Item {
 		private final String mName;
 		private final String mValue;
-		
+
 		public Item(String pName, String pValue) {
 			mName = pName;
 			mValue = pValue;
 		}
-		
+
 		public String getName() {
 			return mName;
 		}
-		
+
 		public String getValue() {
 			return mValue;
 		}
-		
+
 		@Override
 		public String toString() {
 			return mName + " : " + mValue;
@@ -335,7 +398,7 @@ public abstract class QueryBuilder {
 
 	static {
 		DOUBLE_NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
-		DOUBLE_NUMBER_FORMAT.setGroupingUsed(false);		
+		DOUBLE_NUMBER_FORMAT.setGroupingUsed(false);
 	}
-	
-}	
+
+}

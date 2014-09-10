@@ -1,4 +1,5 @@
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsApiService.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\tools\ValidationAspect.java
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsWriterFactory.java
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsImporter.java
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\tools\QueryBuilder.java
@@ -10,5 +11,5 @@ E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\tools\CoinsValidator.java
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\DocFileService.java
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\ICoinsApiService.java
-E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\CoinsFormat.java
 E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\services\ICoinsDocFileService.java
+E:\localAplicationData\git\CoinsServer\lmf-coinsapi-module\src\main\java\nl\tno\coinsapi\CoinsFormat.java

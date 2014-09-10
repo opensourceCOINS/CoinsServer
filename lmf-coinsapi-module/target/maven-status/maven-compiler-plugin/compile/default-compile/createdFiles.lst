@@ -1,3 +1,4 @@
+nl\tno\coinsapi\CoinsFormat.class
 nl\tno\coinsapi\services\CoinsImporter$1.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsMaxBoundingBoxValidator.class
 nl\tno\coinsapi\services\CoinsDateConverter.class
@@ -5,9 +6,12 @@ nl\tno\coinsapi\tools\CoinsValidator$CoinsCurrentStateStateOfValidator.class
 nl\tno\coinsapi\services\CoinsWriter$CoinsZipper.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsTranslationValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsNextParamaterValidator.class
+nl\tno\coinsapi\tools\QueryBuilder$1.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsSuperRequirement.class
+nl\tno\coinsapi\tools\CoinsValidator$CoinsPerformanceValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsLiteralValidator$Relation.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsAffectsValidator.class
+nl\tno\coinsapi\tools\QueryBuilder$TypedItem.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsSituatedValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsLiteralValidator$LiteralRelation.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsSecondaryOrientationValidator.class
@@ -21,11 +25,10 @@ nl\tno\coinsapi\tools\CoinsValidator$CoinsLiteralValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsFemaleTerminalValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsSupertypeValidator.class
 nl\tno\coinsapi\services\CoinsImporter$ReferenceUpdater.class
-nl\tno\coinsapi\services\ICoinsApiService$ValidationAspect.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsFirstParamaterValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsRequirementValidator.class
 nl\tno\coinsapi\tools\QueryBuilder.class
-nl\tno\coinsapi\services\CoinsFormat.class
+nl\tno\coinsapi\tools\ValidationAspect.class
 nl\tno\coinsapi\services\ICoinsDateConversion.class
 nl\tno\coinsapi\services\CoinsWriter$3.class
 nl\tno\coinsapi\tools\CoinsValidatorFactory$1.class
@@ -45,6 +48,7 @@ nl\tno\coinsapi\tools\CoinsValidator$CoinsRequirementOfValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsPhysicalParentValidator.class
 nl\tno\coinsapi\services\ICoinsApiService.class
 nl\tno\coinsapi\tools\CoinsValidatorFactory.class
+nl\tno\coinsapi\tools\QueryBuilder$FieldType.class
 nl\tno\coinsapi\tools\CoinsValidator.class
 nl\tno\coinsapi\tools\QueryBuilder$InsertQueryBuilder.class
 nl\tno\coinsapi\services\CoinsWriter$RDFTask.class
