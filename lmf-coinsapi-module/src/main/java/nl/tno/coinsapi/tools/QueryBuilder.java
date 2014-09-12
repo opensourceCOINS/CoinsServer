@@ -159,7 +159,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeLink(String pName, String pValue) {
+	public void addAttributeResource(String pName, String pValue) {
 		addAttribute(pName, pValue, FieldType.RESOURCE);
 	}
 

@@ -210,6 +210,7 @@ public class CoinsImporter implements Importer {
 					}
 				}
 			}
+			pFolder.delete();
 		}
 	}
 

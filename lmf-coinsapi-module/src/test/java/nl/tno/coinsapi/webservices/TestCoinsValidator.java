@@ -5,6 +5,7 @@ import static com.jayway.restassured.RestAssured.given;
 import java.util.List;
 
 import junit.framework.Assert;
+import nl.tno.coinsapi.tools.ValidationAspect;
 import nl.tno.coinsapi.util.TestUtil;
 
 import org.apache.marmotta.platform.core.test.base.JettyMarmotta;
@@ -44,12 +45,17 @@ public class TestCoinsValidator {
 		RestAssured.basePath = mMarmotta.getContext();
 		mContext = RestAssured.baseURI + ":" + RestAssured.port
 				+ RestAssured.basePath;
-
+		given().queryParam("context", mContext)
+				.queryParam("modelURI", MODEL_URI)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_INITIALIZE_CONTEXT);
 		// POST PersonOrOrganisation (creator/modifier)
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", "Pietje Puk")
 				.expect()
 				.statusCode(OK)
@@ -138,6 +144,156 @@ public class TestCoinsValidator {
 	}
 
 	/**
+	 * Test the physical parent relation between two PhysicalObjects
+	 */
+	@Test
+	public void testPhysicalParent() {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Parent B")
+				.queryParam("layerIndex", 2)
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "B")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PHYSICAL_OBJECT).body();
+		String parentB = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Child")
+				.queryParam("layerIndex", 2)
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "C 1")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PHYSICAL_OBJECT).body();
+		String child = body.asString();
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("child", child)
+				.queryParam("parent", parentB)
+				.queryParam("modifier", mCreatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("aspect",
+						ValidationAspect.PHYSICALOBJECT_PARENT_CHILD.toString())
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
+		List<String> result = TestUtil.getStringList(body);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("OK", result.get(0));
+		// Link physical child
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("child", child)
+				.queryParam("parent", parentB)
+				.queryParam("modifier", mCreatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_PHYSICAL_CHILD).body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("aspect",
+						ValidationAspect.PHYSICALOBJECT_PARENT_CHILD.toString())
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
+		result = TestUtil.getStringList(body);
+		Assert.assertEquals(1, result.size());
+		Assert.assertTrue(result.get(0).contains("and vice versa"));
+	}
+
+	/**
+	 * Test the spatial parent relation between two Space objects
+	 */
+	@Test
+	public void testSpatialParent() {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext).queryParam("name", "Parent A")
+				.queryParam("layerIndex", 2).queryParam("creator", mCreatorId)
+				.queryParam("userID", "A").expect().statusCode(OK).when()
+				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_SPACE)
+				.body();
+		String parentA = body.asString();
+		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext).queryParam("name", "Child")
+				.queryParam("layerIndex", 2).queryParam("creator", mCreatorId)
+				.queryParam("userID", "C 1").expect().statusCode(OK).when()
+				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_SPACE)
+				.body();
+		String child = body.asString();
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("child", child)
+				.queryParam("parent", parentA)
+				.queryParam("modifier", mCreatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_SPATIAL_PARENT).body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("aspect",
+						ValidationAspect.SPACE_PARENT_CHILD.toString())
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
+		List<String> result = TestUtil.getStringList(body);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("OK", result.get(0));
+		// Link spatial child
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("child", child)
+				.queryParam("parent", parentA)
+				.queryParam("modifier", mCreatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_SPATIAL_CHILD).body();
+		// Validate again
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("aspect",
+						ValidationAspect.SPACE_PARENT_CHILD.toString())
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
+				.body();
+		result = TestUtil.getStringList(body);
+		Assert.assertEquals(1, result.size());
+		Assert.assertTrue(result.get(0).contains("and vice versa"));
+	}
+
+	/**
 	 * Test isFulfilledBy and fulfills
 	 */
 	@Test
@@ -157,7 +313,7 @@ public class TestCoinsValidator {
 						+ CoinsApiWebService.PATH_LINK_FULFILLED_BY).body();
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("physicalobject", zitBankId)
+				.queryParam("physicalObject", zitBankId)
 				.queryParam("fulfills", zitten)
 				.queryParam("modifier", mCreatorId)
 				.expect()
@@ -180,7 +336,7 @@ public class TestCoinsValidator {
 		// Now add an invalid reference
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("physicalobject", zitSysteemId)
+				.queryParam("physicalObject", zitSysteemId)
 				.queryParam("fulfills", zitten)
 				.queryParam("modifier", mCreatorId)
 				.expect()
@@ -199,9 +355,9 @@ public class TestCoinsValidator {
 				.body();
 		result = TestUtil.getStringList(body);
 		Assert.assertEquals(1, result.size());
-	    Assert.assertTrue(result.get(0).contains("fulfiller"));	    
+		Assert.assertTrue(result.get(0).contains("fulfiller"));
 	}
-	
+
 	/**
 	 * Test the literals
 	 */
@@ -222,7 +378,7 @@ public class TestCoinsValidator {
 						+ CoinsApiWebService.PATH_LINK_FULFILLED_BY).body();
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("physicalobject", zitBankId)
+				.queryParam("physicalObject", zitBankId)
 				.queryParam("fulfills", zitten)
 				.queryParam("modifier", mCreatorId)
 				.expect()
@@ -241,7 +397,7 @@ public class TestCoinsValidator {
 				.body();
 		List<String> result = TestUtil.getStringList(body);
 		Assert.assertEquals(1, result.size());
-		Assert.assertEquals("OK", result.get(0));		
+		Assert.assertEquals("OK", result.get(0));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -252,8 +408,7 @@ public class TestCoinsValidator {
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_ADD_ATTRIBUTE_STRING)
-				.body();
+						+ CoinsApiWebService.PATH_ADD_ATTRIBUTE_STRING).body();
 		// Validate again
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -263,17 +418,16 @@ public class TestCoinsValidator {
 				.statusCode(OK)
 				.when()
 				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATE)
-				.body();		
+				.body();
 		result = TestUtil.getStringList(body);
 		Assert.assertEquals(1, result.size());
-		Assert.assertTrue(result.get(0).contains("invalid data type"));		
+		Assert.assertTrue(result.get(0).contains("invalid data type"));
 	}
-	
+
 	private String addFunction(String name, String userId, int layerIndex) {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
 				.queryParam("layerIndex", layerIndex)
 				.queryParam("creator", mCreatorId)
@@ -290,7 +444,6 @@ public class TestCoinsValidator {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("modelURI", MODEL_URI)
 				.queryParam("name", name)
 				.queryParam("layerIndex", layerIndex)
 				.queryParam("creator", mCreatorId)

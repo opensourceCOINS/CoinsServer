@@ -510,4 +510,24 @@ public class CoinsFormat {
 	 */
 	public static final String CBIMFS_PROPERTY_VALUE_RELATION = "cbimfs:propertyValue";
 
+	/**
+	 * cbim:verificationDate 
+	 */	
+	public static final String CBIM_VERIFICATION_DATE = CBIM + ":verificationDate";
+
+	/**
+	 * cbim:verificationMethod 
+	 */
+	public static final String CBIM_VERIFICATION_METHOD = CBIM + ":verificationMethod";
+
+	/**
+	 * cbim:verificationResult 
+	 */
+	public static final String CBIM_VERIFICATION_RESULT = CBIM + ":verificationResult";
+
+	/**
+	 * cbim:Verification 
+	 */
+	public static final String CBIM_VERIFICATION = CBIM + ":Verification";
+
 }

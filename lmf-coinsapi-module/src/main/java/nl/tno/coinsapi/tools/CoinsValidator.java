@@ -191,6 +191,9 @@ public abstract class CoinsValidator {
 			result.add(new LiteralRelation(CoinsFormat.CBIM_X_COORDINATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
 			result.add(new LiteralRelation(CoinsFormat.CBIM_Y_COORDINATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
 			result.add(new LiteralRelation(CoinsFormat.CBIM_Z_COORDINATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_VERIFICATION_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_VERIFICATION_METHOD, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIM_VERIFICATION_RESULT, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_BOOLEAN));
 			for (Relation rel : result) {
 				if (rel instanceof ResourceRelation) {
 					ResourceRelation relation = (ResourceRelation)rel;

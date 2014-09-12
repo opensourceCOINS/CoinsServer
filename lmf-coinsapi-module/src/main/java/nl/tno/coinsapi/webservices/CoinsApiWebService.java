@@ -40,91 +40,6 @@ import org.openrdf.query.UpdateExecutionException;
 @Path("/" + CoinsApiWebService.PATH)
 public class CoinsApiWebService {
 
-	private static final String OBJECT = "object";
-
-	private static final String LAYERINDEX = "layerindex";
-
-	private static final String LOCATOR = "locator";
-
-	private static final String IS_AFFECTED_BY = "isAffectedBy";
-
-	private static final String IS_FULFILLED_BY = "isFulfilledBy";
-
-	private static final String FUNCTION = "function";
-
-	private static final String FULFILLS = "fulfills";
-
-	private static final String DOCUMENT = "document";
-
-	private static final String NONFUNCTIONALREQUIREMENT = "nonfunctionalrequirement";
-
-	private static final String FUNCTIONFULFILLER = "functionfulfiller";
-
-	private static final String SHAPE = "shape";
-
-	private static final String PHYSICALOBJECT = "physicalobject";
-
-	private static final String PARENT = "parent";
-
-	private static final String CHILD = "child";
-
-	private static final String DEFAULT_VALUE = "defaultValue";
-
-	private static final String VALUE = "value";
-
-	private static final String CATALOGUE_PART = "cataloguePart";
-
-	private static final String FILENAME = "filename";
-
-	private static final String NON_FUNCTIONAL_REQUIREMENT_TYPE = "nonFunctionalRequirementType";
-
-	private static final String END_DATE_PLANNED = "endDatePlanned";
-
-	private static final String START_DATE_PLANNED = "startDatePlanned";
-
-	private static final String TASK_TYPE = "taskType";
-
-	private static final String AFFECTS = "affects";
-
-	private static final String TRANSLATION = "translation";
-
-	private static final String SECONDARY_ORIENTATION = "secondaryOrientation";
-
-	private static final String PRIMARY_ORIENTATION = "primaryOrientation";
-
-	private static final String Z_COORDINATE = "zCoordinate";
-
-	private static final String Y_COORDINATE = "yCoordinate";
-
-	private static final String X_COORDINATE = "xCoordinate";
-
-	private static final String DOCUMENT_URI = "documentUri";
-
-	private static final String DOCUMENT_ALIAS_FILE_PATH = "documentAliasFilePath";
-
-	private static final String DOCUMENT_TYPE = "documentType";
-
-	private static final String MODIFIER = "modifier";
-
-	private static final String DESCRIPTION = "description";
-
-	private static final String OUTPUT = "output";
-
-	private static final String ID = "id";
-
-	private static final String REQUIREMENT_OF = "requirementOf";
-
-	private static final String CREATOR = "creator";
-
-	private static final String USER_ID = "userID";
-
-	private static final String LAYER_INDEX = "layerIndex";
-
-	private static final String NAME = "name";
-
-	private static final String CONTEXT = "context";
-
-	private static final String MODEL_URI = "modelURI";
 
 	private static final String[][] PREFIXES = new String[][] {
 			{ "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
@@ -316,7 +231,7 @@ public class CoinsApiWebService {
 	/**
 	 * Link Performance
 	 */
-	public static final String PATH_LINK_PERFORMANCE = "/link/performance";	
+	public static final String PATH_LINK_PERFORMANCE = "/link/performance";
 	/**
 	 * State stateOf FunctionFulfiller
 	 */
@@ -397,31 +312,83 @@ public class CoinsApiWebService {
 	 * Property value
 	 */
 	public static final String PATH_PROPERTY_VALUE = "/propertyvalue";
-	
+	/**
+	 * Reference Frame
+	 */
+	public static final String PATH_ADD_REFERENCE_FRAME = "/referenceframe";
+	/**
+	 * Verification 
+	 */
+	public static final String PATH_VERIFICATION = "/verification";
 	/**
 	 * Application/json
 	 */
 	public static final String MIME_TYPE = "application/json";
 
-	private static final String MIN_BOUNDING_BOX = "minboundingbox";
-	private static final String MAX_BOUNDING_BOX = "maxboundingbox";
-
+	private static final String MIN_BOUNDING_BOX = "minBoundingBox";
+	private static final String MAX_BOUNDING_BOX = "maxBoundingBox";
 	private static final String UNIT = "unit";
-
-	private static final String VALUEDOMAIN = "valuedomain";
-
-	private static final String PROPERTYTYPE = "propertytype";
-
+	private static final String VALUE_DOMAIN = "valueDomain";
+	private static final String PROPERTY_TYPE = "propertyType";
 	private static final String STATE = "state";
-
-	private static final String PREVIOUSSTATE = "previousstate";
-
+	private static final String NEXT_PARAMETER = "nextParameter";
+	private static final String PARAMETER = "parameter";
+	private static final String EXPLICIT_3D_REPRESENTATION = "explicit3DRepresentation";
+	private static final String OBJECT = "object";
+	private static final String LOCATOR = "locator";
+	private static final String IS_AFFECTED_BY = "isAffectedBy";
+	private static final String IS_FULFILLED_BY = "isFulfilledBy";
+	private static final String FUNCTION = "function";
+	private static final String FULFILLS = "fulfills";
+	private static final String DOCUMENT = "document";
+	private static final String NON_FUNCTIONAL_REQUIREMENT = "nonFunctionalRequirement";
+	private static final String FUNCTION_FULFILLER = "functionFulfiller";
+	private static final String SHAPE = "shape";
+	private static final String PHYSICAL_OBJECT = "physicalObject";
+	private static final String PARENT = "parent";
+	private static final String CHILD = "child";
+	private static final String DEFAULT_VALUE = "defaultValue";
+	private static final String VALUE = "value";
+	private static final String CATALOGUE_PART = "cataloguePart";
+	private static final String FILENAME = "filename";
+	private static final String NON_FUNCTIONAL_REQUIREMENT_TYPE = "nonFunctionalRequirementType";
+	private static final String END_DATE_PLANNED = "endDatePlanned";
+	private static final String START_DATE_PLANNED = "startDatePlanned";
+	private static final String TASK_TYPE = "taskType";
+	private static final String AFFECTS = "affects";
+	private static final String TRANSLATION = "translation";
+	private static final String SECONDARY_ORIENTATION = "secondaryOrientation";
+	private static final String PRIMARY_ORIENTATION = "primaryOrientation";
+	private static final String Z_COORDINATE = "zCoordinate";
+	private static final String Y_COORDINATE = "yCoordinate";
+	private static final String X_COORDINATE = "xCoordinate";
+	private static final String DOCUMENT_URI = "documentUri";
+	private static final String DOCUMENT_ALIAS_FILE_PATH = "documentAliasFilePath";
+	private static final String DOCUMENT_TYPE = "documentType";
+	private static final String MODIFIER = "modifier";
+	private static final String DESCRIPTION = "description";
+	private static final String OUTPUT = "output";
+	private static final String ID = "id";
+	private static final String REQUIREMENT_OF = "requirementOf";
+	private static final String CREATOR = "creator";
+	private static final String USER_ID = "userID";
+	private static final String LAYER_INDEX = "layerIndex";
+	private static final String NAME = "name";
+	private static final String CONTEXT = "context";
+	private static final String MODEL_URI = "modelURI";
+	private static final String PREVIOUS_STATE = "previousState";
 	private static final String PERFORMANCE = "performance";
-
-	private static final String PROPERTYVALUE = "propertyvalue";
-
-	private static final String PERFORMANCEOF = "performanceof";
-
+	private static final String PROPERTY_VALUE = "propertyValue";
+	private static final String PERFORMANCE_OF = "performanceOf";
+	private static final String MALE_TERMINAL = "maleTerminal";
+	private static final String CONNECTION = "connection";
+	private static final String FEMALE_TERMINAL = "femaleTerminal";
+	private static final String ASPECT = "aspect";
+	private static final String VERIFICATION_DATE = "verificationDate";
+	private static final String VERIFICATION_METHOD = "verificationMethod";
+	private static final String VERIFICATION_RESULT = "verificationResult";
+	private static final String REFERENCE_FRAME = "referenceFrame";
+	
 	@Inject
 	private ConfigurationService mConfigurationService;
 
@@ -450,7 +417,13 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Initialize the context
+	 * Initialize the context.
+	 * It is advised to use a separate context for each model you are constructing.
+	 * A context can easily be exported as a COINS container.
+	 * Each context is linked to a modelURI using this initializeContext method.
+	 * Prior to creating COINS objects in a context, the context must be initialized because the COINS
+	 * objects need the modelURI for their name space.
+	 * If you try to initialize a context twice with different modelURIs you will get an error message. 
 	 * 
 	 * @param context
 	 * @param modelURI
@@ -462,13 +435,39 @@ public class CoinsApiWebService {
 	public Response initializeContext(@QueryParam(CONTEXT) String context,
 			@QueryParam(MODEL_URI) String modelURI) {
 		try {
-			mCoinsService.initializeContext(context, modelURI);
-			return Response.ok().build();
+			String result = mCoinsService.initializeContext(context, modelURI);
+			if (result == null) {
+				return Response.ok().build();
+			}
+			return Response
+					.serverError()
+					.entity("The context has been initialized before with modelURI <"
+							+ result + ">").build();
 		} catch (Exception e) {
-			return Response.serverError().build();
+			return Response.serverError().entity(e.toString()).build();
 		}
 	}
 
+	/**
+	 * Add a Reference Frame to the context
+	 * For example http://www.rws.nl/reference_frameworks/rf-rws.20131101.owl
+	 * 
+	 * @param context
+	 * @param referenceFrame
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_ADD_REFERENCE_FRAME)
+	@Consumes(MIME_TYPE)	
+	public Response addReferenceFrame(@QueryParam(CONTEXT) String context, @QueryParam(REFERENCE_FRAME) String referenceFrame) {
+		try {
+			mCoinsService.addReferenceFrame(context, referenceFrame);
+			return Response.ok().build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.toString()).build();
+		}		
+	}
+	
 	/**
 	 * Add the default COINS prefixes
 	 * 
@@ -500,8 +499,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Requirement</B>
 	 * @param layerIndex
@@ -519,7 +516,6 @@ public class CoinsApiWebService {
 	@Path(PATH_REQUIREMENT)
 	@Consumes(MIME_TYPE)
 	public Response createRequirement(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(LAYER_INDEX) int layerIndex,
 			@QueryParam(USER_ID) String userID,
@@ -537,7 +533,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createRequirement(context, modelURI,
+			identifier = mCoinsService.createRequirement(context,
 					name, layerIndex, userID, creator, requirementOf);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -559,8 +555,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            Context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Requirement</B>
 	 * @param layerIndex
@@ -577,7 +571,6 @@ public class CoinsApiWebService {
 	@POST
 	@Path(PATH_REQUIREMENT_FORM)
 	public Response createRequirementForm(@FormParam(CONTEXT) String context,
-			@FormParam(MODEL_URI) String modelURI,
 			@FormParam(NAME) String name,
 			@FormParam(LAYER_INDEX) int layerIndex,
 			@FormParam(USER_ID) String userId,
@@ -595,7 +588,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createRequirement(context, modelURI,
+			identifier = mCoinsService.createRequirement(context,
 					name, layerIndex, userId, creator, requirementOf);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -660,8 +653,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>PersonOrOrganisation</B>
 	 * @return The id of the created <B>PersonOrOrganisation</B>
@@ -671,7 +662,6 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response createPersonOrOrganisation(
 			@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
@@ -682,7 +672,7 @@ public class CoinsApiWebService {
 		String identifier;
 		try {
 			identifier = mCoinsService.createPersonOrOrganisation(context,
-					modelURI, name);
+					name);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -788,7 +778,7 @@ public class CoinsApiWebService {
 	 *            The context or graph
 	 * @param id
 	 *            The identifier of the object
-	 * @param layerindex
+	 * @param layerIndex
 	 *            The layer index
 	 * @param modifier
 	 *            URI to the modifier of the object
@@ -798,10 +788,10 @@ public class CoinsApiWebService {
 	@Path(PATH_LAYERINDEX)
 	@Consumes(MIME_TYPE)
 	public Response setLayerIndex(@QueryParam(CONTEXT) String context,
-			@QueryParam(ID) String id, @QueryParam(LAYERINDEX) int layerindex,
+			@QueryParam(ID) String id, @QueryParam(LAYER_INDEX) int layerIndex,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setLayerIndex(context, id, layerindex, modifier);
+			mCoinsService.setLayerIndex(context, id, layerIndex, modifier);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -822,10 +812,8 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
-	 *            The name of the <B>PhysicalObject</B>
+	 *            The name of the <B>State</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param creator
@@ -836,7 +824,6 @@ public class CoinsApiWebService {
 	@Path(PATH_STATE)
 	@Consumes(MIME_TYPE)
 	public Response createState(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
@@ -847,7 +834,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createState(context, modelURI, name,
+			identifier = mCoinsService.createState(context, name,
 					userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -908,12 +895,106 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Create a new <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param name
+	 *            The name of the <B>Verification</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param verificationDate 
+	 * 			  Verification date (xsd:dateTime formatted String)
+	 * @param verificationMethod
+	 *            Verification method (String) 
+	 * @param verificationResult
+	 *            Verification result (boolean) 
+	 * @param creator
+	 *            URI referring to the user that created this <B>Verification</B>
+	 * @return The id of the created <B>State</B>
+	 */
+	@POST
+	@Path(PATH_VERIFICATION)
+	@Consumes(MIME_TYPE)
+	public Response createVerification(@QueryParam(CONTEXT) String context,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(VERIFICATION_DATE) String verificationDate,
+			@QueryParam(VERIFICATION_METHOD) String verificationMethod,
+			@QueryParam(VERIFICATION_RESULT) boolean verificationResult,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createVerification(context, name,
+					userID, verificationDate, verificationMethod, verificationResult, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when creating the Verification")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>Verification</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>State</B> formatted the way specified by means of the
+	 *         output
+	 */
+	@GET
+	@Path(PATH_VERIFICATION)
+	@Consumes(MIME_TYPE)
+	public Response getVerification(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getVerificationQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>Verification</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Verification</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_VERIFICATION)
+	@Consumes(MIME_TYPE)
+	public Response deleteVerification(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteVerification(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Verification").build();
+	}
+	
+	/**
 	 * Create a new <B>PhysicalObject</B>
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>PhysicalObject</B>
 	 * @param layerIndex
@@ -929,7 +1010,6 @@ public class CoinsApiWebService {
 	@Path(PATH_PHYSICAL_OBJECT)
 	@Consumes(MIME_TYPE)
 	public Response createPhysicalObject(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(LAYER_INDEX) int layerIndex,
 			@QueryParam(USER_ID) String userID,
@@ -942,7 +1022,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPhysicalObject(context, modelURI,
+			identifier = mCoinsService.createPhysicalObject(context,
 					name, layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1008,8 +1088,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Space</B>
 	 * @param layerIndex
@@ -1024,7 +1102,6 @@ public class CoinsApiWebService {
 	@Path(PATH_SPACE)
 	@Consumes(MIME_TYPE)
 	public Response createSpace(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(LAYER_INDEX) int layerIndex,
 			@QueryParam(USER_ID) String userID,
@@ -1037,7 +1114,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createSpace(context, modelURI, name,
+			identifier = mCoinsService.createSpace(context, name,
 					layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1100,8 +1177,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Function</B>
 	 * @param layerIndex
@@ -1116,7 +1191,6 @@ public class CoinsApiWebService {
 	@Path(PATH_FUNCTION)
 	@Consumes(MIME_TYPE)
 	public Response createFunction(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(LAYER_INDEX) int layerIndex,
 			@QueryParam(USER_ID) String userID,
@@ -1133,7 +1207,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createFunction(context, modelURI, name,
+			identifier = mCoinsService.createFunction(context, name,
 					layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1197,8 +1271,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Document</B>
 	 * @param userID
@@ -1211,7 +1283,6 @@ public class CoinsApiWebService {
 	@Path(PATH_DOCUMENT)
 	@Consumes(MIME_TYPE)
 	public Response createDocument(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
@@ -1226,7 +1297,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createDocument(context, modelURI, name,
+			identifier = mCoinsService.createDocument(context, name,
 					userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1290,8 +1361,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Explicit3DRepresentation</B>
 	 * @param userID
@@ -1312,7 +1381,6 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response createExplicit3DRepresentation(
 			@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(DOCUMENT_TYPE) String documentType,
 			@QueryParam(DOCUMENT_ALIAS_FILE_PATH) String documentAliasFilePath,
@@ -1327,7 +1395,7 @@ public class CoinsApiWebService {
 		String identifier;
 		try {
 			identifier = mCoinsService.createExplicit3DRepresentation(context,
-					modelURI, name, documentType, documentAliasFilePath,
+					name, documentType, documentAliasFilePath,
 					documentUri, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1395,8 +1463,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Vector</B>
 	 * @param xCoordinate
@@ -1413,7 +1479,6 @@ public class CoinsApiWebService {
 	@Path(PATH_VECTOR)
 	@Consumes(MIME_TYPE)
 	public Response createVector(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(X_COORDINATE) Double xCoordinate,
 			@QueryParam(Y_COORDINATE) Double yCoordinate,
@@ -1427,7 +1492,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createVector(context, modelURI, name,
+			identifier = mCoinsService.createVector(context, name,
 					xCoordinate, yCoordinate, zCoordinate, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1491,8 +1556,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Locator</B>
 	 * @param primaryOrientation
@@ -1509,7 +1572,6 @@ public class CoinsApiWebService {
 	@Path(PATH_LOCATOR)
 	@Consumes(MIME_TYPE)
 	public Response createLocator(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(PRIMARY_ORIENTATION) String primaryOrientation,
 			@QueryParam(SECONDARY_ORIENTATION) String secondaryOrientation,
@@ -1523,7 +1585,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createLocator(context, modelURI, name,
+			identifier = mCoinsService.createLocator(context, name,
 					primaryOrientation, secondaryOrientation, translation,
 					creator);
 			return Response.ok().entity(identifier).build();
@@ -1588,8 +1650,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Task</B>
 	 * @param affects
@@ -1613,7 +1673,6 @@ public class CoinsApiWebService {
 	@Path(PATH_TASK)
 	@Consumes(MIME_TYPE)
 	public Response createTask(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(AFFECTS) String[] affects,
 			@QueryParam(USER_ID) String userID,
@@ -1633,7 +1692,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createTask(context, modelURI, name,
+			identifier = mCoinsService.createTask(context, name,
 					affects, userID, taskType, startDatePlanned,
 					endDatePlanned, creator);
 			return Response.ok().entity(identifier).build();
@@ -1697,8 +1756,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>NonFunctionalRequirement</B>
 	 * @param layerIndex
@@ -1717,7 +1774,6 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response createNonFunctionalRequirement(
 			@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name,
 			@QueryParam(LAYER_INDEX) int layerIndex,
 			@QueryParam(USER_ID) String userID,
@@ -1736,7 +1792,7 @@ public class CoinsApiWebService {
 		String identifier;
 		try {
 			identifier = mCoinsService.createNonFunctionalRequirement(context,
-					modelURI, name, layerIndex, userID, creator,
+					name, layerIndex, userID, creator,
 					nonFunctionalRequirementType);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1845,8 +1901,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Amount</B>
 	 * @param userID
@@ -1864,7 +1918,6 @@ public class CoinsApiWebService {
 	@Path(PATH_AMOUNT)
 	@Consumes(MIME_TYPE)
 	public Response createAmount(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CATALOGUE_PART) String cataloguePart,
 			@QueryParam(VALUE) int value, @QueryParam(CREATOR) String creator) {
@@ -1876,7 +1929,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createAmount(context, modelURI, name,
+			identifier = mCoinsService.createAmount(context, name,
 					userID, value, cataloguePart, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -1940,8 +1993,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>CataloguePart</B>
 	 * @param userID
@@ -1954,8 +2005,7 @@ public class CoinsApiWebService {
 	@Path(PATH_CATALOGUE_PART)
 	@Consumes(MIME_TYPE)
 	public Response createCataloguePart(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
-			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+		@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
@@ -1965,7 +2015,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createCataloguePart(context, modelURI,
+			identifier = mCoinsService.createCataloguePart(context, 
 					name, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -2031,8 +2081,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Connection</B>
 	 * @param userID
@@ -2045,7 +2093,6 @@ public class CoinsApiWebService {
 	@Path(PATH_CONNECTION)
 	@Consumes(MIME_TYPE)
 	public Response createConnection(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
@@ -2056,7 +2103,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createConnection(context, modelURI,
+			identifier = mCoinsService.createConnection(context, 
 					name, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -2121,8 +2168,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Parameter</B>
 	 * @param userID
@@ -2137,7 +2182,6 @@ public class CoinsApiWebService {
 	@Path(PATH_PARAMETER)
 	@Consumes(MIME_TYPE)
 	public Response createParameter(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(DEFAULT_VALUE) String defaultValue,
 			@QueryParam(CREATOR) String creator) {
@@ -2149,7 +2193,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createParameter(context, modelURI, name,
+			identifier = mCoinsService.createParameter(context, name,
 					userID, defaultValue, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -2218,7 +2262,7 @@ public class CoinsApiWebService {
 	 *            context or graph
 	 * @param explicit3DRepresentation
 	 *            Identifier of the <B>Explicit3DRepresenation</B> object
-	 * @param firstParameter
+	 * @param parameter
 	 *            Identifier of first parameter
 	 * @param modifier
 	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
@@ -2230,12 +2274,12 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkFirstParameter(
 			@QueryParam(CONTEXT) String context,
-			@QueryParam("explicit3DRepresentation") String explicit3DRepresentation,
-			@QueryParam("firstParameter") String firstParameter,
+			@QueryParam(EXPLICIT_3D_REPRESENTATION) String explicit3DRepresentation,
+			@QueryParam(PARAMETER) String parameter,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setFirstParameter(context, explicit3DRepresentation,
-					firstParameter, modifier);
+					parameter, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
@@ -2243,7 +2287,7 @@ public class CoinsApiWebService {
 					.serverError()
 					.entity("Setting first parameter of <"
 							+ explicit3DRepresentation + "> to <"
-							+ firstParameter + "> failed").build();
+							+ parameter + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2255,7 +2299,7 @@ public class CoinsApiWebService {
 	 *            context or graph
 	 * @param performance
 	 *            Identifier of the <B>Performance</B> object
-	 * @param propertyvalue
+	 * @param propertyValue
 	 *            Identifier of <B>PropertyValue</B>
 	 * @param modifier
 	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
@@ -2267,18 +2311,18 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkPropertyValue(@QueryParam(CONTEXT) String context,
 			@QueryParam(PERFORMANCE) String performance,
-			@QueryParam(PROPERTYVALUE) String propertyvalue,
+			@QueryParam(PROPERTY_VALUE) String propertyValue,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkPropertyValue(context, performance,
-					propertyvalue, modifier);
+					propertyValue, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
 					.entity("Setting property value of <" + performance
-							+ "> to <" + propertyvalue + "> failed").build();
+							+ "> to <" + propertyValue + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2291,7 +2335,7 @@ public class CoinsApiWebService {
 	 *            context or graph
 	 * @param performance
 	 *            Identifier of the <B>Performance</B> object
-	 * @param performanceof
+	 * @param performanceOf
 	 *            Identifier of <B>State</B> or <B>FunctionFulfiller</B>
 	 * @param modifier
 	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
@@ -2303,18 +2347,18 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkPerformanceOf(@QueryParam(CONTEXT) String context,
 			@QueryParam(PERFORMANCE) String performance,
-			@QueryParam(PERFORMANCEOF) String performanceof,
+			@QueryParam(PERFORMANCE_OF) String performanceOf,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkPerformanceOf(context, performance,
-					performanceof, modifier);
+					performanceOf, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
 					.entity("Setting performanceOf <" + performance + "> to <"
-							+ performanceof + "> failed").build();
+							+ performanceOf + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2325,7 +2369,7 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            context or graph
-	 * @param object 
+	 * @param object
 	 *            Identifier of <B>State</B> or <B>FunctionFulfiller</B>
 	 * @param performance
 	 *            Identifier of the <B>Performance</B> object
@@ -2375,8 +2419,8 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_NEXT_PARAMETER)
 	@Consumes(MIME_TYPE)
 	public Response linkNextParameter(@QueryParam(CONTEXT) String context,
-			@QueryParam("parameter") String parameter,
-			@QueryParam("nextParameter") String nextParameter,
+			@QueryParam(PARAMETER) String parameter,
+			@QueryParam(NEXT_PARAMETER) String nextParameter,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setNextParameter(context, parameter, nextParameter,
@@ -2534,7 +2578,7 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            Context / Graph
-	 * @param physicalobject
+	 * @param physicalObject
 	 *            id of <B>PhysicalObject</B>
 	 * @param shape
 	 *            id of Explicit3DRepresentation
@@ -2545,17 +2589,17 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_SHAPE)
 	@Consumes(MIME_TYPE)
 	public Response linkShape(@QueryParam(CONTEXT) String context,
-			@QueryParam(PHYSICALOBJECT) String physicalobject,
+			@QueryParam(PHYSICAL_OBJECT) String physicalObject,
 			@QueryParam(SHAPE) String shape,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setShape(context, physicalobject, shape, modifier);
+			mCoinsService.setShape(context, physicalObject, shape, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
-					.entity("Setting physical parent of <" + physicalobject
+					.entity("Setting physical parent of <" + physicalObject
 							+ "> to <" + shape + "> failed").build();
 		}
 		return Response.ok().build();
@@ -2568,7 +2612,7 @@ public class CoinsApiWebService {
 	 *            context or graph
 	 * @param state
 	 *            Identifier of the <B>State</B> object
-	 * @param functionfulfiller
+	 * @param functionFulfiller
 	 *            Identifier of <B>FunctionFulfiller</B>
 	 * @param modifier
 	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
@@ -2580,17 +2624,17 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkCurrentState(@QueryParam(CONTEXT) String context,
 			@QueryParam(STATE) String state,
-			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setCurrentState(context, state, functionfulfiller,
+			mCoinsService.setCurrentState(context, state, functionFulfiller,
 					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
-					.entity("Setting current state of <" + functionfulfiller
+					.entity("Setting current state of <" + functionFulfiller
 							+ "> to <" + state + "> failed").build();
 		}
 		return Response.ok().build();
@@ -2603,7 +2647,7 @@ public class CoinsApiWebService {
 	 *            context or graph
 	 * @param state
 	 *            Identifier of the <B>State</B> object
-	 * @param previousstate
+	 * @param previousState
 	 *            Identifier of <B>PreviousState</B>
 	 * @param modifier
 	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
@@ -2615,10 +2659,10 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkPreviousState(@QueryParam(CONTEXT) String context,
 			@QueryParam(STATE) String state,
-			@QueryParam(PREVIOUSSTATE) String previousstate,
+			@QueryParam(PREVIOUS_STATE) String previousState,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setPreviousState(context, state, previousstate,
+			mCoinsService.setPreviousState(context, state, previousState,
 					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -2626,7 +2670,7 @@ public class CoinsApiWebService {
 			return Response
 					.serverError()
 					.entity("Setting previsous state of <" + state + "> to <"
-							+ previousstate + "> failed").build();
+							+ previousState + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2638,7 +2682,7 @@ public class CoinsApiWebService {
 	 *            context or graph
 	 * @param state
 	 *            Identifier of the <B>State</B> object
-	 * @param functionfulfiller
+	 * @param functionFulfiller
 	 *            Identifier of <B>FunctionFulfiller</B>
 	 * @param modifier
 	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
@@ -2650,10 +2694,10 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkStateOf(@QueryParam(CONTEXT) String context,
 			@QueryParam(STATE) String state,
-			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setStateOf(context, state, functionfulfiller,
+			mCoinsService.setStateOf(context, state, functionFulfiller,
 					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -2661,7 +2705,7 @@ public class CoinsApiWebService {
 			return Response
 					.serverError()
 					.entity("Setting state of <" + state + "> to <"
-							+ functionfulfiller + "> failed").build();
+							+ functionFulfiller + "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2672,9 +2716,9 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            Context or Graph
-	 * @param functionfulfiller
+	 * @param functionFulfiller
 	 *            id of <B>FunctionFulfiller</B>
-	 * @param nonfunctionalrequirement
+	 * @param nonFunctionalRequirement
 	 *            list of <B>NonFunctionalRequirement</B> id's
 	 * @param modifier
 	 *            who did this modification
@@ -2685,12 +2729,12 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkNonFunctionalRequirement(
 			@QueryParam(CONTEXT) String context,
-			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
-			@QueryParam(NONFUNCTIONALREQUIREMENT) String[] nonfunctionalrequirement,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
+			@QueryParam(NON_FUNCTIONAL_REQUIREMENT) String[] nonFunctionalRequirement,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkNonFunctionalRequirement(context,
-					functionfulfiller, nonfunctionalrequirement, modifier);
+					functionFulfiller, nonFunctionalRequirement, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
@@ -2706,7 +2750,7 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            Context or Graph
-	 * @param physicalobject
+	 * @param physicalObject
 	 *            id of <B>PhysicalObject</B>
 	 * @param document
 	 *            list of Document id's
@@ -2718,11 +2762,11 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_DOCUMENT)
 	@Consumes(MIME_TYPE)
 	public Response linkDocument(@QueryParam(CONTEXT) String context,
-			@QueryParam(PHYSICALOBJECT) String physicalobject,
+			@QueryParam(PHYSICAL_OBJECT) String physicalObject,
 			@QueryParam(DOCUMENT) String[] document,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkDocument(context, physicalobject, document,
+			mCoinsService.linkDocument(context, physicalObject, document,
 					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -2739,7 +2783,7 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            Context or Graph
-	 * @param physicalobject
+	 * @param physicalObject
 	 *            <B>PhysicalObject</B> Id
 	 * @param fulfills
 	 *            List containing one or more Function ids
@@ -2751,11 +2795,11 @@ public class CoinsApiWebService {
 	@Consumes(MIME_TYPE)
 	public Response linkPhysicalObjectFulfills(
 			@QueryParam(CONTEXT) String context,
-			@QueryParam(PHYSICALOBJECT) String physicalobject,
+			@QueryParam(PHYSICAL_OBJECT) String physicalObject,
 			@QueryParam(FULFILLS) String[] fulfills,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkPhysicalObjectFulfills(context, physicalobject,
+			mCoinsService.linkPhysicalObjectFulfills(context, physicalObject,
 					fulfills, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -2805,7 +2849,7 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            Context of Graph
-	 * @param functionfulfiller
+	 * @param functionFulfiller
 	 *            <B>FunctionFulfiller</B> id
 	 * @param isAffectedBy
 	 *            id of <B>Task<B> that affects the <B>FunctionFulfiller</B>
@@ -2816,11 +2860,11 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_ISAFFECTEDBY)
 	@Consumes(MIME_TYPE)
 	public Response linkIsAffectedBy(@QueryParam(CONTEXT) String context,
-			@QueryParam(FUNCTIONFULFILLER) String functionfulfiller,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
 			@QueryParam(IS_AFFECTED_BY) String isAffectedBy,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkIsAffectedBy(context, functionfulfiller,
+			mCoinsService.linkIsAffectedBy(context, functionFulfiller,
 					isAffectedBy, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -2911,8 +2955,8 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_FEMALE_TERMINAL)
 	@Consumes(MIME_TYPE)
 	public Response linkFemaleTerminal(@QueryParam(CONTEXT) String context,
-			@QueryParam(LOCATOR) String connection,
-			@QueryParam(MIN_BOUNDING_BOX) String femaleTerminal,
+			@QueryParam(CONNECTION) String connection,
+			@QueryParam(FEMALE_TERMINAL) String femaleTerminal,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkTerminal(context,
@@ -2943,8 +2987,8 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_MALE_TERMINAL)
 	@Consumes(MIME_TYPE)
 	public Response linkMaleTerminal(@QueryParam(CONTEXT) String context,
-			@QueryParam(LOCATOR) String connection,
-			@QueryParam(MIN_BOUNDING_BOX) String maleTerminal,
+			@QueryParam(CONNECTION) String connection,
+			@QueryParam(MALE_TERMINAL) String maleTerminal,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkTerminal(context, CoinsFormat.CBIM_MALE_TERMINAL,
@@ -3019,7 +3063,7 @@ public class CoinsApiWebService {
 	@Path(PATH_VALIDATE)
 	@Produces(MIME_TYPE)
 	public Response validate(@QueryParam(CONTEXT) String context,
-			@QueryParam("aspect") String aspect) {
+			@QueryParam(ASPECT) String aspect) {
 		for (ValidationAspect as : ValidationAspect.values()) {
 			if (as.name().equalsIgnoreCase(aspect)) {
 				List<String> result = mCoinsService.validate(context, as);
@@ -3035,8 +3079,6 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>Performance</B>
 	 * @param userID
@@ -3050,7 +3092,6 @@ public class CoinsApiWebService {
 	@Path(PATH_PERFORMANCE)
 	@Consumes(MIME_TYPE)
 	public Response createPerformance(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
@@ -3061,7 +3102,7 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPerformance(context, modelURI,
+			identifier = mCoinsService.createPerformance(context, 
 					name, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
@@ -3126,15 +3167,13 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param locator
 	 *            Identifier of the locator
 	 * @param name
 	 *            The name of the <B>Terminal</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
-	 * @param layerindex
+	 * @param layerIndex
 	 *            Layer index
 	 * @param creator
 	 *            Identifier of the <B>PersonOrOrganisation</B> that created the
@@ -3145,10 +3184,9 @@ public class CoinsApiWebService {
 	@Path(PATH_TERMINAL)
 	@Consumes(MIME_TYPE)
 	public Response createTerminal(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(LOCATOR) String locator,
-			@QueryParam(LAYERINDEX) int layerindex,
+			@QueryParam(LAYER_INDEX) int layerIndex,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
@@ -3158,8 +3196,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createTerminal(context, modelURI, name,
-					userID, locator, layerindex, creator);
+			identifier = mCoinsService.createTerminal(context, name,
+					userID, locator, layerIndex, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -3222,15 +3260,13 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>PropertyType</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
 	 * @param unit
 	 *            The unit (String) of this property type
-	 * @param valuedomain
+	 * @param valueDomain
 	 *            The valueDomain (cbim:XsdBoolean, cbim:XsdFloat,
 	 *            cbim:XsdString, cbim:XsdInt, cbimfs:CbimCataloguePart,
 	 *            cbimotl:XsdDateTime, cbimotl:CbimParameter)
@@ -3243,10 +3279,9 @@ public class CoinsApiWebService {
 	@Path(PATH_PROPERTY_TYPE)
 	@Consumes(MIME_TYPE)
 	public Response createPropertyType(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(UNIT) String unit,
-			@QueryParam(VALUEDOMAIN) String valuedomain,
+			@QueryParam(VALUE_DOMAIN) String valueDomain,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
@@ -3256,8 +3291,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPropertyType(context, modelURI,
-					name, userID, unit, valuedomain, creator);
+			identifier = mCoinsService.createPropertyType(context, 
+					name, userID, unit, valueDomain, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -3321,13 +3356,11 @@ public class CoinsApiWebService {
 	 * 
 	 * @param context
 	 *            The context or named graph
-	 * @param modelURI
-	 *            The URI of the model
 	 * @param name
 	 *            The name of the <B>PropertyValue</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
-	 * @param propertytype
+	 * @param propertyType
 	 *            ID referring to the <B>PropertyType</B>
 	 * @param value
 	 *            Value of the property
@@ -3340,9 +3373,8 @@ public class CoinsApiWebService {
 	@Path(PATH_PROPERTY_VALUE)
 	@Consumes(MIME_TYPE)
 	public Response createPropertyValue(@QueryParam(CONTEXT) String context,
-			@QueryParam(MODEL_URI) String modelURI,
 			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
-			@QueryParam(PROPERTYTYPE) String propertytype,
+			@QueryParam(PROPERTY_TYPE) String propertyType,
 			@QueryParam(VALUE) String value, @QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
@@ -3352,8 +3384,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPropertyValue(context, modelURI,
-					name, userID, propertytype, value, creator);
+			identifier = mCoinsService.createPropertyValue(context, 
+					name, userID, propertyType, value, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();

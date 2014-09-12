@@ -1,8 +1,12 @@
 package nl.tno.coinsapi.util;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.junit.Assert;
 
@@ -48,6 +52,39 @@ public class TestUtil {
 	public static boolean isEmpty(String pCsvString) {
 		return (pCsvString.replace("name", "").replace(",", "")
 				.replace("value", "").trim().length() == 0);
+	}
+
+	/**
+	 * Print a Map
+	 * @param pMap
+	 */
+	public static void print(Map<String, String> pMap) {
+		List<String> items = new Vector<String>();
+		int length = 0;
+		for (Entry<String,String> entry : pMap.entrySet()) {
+			items.add(entry.getKey());
+			length = Math.max(length, entry.getKey().length());
+		}
+		Collections.sort(items, new Comparator<String>(){
+			@Override
+			public int compare(String o1, String o2) {
+				if (o1.equals("name")) {
+					return -1;
+				}
+				if (o2.equals("name")) {
+					return 1;
+				}
+				return o1.compareTo(o2);
+			}});
+		for (String item : items) {
+			StringBuilder sb = new StringBuilder(item);
+			while (sb.length() < length) {
+				sb.append(' ');
+			}			
+			sb.append(": ");
+			sb.append(pMap.get(item));
+			System.out.println(sb.toString());
+		}
 	}
 
 }

@@ -17,7 +17,6 @@ public interface ICoinsApiService {
 	/**
 	 * @param context
 	 * @param name
-	 * @param modelURI
 	 * @param layerIndex
 	 * @param userId
 	 * @param creator
@@ -29,10 +28,9 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 */
 	public String createRequirement(String context, String name,
-			String modelURI, int layerIndex, String userId, String creator,
-			String requirementOf) throws MarmottaException,
-			InvalidArgumentException, MalformedQueryException,
-			UpdateExecutionException;
+			int layerIndex, String userId, String creator, String requirementOf)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -50,7 +48,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @return the id of the created person or organisation
 	 * @throws MarmottaException
@@ -58,8 +55,8 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createPersonOrOrganisation(String context, String modelURI,
-			String name) throws MarmottaException, InvalidArgumentException,
+	public String createPersonOrOrganisation(String context, String name)
+			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException;
 
 	/**
@@ -78,7 +75,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param layerIndex
 	 * @param userID
@@ -89,8 +85,8 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createPhysicalObject(String context, String modelURI,
-			String name, int layerIndex, String userID, String creator)
+	public String createPhysicalObject(String context, String name,
+			int layerIndex, String userID, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException;
 
@@ -117,7 +113,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param layerIndex
 	 * @param userID
@@ -128,10 +123,10 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createFunction(String context, String modelURI, String name,
-			int layerIndex, String userID, String creator)
-			throws MarmottaException, InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException;
+	public String createFunction(String context, String name, int layerIndex,
+			String userID, String creator) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -149,7 +144,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param creator
@@ -159,10 +153,9 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createDocument(String context, String modelURI, String name,
-			String userID, String creator) throws MarmottaException,
-			InvalidArgumentException, MalformedQueryException,
-			UpdateExecutionException;
+	public String createDocument(String context, String name, String userID,
+			String creator) throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -180,7 +173,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param documentType
 	 * @param documentAliasFilePath
@@ -192,11 +184,11 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createExplicit3DRepresentation(String context,
-			String modelURI, String name, String documentType,
-			String documentAliasFilePath, String documentUri, String creator)
-			throws MarmottaException, InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException;
+	public String createExplicit3DRepresentation(String context, String name,
+			String documentType, String documentAliasFilePath,
+			String documentUri, String creator) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -207,7 +199,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param xCoordinate
 	 * @param yCoordinate
@@ -219,9 +210,9 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createVector(String context, String modelURI, String name,
-			Double xCoordinate, Double yCoordinate, Double zCoordinate,
-			String creator) throws MarmottaException, InvalidArgumentException,
+	public String createVector(String context, String name, Double xCoordinate,
+			Double yCoordinate, Double zCoordinate, String creator)
+			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException;
 
 	/**
@@ -247,7 +238,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param primaryOrientation
 	 * @param secondaryOrientation
@@ -259,7 +249,7 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createLocator(String context, String modelURI, String name,
+	public String createLocator(String context, String name,
 			String primaryOrientation, String secondaryOrientation,
 			String translation, String creator) throws MarmottaException,
 			InvalidArgumentException, MalformedQueryException,
@@ -274,7 +264,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param affects
 	 * @param userID
@@ -288,11 +277,11 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createTask(String context, String modelURI, String name,
-			String[] affects, String userID, String taskType,
-			String startDatePlanned, String endDatePlanned, String creator)
-			throws MarmottaException, InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException;
+	public String createTask(String context, String name, String[] affects,
+			String userID, String taskType, String startDatePlanned,
+			String endDatePlanned, String creator) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -317,7 +306,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param layerIndex
 	 * @param userID
@@ -329,11 +317,11 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createNonFunctionalRequirement(String context,
-			String modelURI, String name, int layerIndex, String userID,
-			String creator, String nonFunctionalRequirementType)
-			throws MarmottaException, InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException;
+	public String createNonFunctionalRequirement(String context, String name,
+			int layerIndex, String userID, String creator,
+			String nonFunctionalRequirementType) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -351,7 +339,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param value
@@ -363,8 +350,8 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createAmount(String context, String modelURI, String name,
-			String userID, int value, String catalogPart, String creator)
+	public String createAmount(String context, String name, String userID,
+			int value, String catalogPart, String creator)
 			throws MarmottaException, InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException;
 
@@ -384,7 +371,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param creator
@@ -394,10 +380,10 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createCataloguePart(String context, String modelURI,
-			String name, String userID, String creator)
-			throws MarmottaException, InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException;
+	public String createCataloguePart(String context, String name,
+			String userID, String creator) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -426,12 +412,13 @@ public interface ICoinsApiService {
 	/**
 	 * @param context
 	 * @param modelURI
+	 * @return null if OK otherwise existing modelURI
 	 * @throws InvalidArgumentException
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public void initializeContext(String context, String modelURI)
+	public String initializeContext(String context, String modelURI)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
 
@@ -669,7 +656,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param layerIndex
 	 * @param userID
@@ -680,10 +666,10 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createSpace(String context, String modelURI, String name,
-			int layerIndex, String userID, String creator)
-			throws InvalidArgumentException, MalformedQueryException,
-			UpdateExecutionException, MarmottaException;
+	public String createSpace(String context, String name, int layerIndex,
+			String userID, String creator) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
 
 	/**
 	 * @param context
@@ -717,7 +703,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param defaultValue
@@ -728,8 +713,8 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createParameter(String context, String modelURI, String name,
-			String userID, String defaultValue, String creator)
+	public String createParameter(String context, String name, String userID,
+			String defaultValue, String creator)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
 
@@ -798,7 +783,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param locator
@@ -810,8 +794,8 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createTerminal(String context, String modelURI, String name,
-			String userID, String locator, int layerindex, String creator)
+	public String createTerminal(String context, String name, String userID,
+			String locator, int layerindex, String creator)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
 
@@ -863,7 +847,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param creator
@@ -873,10 +856,10 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createConnection(String context, String modelURI,
-			String name, String userID, String creator)
-			throws InvalidArgumentException, MalformedQueryException,
-			UpdateExecutionException, MarmottaException;
+	public String createConnection(String context, String name, String userID,
+			String creator) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
 
 	/**
 	 * @param context
@@ -894,7 +877,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param unit
@@ -906,11 +888,10 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createPropertyType(String context, String modelURI,
-			String name, String userID, String unit, String valuedomain,
-			String creator) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+	public String createPropertyType(String context, String name,
+			String userID, String unit, String valuedomain, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 	/**
 	 * @param context
@@ -928,7 +909,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param propertytype
@@ -940,15 +920,13 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createPropertyValue(String context, String modelURI,
-			String name, String userID, String propertytype, String value,
-			String creator) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+	public String createPropertyValue(String context, String name,
+			String userID, String propertytype, String value, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param creator
@@ -958,8 +936,8 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public String createState(String context, String modelURI, String name,
-			String userID, String creator) throws InvalidArgumentException,
+	public String createState(String context, String name, String userID,
+			String creator) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
 
@@ -988,9 +966,9 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void setCurrentState(String context, String state,
-			String functionfulfiller, String modifier) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+			String functionfulfiller, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 	/**
 	 * @param context
@@ -1003,9 +981,9 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void setStateOf(String context, String state,
-			String functionfulfiller, String modifier) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+			String functionfulfiller, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 	/**
 	 * @param context
@@ -1018,9 +996,9 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void setPreviousState(String context, String state,
-			String previousstate, String modifier) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+			String previousstate, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 	/**
 	 * @param context
@@ -1038,7 +1016,6 @@ public interface ICoinsApiService {
 
 	/**
 	 * @param context
-	 * @param modelURI
 	 * @param name
 	 * @param userID
 	 * @param creator
@@ -1048,10 +1025,9 @@ public interface ICoinsApiService {
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
 	 */
-	public String createPerformance(String context, String modelURI,
-			String name, String userID, String creator) throws MarmottaException,
-			InvalidArgumentException, MalformedQueryException,
-			UpdateExecutionException;
+	public String createPerformance(String context, String name, String userID,
+			String creator) throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -1079,9 +1055,9 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void linkPropertyValue(String context, String performance,
-			String propertyvalue, String modifier) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+			String propertyvalue, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 	/**
 	 * @param context
@@ -1094,9 +1070,9 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void linkPerformanceOf(String context, String performance,
-			String performanceof, String modifier) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+			String performanceof, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 	/**
 	 * @param context
@@ -1109,8 +1085,54 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void linkPerformance(String context, String object,
-			String performance, String modifier) throws InvalidArgumentException,
-			MalformedQueryException, UpdateExecutionException,
-			MarmottaException;
+			String performance, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteVerification(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return a verification query
+	 */
+	public String getVerificationQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param name
+	 * @param userID
+	 * @param verificationDate
+	 * @param verificationMethod
+	 * @param verificationResult
+	 * @param creator
+	 * @return id of verification
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public String createVerification(String context, String name,
+			String userID, String verificationDate, String verificationMethod,
+			boolean verificationResult, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param referenceFrame
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void addReferenceFrame(String context, String referenceFrame)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 
 }
