@@ -276,7 +276,7 @@ public class TestCoinsModule {
 		// Set shape
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("physicalObject", steunLinksId)
+				.queryParam("functionFulfiller", steunLinksId)
 				.queryParam("shape", explicit3DSteunLinks)
 				.queryParam("modifier", mCreatorId)
 				.expect()

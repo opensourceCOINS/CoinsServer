@@ -31,6 +31,8 @@ public class TestCoinsApiWebService {
 
 	private static String mCreatorId;
 
+	private static String mModifierId;
+
 	/**
 	 * Setting up Marmotta test service and RestAssured
 	 */
@@ -55,17 +57,8 @@ public class TestCoinsApiWebService {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_INITIALIZE_CONTEXT);
 		// POST PersonOrOrganisation (creator/modifier)
-		ResponseBody body = given()
-				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
-				.queryParam("context", mContext)
-				.queryParam("name", "Pietje Puk")
-				.expect()
-				.statusCode(OK)
-				.when()
-				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_PERSON_OR_ORGANISATION)
-				.body();
-		mCreatorId = body.asString();
+		mCreatorId = createPersonOrOrganisation("Pietje Puk");
+		mModifierId = createPersonOrOrganisation("Klaas vaak");
 	}
 
 	/**
@@ -85,7 +78,7 @@ public class TestCoinsApiWebService {
 				+ CoinsApiWebService.PATH_VERSION);
 		Assert.assertEquals(200, resp.getStatusCode());
 		Assert.assertEquals(CoinsApiWebService.MIME_TYPE, resp.getContentType());
-		Assert.assertEquals("v0.1", resp.getBody().asString());
+		Assert.assertEquals("v0.2", resp.getBody().asString());
 	}
 
 	/**
@@ -124,7 +117,8 @@ public class TestCoinsApiWebService {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_REQUIREMENT).body();
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		// GET requirement
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -163,7 +157,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("id", id)
 				.queryParam("description", "This is a nice description!")
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -197,7 +191,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertEquals("This is a nice description!",
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -206,7 +200,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("id", id)
 				.queryParam("description", "This description is even nicer...")
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -240,7 +234,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertEquals("This description is even nicer...",
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -329,7 +323,8 @@ public class TestCoinsApiWebService {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_REQUIREMENT).body();
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/leunstoel.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/leunstoel.owl"));
 		// GET requirement to check it is available removed
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -389,7 +384,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET non functional requirement
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -430,7 +426,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("id", id)
 				.queryParam("description", "This is a nice description!")
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -467,7 +463,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertEquals("This is a nice description!",
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -516,7 +512,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET PersonOrOrganisation
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -583,7 +580,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_PROPERTY_TYPE).body();
 		// GET Property type
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -668,7 +666,8 @@ public class TestCoinsApiWebService {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_PROPERTY_VALUE).body();
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		// GET Property value
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -749,7 +748,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_PHYSICAL_OBJECT).body();
 		// GET PhysicalObject
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -790,7 +790,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("id", id)
 				.queryParam("description", "Prima zitbank")
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -801,7 +801,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("id", id)
 				.queryParam("layerIndex", 4)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -810,20 +810,20 @@ public class TestCoinsApiWebService {
 		// Link locator
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("object", id)
+				.queryParam("functionFulfiller", id)
 				.queryParam("locator", locatorId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_LINK_LOCATOR);
+						+ CoinsApiWebService.PATH_FUNCTIONFULFILLER_LINK_LOCATOR);
 		// Set current state
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
 				.queryParam("functionFulfiller", id)
 				.queryParam("state", stateId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -856,7 +856,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertEquals("Prima zitbank",
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -947,7 +947,8 @@ public class TestCoinsApiWebService {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_PERFORMANCE).body();
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		// GET Performance
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -987,7 +988,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("performance", id)
 				.queryParam("propertyValue", propertyValueId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -999,7 +1000,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("performance", id)
 				.queryParam("performanceOf", stateId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -1029,7 +1030,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -1078,7 +1079,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET Space
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext).queryParam("id", id)
 				.queryParam("output", "csv").expect().statusCode(OK).when()
@@ -1109,7 +1111,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("id", id)
 				.queryParam("description", "Een ruime foyer")
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -1136,7 +1138,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertEquals("Een ruime foyer",
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -1180,7 +1182,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_FUNCTION).body();
 		// GET function
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -1217,7 +1220,7 @@ public class TestCoinsApiWebService {
 				.queryParam("id", id)
 				.queryParam("description",
 						"This is the description of a function")
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -1249,7 +1252,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertEquals("This is the description of a function",
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -1298,7 +1301,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_DOCUMENT).body();
 		// GET document
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -1392,7 +1396,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET Explicit3dRepresentation
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -1436,7 +1441,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("explicit3DRepresentation", id)
 				.queryParam("parameter", parameterId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -1474,7 +1479,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#description"));
@@ -1526,7 +1531,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET vector
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext).queryParam("id", id)
 				.queryParam("output", "csv").expect().statusCode(OK).when()
@@ -1625,7 +1631,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET locator
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext).queryParam("id", id)
 				.queryParam("output", "csv").expect().statusCode(OK).when()
@@ -1701,7 +1708,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("locator", locatorId)
 				.queryParam("minBoundingBox", minBoundingBoxId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -1712,7 +1719,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("locator", locatorId)
 				.queryParam("maxBoundingBox", maxBoundingBoxId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -1784,7 +1791,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET task
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext).queryParam("id", id)
 				.queryParam("output", "csv").expect().statusCode(OK).when()
@@ -1844,7 +1852,8 @@ public class TestCoinsApiWebService {
 				.body();
 		// GET amount
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext).queryParam("id", id)
 				.queryParam("output", "csv").expect().statusCode(OK).when()
@@ -1907,7 +1916,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_CATALOGUE_PART).body();
 		// GET CataloguePart
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -2006,7 +2016,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_CONNECTION).body();
 		// GET Connection
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -2038,7 +2049,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("connection", id)
 				.queryParam("maleTerminal", maleTerminalId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -2048,7 +2059,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("connection", id)
 				.queryParam("femaleTerminal", femaleTerminalId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -2155,7 +2166,8 @@ public class TestCoinsApiWebService {
 				.post(CoinsApiWebService.PATH + CoinsApiWebService.PATH_STATE)
 				.body();
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		// GET State
 		body = given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext).queryParam("id", id)
@@ -2186,7 +2198,7 @@ public class TestCoinsApiWebService {
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
 				.queryParam("state", id)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.queryParam("previousState", previousStateId)
 				.expect()
 				.statusCode(OK)
@@ -2197,19 +2209,19 @@ public class TestCoinsApiWebService {
 		// Set performance
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("object", id)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("state", id)
+				.queryParam("modifier", mModifierId)
 				.queryParam("performance", performanceId)
 				.expect()
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_LINK_PERFORMANCE);
+						+ CoinsApiWebService.PATH_LINK_STATE_PERFORMANCE);
 		// Set stateOf
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
 				.queryParam("functionFulfiller", physicalObjectId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.queryParam("state", id)
 				.expect()
 				.statusCode(OK)
@@ -2235,7 +2247,7 @@ public class TestCoinsApiWebService {
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertEquals(previousStateId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#previousState"));
@@ -2308,7 +2320,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("child", child)
 				.queryParam("parent", parentA)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -2334,7 +2346,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("child", child)
 				.queryParam("parent", parentB)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -2387,7 +2399,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("child", child)
 				.queryParam("parent", parentA)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -2408,7 +2420,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("child", child)
 				.queryParam("parent", parentB)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -2444,7 +2456,8 @@ public class TestCoinsApiWebService {
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_PARAMETER).body();
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -2490,7 +2503,7 @@ public class TestCoinsApiWebService {
 				.queryParam("context", mContext)
 				.queryParam("parameter", id)
 				.queryParam("nextParameter", nextParameterId)
-				.queryParam("modifier", mCreatorId)
+				.queryParam("modifier", mModifierId)
 				.expect()
 				.statusCode(OK)
 				.when()
@@ -2520,7 +2533,7 @@ public class TestCoinsApiWebService {
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#nextParameter"));
 		Assert.assertEquals(mCreatorId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#creator"));
-		Assert.assertEquals(mCreatorId,
+		Assert.assertEquals(mModifierId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
@@ -2574,7 +2587,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_TERMINAL).body();
 		// GET terminal
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -2630,6 +2644,12 @@ public class TestCoinsApiWebService {
 	 */
 	@Test
 	public void testVerification() throws JsonProcessingException {
+		String requirementId = createRequirement();
+		String nonFunctionalRequirementId = createNonFunctionalRequirement();
+		String physicalObjectId = createPhysicalObject();
+		String performerId = createPersonOrOrganisation("Bassie");
+		String plannedPerformerId = createPersonOrOrganisation("Adriaan");
+		String authorizer = createPersonOrOrganisation("Kees");
 		// POST Verification
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -2647,7 +2667,8 @@ public class TestCoinsApiWebService {
 						+ CoinsApiWebService.PATH_VERIFICATION).body();
 		// GET verification
 		String id = body.asString();
-		Assert.assertTrue(id.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
+		Assert.assertTrue(id
+				.startsWith("http://www.coinsweb.nl/zeer-eenvoudige-casus/zitbank.owl"));
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -2676,6 +2697,269 @@ public class TestCoinsApiWebService {
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#creator"));
 		Assert.assertNotNull(result
 				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#verificationRequirement"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/cbimfs.owl#verificationRequirement"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/cbimfs.owl#plannedVerificationPerformer"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationPerformer"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizedBy"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationFunctionFulfiller"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationDefects"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationMeasures"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationRemarks"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedRemarks"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedVerificationMethod"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedVerificationDate"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedWorkPackage"));
+		Assert.assertNull(result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#verificationRisks"));
+		// Link requirement
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("requirement", requirementId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_VERIFICATION_REQUIREMENT);
+		// Link physical object (function fulfiller)
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("functionFulfiller", physicalObjectId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_VERIFICATION_FUNCTION_FULFILLER);
+		// Link non functional requirement
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("requirement", nonFunctionalRequirementId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_VERIFICATION_NON_FUNCTIONAL_REQUIREMENT);
+		// Link performer
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("performer", performerId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_VERIFICATION_PERFORMER);
+		// Link planned performer
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("performer", plannedPerformerId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_VERIFICATION_PLANNED_PERFORMER);
+		// Link authorizer
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("authorizer", authorizer)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_VERIFICATION_AUTHORIZED_BY);
+		// Set authorization date
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("authorizationDate", "2004-09-01T08:00:00.000Z")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_AUTHORIZATION_DATE);
+		// Set authorization remarks
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("authorizationRemarks", "Authorization remarks")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_AUTHORIZATION_REMARKS);
+		// Set authorization defects
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("authorizationDefects", "Authorization defects")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_AUTHORIZATION_DEFECTS);
+		// Set authorization measures
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("authorizationMeasures", "Authorization measures")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_AUTHORIZATION_MEASURES);
+		// Set planned remarks
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("plannedRemarks", "Planned remarks")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_PLANNED_REMARKS);
+		// Set planned date
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("plannedDate", "2007-09-01T08:00:00.000Z")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_PLANNED_DATE);
+		// Set planned method
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("plannedMethod", "Planned method")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_PLANNED_METHOD);
+		// Set planned work package
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("plannedWorkPackage", "Planned work package")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_PLANNED_WORK_PACKAGE);
+		// Set risks
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("verification", id)
+				.queryParam("risks", "These are the risks")
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION_RISKS);		
+
+		// Test
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_VERIFICATION).body();
+		result = TestUtil.toKeyValueMapping(body.asString());
+		Assert.assertEquals("Verification",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#name"));
+		Assert.assertEquals("V1",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#userID"));
+		Assert.assertEquals("Slaan met hamer", result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationMethod"));
+		Assert.assertEquals("false", result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationResult"));
+		Assert.assertEquals("2010-09-01T08:00:00.000Z", result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationDate"));
+		Assert.assertEquals("http://www.coinsweb.nl/cbim-1.1.owl#Verification",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(mCreatorId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
+		Assert.assertEquals("2004-09-01T08:00:00.000Z", result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationDate"));
+		Assert.assertEquals(
+				requirementId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationRequirement"));
+		Assert.assertEquals(
+				nonFunctionalRequirementId,
+				result.get("http://www.coinsweb.nl/c-bim-fs.owl#verificationRequirement"));
+		Assert.assertEquals(
+				performerId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationPerformer"));
+		Assert.assertNull(
+				plannedPerformerId,
+				result.get("http://www.coinsweb.nl/cbimfs.owl#plannedVerificationPerformer"));
+		Assert.assertEquals(
+				physicalObjectId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#verificationFunctionFulfiller"));
+		Assert.assertEquals(authorizer,
+				result.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizedBy"));
+		Assert.assertEquals("Authorization remarks", result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationRemarks"));
+		Assert.assertEquals("Authorization defects", result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationDefects"));
+		Assert.assertEquals("Authorization measures", result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#authorizationMeasures"));
+		Assert.assertEquals("Planned remarks", result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedRemarks"));
+		Assert.assertEquals("2007-09-01T08:00:00.000Z", result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedVerificationDate"));
+		Assert.assertEquals("Planned method", result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedVerificationMethod"));
+		Assert.assertEquals("Planned work package",result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#plannedWorkPackage"));
+		Assert.assertEquals("These are the risks",result
+				.get("http://www.coinsweb.nl/c-bim-fs.owl#verificationRisks"));
 		validate(mContext);
 		// DELETE Verification
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -2700,7 +2984,87 @@ public class TestCoinsApiWebService {
 		Assert.assertTrue(TestUtil.isEmpty(body.asString()));
 	}
 
-	private String createLocator() {
+	private static String createPersonOrOrganisation(String pName) {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", pName)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PERSON_OR_ORGANISATION)
+				.body();
+		return body.asString();
+	}
+
+	private static String createPhysicalObject() {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Zitbank")
+				.queryParam("layerIndex", 2)
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "B1")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PHYSICAL_OBJECT).body();
+		return body.asString();
+	}
+
+	private static String createNonFunctionalRequirement() {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "non functional requirement name")
+				.queryParam("layerIndex", 2)
+				.queryParam("creator", mCreatorId)
+				.queryParam("nonFunctionalRequirementType", "A8")
+				.queryParam("userID", "B1.1")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_NON_FUNCTIONAL_REQUIREMENT)
+				.body();
+		return body.asString();
+	}
+
+	private static String createRequirement() {
+		// Post function
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "This is a function")
+				.queryParam("layerIndex", 3)
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "C12")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_FUNCTION).body();
+		String functionId = body.asString();
+		// POST requirement
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "requirement name")
+				.queryParam("layerIndex", 3)
+				.queryParam("creator", mCreatorId)
+				.queryParam("requirementOf", functionId)
+				.queryParam("userID", "B1.1")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_REQUIREMENT).body();
+		return body.asString();
+	}
+
+	private static String createLocator() {
 		// POST vectors
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)

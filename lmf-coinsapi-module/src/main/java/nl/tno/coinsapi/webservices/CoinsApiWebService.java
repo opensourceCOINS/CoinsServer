@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -23,6 +22,7 @@ import javax.ws.rs.core.Response;
 import nl.tno.coinsapi.CoinsFormat;
 import nl.tno.coinsapi.services.ICoinsApiService;
 import nl.tno.coinsapi.services.ICoinsDocFileService;
+import nl.tno.coinsapi.tools.QueryBuilder.FieldType;
 import nl.tno.coinsapi.tools.ValidationAspect;
 
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
@@ -39,7 +39,6 @@ import org.openrdf.query.UpdateExecutionException;
 @ApplicationScoped
 @Path("/" + CoinsApiWebService.PATH)
 public class CoinsApiWebService {
-
 
 	private static final String[][] PREFIXES = new String[][] {
 			{ "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
@@ -71,10 +70,6 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_NON_FUNCTIONAL_REQUIREMENT = "/nonfunctionalrequirement";
 	/**
-	 * Requirement (FORM)
-	 */
-	public static final String PATH_REQUIREMENT_FORM = "/requirementform";
-	/**
 	 * PersonOrOrganisation
 	 */
 	public static final String PATH_PERSON_OR_ORGANISATION = "/personorganisation";
@@ -82,6 +77,22 @@ public class CoinsApiWebService {
 	 * State
 	 */
 	public static final String PATH_STATE = "/state";
+	/**
+	 * State stateOf FunctionFulfiller
+	 */
+	public static final String PATH_LINK_STATE_OF = PATH_STATE + "/stateof";
+
+	/**
+	 * Link Performance
+	 */
+	public static final String PATH_LINK_STATE_PERFORMANCE = PATH_STATE
+			+ "/performance";
+
+	/**
+	 * previous state of state
+	 */
+	public static final String PATH_LINK_PREVIOUS_STATE = PATH_STATE
+			+ "/previousstate";
 	/**
 	 * Description
 	 */
@@ -91,9 +102,37 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_FUNCTION = "/function";
 	/**
+	 * Link a function to a function fulfiller (isFulfilledBy)
+	 */
+	public static final String PATH_LINK_FULFILLED_BY = PATH_FUNCTION
+			+ "/isfulfilledby";
+	/**
 	 * PhysicalObject
 	 */
 	public static final String PATH_PHYSICAL_OBJECT = "/physicalobject";
+	/**
+	 * PhysicalObject isSituatedIn Space
+	 */
+	public static final String PATH_LINK_IS_SITUATED_IN = PATH_PHYSICAL_OBJECT
+			+ "/issituatedin";
+
+	/**
+	 * Edit physical parent relation
+	 */
+	public static final String PATH_LINK_PHYSICAL_PARENT = PATH_PHYSICAL_OBJECT
+			+ "/physicalparent";
+	/**
+	 * Add a physical child relation
+	 */
+	public static final String PATH_LINK_PHYSICAL_CHILD = PATH_PHYSICAL_OBJECT
+			+ "/physicalchild";
+
+	/**
+	 * Link Documents to a PhysicalObject
+	 */
+	public static final String PATH_LINK_DOCUMENT = PATH_PHYSICAL_OBJECT
+			+ "/document";
+
 	/**
 	 * Document
 	 */
@@ -106,10 +145,30 @@ public class CoinsApiWebService {
 	 * Locator
 	 */
 	public static final String PATH_LOCATOR = "/locator";
+
+	/**
+	 * Link a max bounding box to a locator
+	 */
+	public static final String PATH_LINK_MAX_BOUNDING_BOX = PATH_LOCATOR
+			+ "/maxboundingbox";
+
+	/**
+	 * Link a min bounding box to a locator
+	 */
+	public static final String PATH_LINK_MIN_BOUNDING_BOX = PATH_LOCATOR
+			+ "/minboundingbox";
+
 	/**
 	 * Explicit3DRepresentation
 	 */
 	public static final String PATH_EXPLICIT_3D_REPRESENTATION = "/explicit3drepresentation";
+
+	/**
+	 * Add the first parameter to an Explicit3DRepresentation
+	 */
+	public static final String PATH_LINK_FIRST_PARAMETER = PATH_EXPLICIT_3D_REPRESENTATION
+			+ "/firstparameter";
+
 	/**
 	 * Task
 	 */
@@ -119,9 +178,25 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_PERFORMANCE = "/performance";
 	/**
+	 * Performance of State/FunctionFulfiller
+	 */
+	public static final String PATH_LINK_PERFORMANCEOF = PATH_PERFORMANCE
+			+ "/performanceof";
+	/**
+	 * Link a property value to Performance
+	 */
+	public static final String PATH_LINK_PROPERTY_VALUE = PATH_PERFORMANCE
+			+ "/propertyvalue";
+	/**
 	 * Amount
 	 */
 	public static final String PATH_AMOUNT = "/amount";
+	/**
+	 * Link a Locator to an Amount/FunctionFulfiller/Terminal
+	 */
+	public static final String PATH_AMOUNT_LINK_LOCATOR = PATH_AMOUNT
+			+ "/locator";
+
 	/**
 	 * CataloguePart
 	 */
@@ -130,122 +205,80 @@ public class CoinsApiWebService {
 	 * Connection
 	 */
 	public static final String PATH_CONNECTION = "/connection";
-	/**
-	 * References to documents from COINS containers
-	 */
-	public static final String PATH_DOCUMENT_REFERENCE = "/doc";
-	/**
-	 * Initialize the context
-	 */
-	public static final String PATH_INITIALIZE_CONTEXT = "/initializecontext";
-	/**
-	 * Set the layerindex
-	 */
-	public static final String PATH_LAYERINDEX = "/layerindex";
-	/**
-	 * Edit physical parent relation
-	 */
-	public static final String PATH_LINK_PHYSICAL_PARENT = "/link/physicalparent";
-	/**
-	 * Link a property value to Performance
-	 */
-	public static final String PATH_LINK_PROPERTY_VALUE = "/link/propertyvalue";
-	/**
-	 * Add a physical child relation
-	 */
-	public static final String PATH_LINK_PHYSICAL_CHILD = "/link/physicalchild";
-	/**
-	 * Performance of State/FunctionFulfiller
-	 */
-	public static final String PATH_LINK_PERFORMANCEOF = "/link/performanceof";
-	/**
-	 * Edit spatial parent relation
-	 */
-	public static final String PATH_LINK_SPATIAL_PARENT = "/link/spatialparent";
-	/**
-	 * Add a spatial child relation
-	 */
-	public static final String PATH_LINK_SPATIAL_CHILD = "/link/spatialchild";
-	/**
-	 * Link NonFunctionalRequirements to a PhysicalObject
-	 */
-	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = "/link/nonfunctionalrequirement";
-
-	/**
-	 * Link a max bounding box to a locator
-	 */
-	public static final String PATH_LINK_MAX_BOUNDING_BOX = "/link/maxboundingbox";
-
-	/**
-	 * Link a min bounding box to a locator
-	 */
-	public static final String PATH_LINK_MIN_BOUNDING_BOX = "/link/minboundingbox";
 
 	/**
 	 * Link a male terminal to a connection
 	 */
-	public static final String PATH_LINK_MALE_TERMINAL = "/link/maleterminal";
+	public static final String PATH_LINK_MALE_TERMINAL = PATH_CONNECTION
+			+ "/maleterminal";
 
 	/**
 	 * Link a female terminal to a connection
 	 */
-	public static final String PATH_LINK_FEMALE_TERMINAL = "/link/femaleterminal";
-	/**
-	 * Link Documents to a PhysicalObject
-	 */
-	public static final String PATH_LINK_DOCUMENT = "/link/document";
+	public static final String PATH_LINK_FEMALE_TERMINAL = PATH_CONNECTION
+			+ "/femaleterminal";
 
 	/**
-	 * Link a function to a function fulfiller (isFulfilledBy)
+	 * References to documents from COINS containers
 	 */
-	public static final String PATH_LINK_FULFILLED_BY = "/link/isfulfilledby";
+	public static final String PATH_DOCUMENT_REFERENCE = "/doc";
 
 	/**
-	 * Link a function fulfiller to a function (fulfills)
+	 * Initialize the context
 	 */
-	public static final String PATH_LINK_FULFILLS = "/link/fulfills";
+	public static final String PATH_INITIALIZE_CONTEXT = "/initializecontext";
 
 	/**
-	 * Link an Explicit3DRepresentation to a PhysicalObject
+	 * Set the layerindex
 	 */
-	public static final String PATH_LINK_SHAPE = "/link/shape";
+	public static final String PATH_LAYERINDEX = "/layerindex";
 
 	/**
-	 * Link a Locator to an Amount/FunctionFulfiller/Terminal
+	 * Function fulfiller (Physical object/Space)
 	 */
-	public static final String PATH_LINK_LOCATOR = "/link/locator";
+	public static final String PATH_FUNCTION_FULFILLER = "/functionfulfiller";
 
 	/**
-	 * A Physical object affected by a task
+	 * Link NonFunctionalRequirements to a Function Fulfiller
 	 */
-	public static final String PATH_LINK_ISAFFECTEDBY = "/link/isaffectedby";
+	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = PATH_FUNCTION_FULFILLER
+			+ "/nonfunctionalrequirement";
+
+	/**
+	 * Link Performance
+	 */
+	public static final String PATH_LINK_FUNCTION_FULFILLER_PERFORMANCE = PATH_FUNCTION_FULFILLER
+			+ "/performance";
 
 	/**
 	 * currentState of FunctionFulfiller
 	 */
-	public static final String PATH_LINK_CURRENT_STATE = "/link/currentstate";
-	/**
-	 * previous state of function state
-	 */
-	public static final String PATH_LINK_PREVIOUS_STATE = "/link/previousstate";
-	/**
-	 * Link Performance
-	 */
-	public static final String PATH_LINK_PERFORMANCE = "/link/performance";
-	/**
-	 * State stateOf FunctionFulfiller
-	 */
-	public static final String PATH_LINK_STATE_OF = "/link/stateof";
+	public static final String PATH_LINK_CURRENT_STATE = PATH_FUNCTION_FULFILLER
+			+ "/currentstate";
 
 	/**
-	 * Add an Explicit3DRepresentation to a parameter
+	 * A Function fulfiller affected by a task
 	 */
-	public static final String PATH_LINK_FIRST_PARAMETER = "/link/firstparameter";
+	public static final String PATH_LINK_ISAFFECTEDBY = PATH_FUNCTION_FULFILLER
+			+ "/isaffectedby";
 
 	/**
-	 * Add a parameter to the next one
+	 * Link a function fulfiller to a locator
 	 */
-	public static final String PATH_LINK_NEXT_PARAMETER = "/link/nextparameter";
+	public static final String PATH_FUNCTIONFULFILLER_LINK_LOCATOR = PATH_FUNCTION_FULFILLER
+			+ "/locator";
+
+	/**
+	 * Link an Explicit3DRepresentation to a FunctionFulfiller
+	 */
+	public static final String PATH_LINK_SHAPE = PATH_FUNCTION_FULFILLER
+			+ "/shape";
+
+	/**
+	 * Link a function fulfiller to a function (fulfills)
+	 */
+	public static final String PATH_LINK_FULFILLS = PATH_FUNCTION_FULFILLER
+			+ "/fulfills";
 
 	/**
 	 * Validate
@@ -285,25 +318,49 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_ADD_ATTRIBUTE_RESOURCE = PATH_ADD_ATTRIBUTE
 			+ "/resource";
-
 	/**
 	 * Add attribute date
 	 */
 	public static final String PATH_ADD_ATTRIBUTE_DATE = PATH_ADD_ATTRIBUTE
 			+ "/date";
-
 	/**
 	 * Add a space object
 	 */
 	public static final String PATH_SPACE = "/space";
 	/**
+	 * PhysicalObject isSituatedIn Space
+	 */
+	public static final String PATH_LINK_SITUATES = PATH_SPACE
+			+ "/situates";
+	/**
+	 * Edit spatial parent relation
+	 */
+	public static final String PATH_LINK_SPATIAL_PARENT = PATH_SPACE
+			+ "/spatialparent";
+	/**
+	 * Add a spatial child relation
+	 */
+	public static final String PATH_LINK_SPATIAL_CHILD = PATH_SPACE
+			+ "/spatialchild";
+	/**
 	 * Parameter
 	 */
 	public static final String PATH_PARAMETER = "/parameter";
 	/**
+	 * Add a parameter to the next one
+	 */
+	public static final String PATH_LINK_NEXT_PARAMETER = PATH_PARAMETER
+			+ "/nextparameter";
+
+	/**
 	 * Terminal
 	 */
 	public static final String PATH_TERMINAL = "/terminal";
+	/**
+	 * Terminal locator
+	 */
+	public static final String PATH_TERMINAL_LINK_LOCATOR = PATH_TERMINAL
+			+ "/locator";
 	/**
 	 * Property type
 	 */
@@ -317,9 +374,95 @@ public class CoinsApiWebService {
 	 */
 	public static final String PATH_ADD_REFERENCE_FRAME = "/referenceframe";
 	/**
-	 * Verification 
+	 * Verification
 	 */
 	public static final String PATH_VERIFICATION = "/verification";
+	/**
+	 * Link function fulfiller to Verification
+	 * (cbim:verificationFunctionFulfiller)
+	 */
+	public static final String PATH_LINK_VERIFICATION_FUNCTION_FULFILLER = PATH_VERIFICATION
+			+ "/functionfulfiller";
+
+	/**
+	 * Link PersonOrOrganisation to Verification
+	 * (cbimfs:plannedVerificationPerformer)
+	 */
+	public static final String PATH_LINK_VERIFICATION_PLANNED_PERFORMER = PATH_VERIFICATION
+			+ "/plannedperformer";
+
+	/**
+	 * Link PersonOrOrganisation to Verification
+	 * (cbimfs:verificationAuthorizedBy)
+	 */
+	public static final String PATH_LINK_VERIFICATION_AUTHORIZED_BY = PATH_VERIFICATION
+			+ "/authorizedby";
+
+	/**
+	 * Link NonFunctionalRequirement to Verification
+	 * (cbimfs:verificationRequirement)
+	 */
+	public static final String PATH_LINK_VERIFICATION_NON_FUNCTIONAL_REQUIREMENT = PATH_VERIFICATION
+			+ "/nonfunctionalrequirement";
+
+	/**
+	 * Link Requirement to Verification (cbim:verificationRequirement)
+	 */
+	public static final String PATH_LINK_VERIFICATION_REQUIREMENT = PATH_VERIFICATION
+			+ "/requirement";
+
+	/**
+	 * Link performer(PersonOrOrganisation) to Verification
+	 * (cbim:verificationPerformer)
+	 */
+	public static final String PATH_LINK_VERIFICATION_PERFORMER = PATH_VERIFICATION
+			+ "/performer";
+
+	/**
+	 * Verification authorization date
+	 */
+	public static final String PATH_VERIFICATION_AUTHORIZATION_DATE = PATH_VERIFICATION
+			+ "/authorizationdate";
+	/**
+	 * Verification authorization defects
+	 */
+	public static final String PATH_VERIFICATION_AUTHORIZATION_DEFECTS = PATH_VERIFICATION
+			+ "/authorizationdefects";
+	/**
+	 * Verification authorization measures
+	 */
+	public static final String PATH_VERIFICATION_AUTHORIZATION_MEASURES = PATH_VERIFICATION
+			+ "/authorizationmeasures";
+	/**
+	 * Verification authorization remarks
+	 */
+	public static final String PATH_VERIFICATION_AUTHORIZATION_REMARKS = PATH_VERIFICATION
+			+ "/authorizationremarks";
+	/**
+	 * Verification planned remarks
+	 */
+	public static final String PATH_VERIFICATION_PLANNED_REMARKS = PATH_VERIFICATION
+			+ "/plannedremarks";
+	/**
+	 * Planned verification date
+	 */
+	public static final String PATH_VERIFICATION_PLANNED_DATE = PATH_VERIFICATION
+			+ "/planneddate";
+	/**
+	 * Planned verification method
+	 */
+	public static final String PATH_VERIFICATION_PLANNED_METHOD = PATH_VERIFICATION
+			+ "/plannedmethod";
+	/**
+	 * Planned verification work package
+	 */
+	public static final String PATH_VERIFICATION_PLANNED_WORK_PACKAGE = PATH_VERIFICATION
+			+ "/plannedworkpackage";
+	/**
+	 * Verification risks
+	 */
+	public static final String PATH_VERIFICATION_RISKS = PATH_VERIFICATION
+			+ "/risks";
 	/**
 	 * Application/json
 	 */
@@ -388,7 +531,23 @@ public class CoinsApiWebService {
 	private static final String VERIFICATION_METHOD = "verificationMethod";
 	private static final String VERIFICATION_RESULT = "verificationResult";
 	private static final String REFERENCE_FRAME = "referenceFrame";
-	
+	private static final String VERIFICATION = "verification";
+	private static final String PERFORMER = "performer";
+	private static final String REQUIREMENT = "requirement";
+	private static final String AUTHORIZER = "authorizer";
+	private static final String AUTHORIZATION_DATE = "authorizationDate";
+	private static final String AUTHORIZATION_DEFECTS = "authorizationDefects";
+	private static final String AUTHORIZATION_MEASURES = "authorizationMeasures";
+	private static final String AUTHORIZATION_REMARKS = "authorizationRemarks";
+	private static final String PLANNED_REMARKS = "plannedRemarks";
+	private static final String PLANNED_DATE = "plannedDate";
+	private static final String PLANNED_METHOD = "plannedMethod";
+	private static final String PLANNED_WORKPACKAGE = "plannedWorkPackage";
+	private static final String RISKS = "risks";
+	private static final String AMOUNT = "amount";
+	private static final String TERMINAL = "terminal";
+	private static final String SPACE = "space";
+
 	@Inject
 	private ConfigurationService mConfigurationService;
 
@@ -413,17 +572,17 @@ public class CoinsApiWebService {
 	@GET
 	@Produces(MIME_TYPE)
 	public Response getVersion() {
-		return Response.ok().entity("v0.1").build();
+		return Response.ok().entity("v0.2").build();
 	}
 
 	/**
-	 * Initialize the context.
-	 * It is advised to use a separate context for each model you are constructing.
-	 * A context can easily be exported as a COINS container.
-	 * Each context is linked to a modelURI using this initializeContext method.
-	 * Prior to creating COINS objects in a context, the context must be initialized because the COINS
-	 * objects need the modelURI for their name space.
-	 * If you try to initialize a context twice with different modelURIs you will get an error message. 
+	 * Initialize the context. It is advised to use a separate context for each
+	 * model you are constructing. A context can easily be exported as a COINS
+	 * container. Each context is linked to a modelURI using this
+	 * initializeContext method. Prior to creating COINS objects in a context,
+	 * the context must be initialized because the COINS objects need the
+	 * modelURI for their name space. If you try to initialize a context twice
+	 * with different modelURIs you will get an error message.
 	 * 
 	 * @param context
 	 * @param modelURI
@@ -449,8 +608,8 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Add a Reference Frame to the context
-	 * For example http://www.rws.nl/reference_frameworks/rf-rws.20131101.owl
+	 * Add a Reference Frame to the context For example
+	 * http://www.rws.nl/reference_frameworks/rf-rws.20131101.owl
 	 * 
 	 * @param context
 	 * @param referenceFrame
@@ -458,16 +617,17 @@ public class CoinsApiWebService {
 	 */
 	@POST
 	@Path(PATH_ADD_REFERENCE_FRAME)
-	@Consumes(MIME_TYPE)	
-	public Response addReferenceFrame(@QueryParam(CONTEXT) String context, @QueryParam(REFERENCE_FRAME) String referenceFrame) {
+	@Consumes(MIME_TYPE)
+	public Response addReferenceFrame(@QueryParam(CONTEXT) String context,
+			@QueryParam(REFERENCE_FRAME) String referenceFrame) {
 		try {
 			mCoinsService.addReferenceFrame(context, referenceFrame);
 			return Response.ok().build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.toString()).build();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Add the default COINS prefixes
 	 * 
@@ -533,63 +693,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createRequirement(context,
-					name, layerIndex, userID, creator, requirementOf);
-			return Response.ok().entity(identifier).build();
-		} catch (MarmottaException e) {
-			e.printStackTrace();
-		} catch (InvalidArgumentException e) {
-			e.printStackTrace();
-		} catch (MalformedQueryException e) {
-			e.printStackTrace();
-		} catch (UpdateExecutionException e) {
-			e.printStackTrace();
-		}
-		return Response.serverError()
-				.entity("Something went wrong when creating the requirement")
-				.build();
-	}
-
-	/**
-	 * Create a new <B>Requirement</B> by means of a HTML form
-	 * 
-	 * @param context
-	 *            Context or graph
-	 * @param name
-	 *            The name of the <B>Requirement</B>
-	 * @param layerIndex
-	 *            The layer index
-	 * @param userId
-	 *            A user defined identifier (for convenience)
-	 * @param creator
-	 *            URI referring to the user that created this <B>Requirement</B>
-	 * @param requirementOf
-	 *            URI referring to the function this <B>Requirement</B> is part
-	 *            of
-	 * @return The id of the created requirement
-	 */
-	@POST
-	@Path(PATH_REQUIREMENT_FORM)
-	public Response createRequirementForm(@FormParam(CONTEXT) String context,
-			@FormParam(NAME) String name,
-			@FormParam(LAYER_INDEX) int layerIndex,
-			@FormParam(USER_ID) String userId,
-			@FormParam(CREATOR) String creator,
-			@FormParam(REQUIREMENT_OF) String requirementOf) {
-		if (name == null) {
-			return Response.serverError().entity("Name cannot be null").build();
-		}
-		if (userId == null) {
-			return Response.serverError().entity("Userid cannot be null")
-					.build();
-		}
-		if (context == null) {
-			context = mConfigurationService.getDefaultContext();
-		}
-		String identifier;
-		try {
-			identifier = mCoinsService.createRequirement(context,
-					name, layerIndex, userId, creator, requirementOf);
+			identifier = mCoinsService.createRequirement(context, name,
+					layerIndex, userID, creator, requirementOf);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -661,8 +766,7 @@ public class CoinsApiWebService {
 	@Path(PATH_PERSON_OR_ORGANISATION)
 	@Consumes(MIME_TYPE)
 	public Response createPersonOrOrganisation(
-			@QueryParam(CONTEXT) String context,
-			@QueryParam(NAME) String name) {
+			@QueryParam(CONTEXT) String context, @QueryParam(NAME) String name) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
 		}
@@ -671,8 +775,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPersonOrOrganisation(context,
-					name);
+			identifier = mCoinsService
+					.createPersonOrOrganisation(context, name);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -808,6 +912,378 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Set the authorization date of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param authorizationDate
+	 *            Authorization date (xsd:dateTime formatted String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_AUTHORIZATION_DATE)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationAuthorizationDate(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(AUTHORIZATION_DATE) String authorizationDate,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					authorizationDate, CoinsFormat.CBIMFS_AUTHORIZATION_DATE,
+					modifier, FieldType.DATE);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the Authorization date")
+				.build();
+	}
+
+	/**
+	 * Set the authorization defects of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param authorizationDefects
+	 *            Authorization defects (String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_AUTHORIZATION_DEFECTS)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationAuthorizationDefects(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(AUTHORIZATION_DEFECTS) String authorizationDefects,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					authorizationDefects,
+					CoinsFormat.CBIMFS_AUTHORIZATION_DEFECTS, modifier,
+					FieldType.STRING);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the Authorization defects")
+				.build();
+	}
+
+	/**
+	 * Set the authorization measures of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param authorizationMeasures
+	 *            Authorization measures (String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_AUTHORIZATION_MEASURES)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationAuthorizationMeasures(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(AUTHORIZATION_MEASURES) String authorizationMeasures,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					authorizationMeasures,
+					CoinsFormat.CBIMFS_AUTHORIZATION_MEASURES, modifier,
+					FieldType.STRING);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the Authorization measures")
+				.build();
+	}
+
+	/**
+	 * Set the authorization remarks of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param authorizationRemarks
+	 *            Authorization remarks (String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_AUTHORIZATION_REMARKS)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationAuthorizationRemarks(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(AUTHORIZATION_REMARKS) String authorizationRemarks,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					authorizationRemarks,
+					CoinsFormat.CBIMFS_AUTHORIZATION_REMARKS, modifier,
+					FieldType.STRING);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the Authorization remarks")
+				.build();
+	}
+
+	/**
+	 * Set the planned remarks of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param plannedRemarks
+	 *            Planned remarks (String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_PLANNED_REMARKS)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationPlannedRemarks(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(PLANNED_REMARKS) String plannedRemarks,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					plannedRemarks, CoinsFormat.CBIMFS_PLANNED_REMARKS,
+					modifier, FieldType.STRING);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the Planned remarks")
+				.build();
+	}
+
+	/**
+	 * Set the planned date of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param plannedDate
+	 *            Planned date (xsd:dateTime formatted String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_PLANNED_DATE)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationPlannedDate(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(PLANNED_DATE) String plannedDate,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					plannedDate, CoinsFormat.CBIMFS_PLANNED_VERIFICATION_DATE,
+					modifier, FieldType.DATE);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when setting the Planned date")
+				.build();
+	}
+
+	/**
+	 * Set the planned verification method of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param plannedMethod
+	 *            Planned verification method (String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_PLANNED_METHOD)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationPlannedMethod(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(PLANNED_METHOD) String plannedMethod,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					plannedMethod,
+					CoinsFormat.CBIMFS_PLANNED_VERIFICATION_METHOD, modifier,
+					FieldType.STRING);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the Planned verification method")
+				.build();
+	}
+
+	/**
+	 * Set the planned WorkPackage of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param plannedWorkPackage
+	 *            Planned WorkPakage (String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_PLANNED_WORK_PACKAGE)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationPlannedWorkPackage(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(PLANNED_WORKPACKAGE) String plannedWorkPackage,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					plannedWorkPackage,
+					CoinsFormat.CBIMFS_PLANNED_WORK_PACKAGE, modifier,
+					FieldType.STRING);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the Planned WorkPackage")
+				.build();
+	}
+
+	/**
+	 * Set the Risks of a <B>Verification</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param verification
+	 *            The identifier of the <B>Verification</B> object
+	 * @param risks
+	 *            Risks (String)
+	 * @param modifier
+	 *            URI to the modifier of the object
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_VERIFICATION_RISKS)
+	@Consumes(MIME_TYPE)
+	public Response setVerificationRisks(@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(RISKS) String risks,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					risks, CoinsFormat.CBIMFS_VERIFICATION_RISKS, modifier,
+					FieldType.STRING);
+			return Response.ok().build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when setting the verification risks")
+				.build();
+	}
+
+	/**
 	 * Create a new <B>State</B>
 	 * 
 	 * @param context
@@ -834,8 +1310,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createState(context, name,
-					userID, creator);
+			identifier = mCoinsService.createState(context, name, userID,
+					creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -903,14 +1379,15 @@ public class CoinsApiWebService {
 	 *            The name of the <B>Verification</B>
 	 * @param userID
 	 *            A user defined identifier (for convenience)
-	 * @param verificationDate 
-	 * 			  Verification date (xsd:dateTime formatted String)
+	 * @param verificationDate
+	 *            Verification date (xsd:dateTime formatted String)
 	 * @param verificationMethod
-	 *            Verification method (String) 
+	 *            Verification method (String)
 	 * @param verificationResult
-	 *            Verification result (boolean) 
+	 *            Verification result (boolean)
 	 * @param creator
-	 *            URI referring to the user that created this <B>Verification</B>
+	 *            URI referring to the user that created this
+	 *            <B>Verification</B>
 	 * @return The id of the created <B>State</B>
 	 */
 	@POST
@@ -931,7 +1408,8 @@ public class CoinsApiWebService {
 		String identifier;
 		try {
 			identifier = mCoinsService.createVerification(context, name,
-					userID, verificationDate, verificationMethod, verificationResult, creator);
+					userID, verificationDate, verificationMethod,
+					verificationResult, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -942,8 +1420,7 @@ public class CoinsApiWebService {
 		} catch (UpdateExecutionException e) {
 			e.printStackTrace();
 		}
-		return Response
-				.serverError()
+		return Response.serverError()
 				.entity("Something went wrong when creating the Verification")
 				.build();
 	}
@@ -987,9 +1464,10 @@ public class CoinsApiWebService {
 		if (mCoinsService.deleteVerification(context, id)) {
 			return Response.ok().build();
 		}
-		return Response.serverError().entity("Cannot delete Verification").build();
+		return Response.serverError().entity("Cannot delete Verification")
+				.build();
 	}
-	
+
 	/**
 	 * Create a new <B>PhysicalObject</B>
 	 * 
@@ -1022,8 +1500,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPhysicalObject(context,
-					name, layerIndex, userID, creator);
+			identifier = mCoinsService.createPhysicalObject(context, name,
+					layerIndex, userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1114,8 +1592,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createSpace(context, name,
-					layerIndex, userID, creator);
+			identifier = mCoinsService.createSpace(context, name, layerIndex,
+					userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1297,8 +1775,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createDocument(context, name,
-					userID, creator);
+			identifier = mCoinsService.createDocument(context, name, userID,
+					creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1380,8 +1858,7 @@ public class CoinsApiWebService {
 	@Path(PATH_EXPLICIT_3D_REPRESENTATION)
 	@Consumes(MIME_TYPE)
 	public Response createExplicit3DRepresentation(
-			@QueryParam(CONTEXT) String context,
-			@QueryParam(NAME) String name,
+			@QueryParam(CONTEXT) String context, @QueryParam(NAME) String name,
 			@QueryParam(DOCUMENT_TYPE) String documentType,
 			@QueryParam(DOCUMENT_ALIAS_FILE_PATH) String documentAliasFilePath,
 			@QueryParam(DOCUMENT_URI) String documentUri,
@@ -1395,8 +1872,8 @@ public class CoinsApiWebService {
 		String identifier;
 		try {
 			identifier = mCoinsService.createExplicit3DRepresentation(context,
-					name, documentType, documentAliasFilePath,
-					documentUri, creator);
+					name, documentType, documentAliasFilePath, documentUri,
+					creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1492,8 +1969,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createVector(context, name,
-					xCoordinate, yCoordinate, zCoordinate, creator);
+			identifier = mCoinsService.createVector(context, name, xCoordinate,
+					yCoordinate, zCoordinate, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1692,9 +2169,9 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createTask(context, name,
-					affects, userID, taskType, startDatePlanned,
-					endDatePlanned, creator);
+			identifier = mCoinsService
+					.createTask(context, name, affects, userID, taskType,
+							startDatePlanned, endDatePlanned, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1929,8 +2406,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createAmount(context, name,
-					userID, value, cataloguePart, creator);
+			identifier = mCoinsService.createAmount(context, name, userID,
+					value, cataloguePart, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -1965,7 +2442,7 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Get an <B>Amount</B>
+	 * get an <B>Amount</B>
 	 * 
 	 * @param context
 	 *            / graph
@@ -2005,7 +2482,7 @@ public class CoinsApiWebService {
 	@Path(PATH_CATALOGUE_PART)
 	@Consumes(MIME_TYPE)
 	public Response createCataloguePart(@QueryParam(CONTEXT) String context,
-		@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
 			@QueryParam(CREATOR) String creator) {
 		if (name == null) {
 			return Response.serverError().entity("Name cannot be null").build();
@@ -2015,8 +2492,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createCataloguePart(context, 
-					name, userID, creator);
+			identifier = mCoinsService.createCataloguePart(context, name,
+					userID, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -2103,8 +2580,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createConnection(context, 
-					name, userID, creator);
+			identifier = mCoinsService.createConnection(context, name, userID,
+					creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -2193,8 +2670,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createParameter(context, name,
-					userID, defaultValue, creator);
+			identifier = mCoinsService.createParameter(context, name, userID,
+					defaultValue, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -2286,8 +2763,8 @@ public class CoinsApiWebService {
 			return Response
 					.serverError()
 					.entity("Setting first parameter of <"
-							+ explicit3DRepresentation + "> to <"
-							+ parameter + "> failed").build();
+							+ explicit3DRepresentation + "> to <" + parameter
+							+ "> failed").build();
 		}
 		return Response.ok().build();
 	}
@@ -2364,13 +2841,12 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Link <B>State</B> or <B>FunctionFulfiller</B> to <B>Performance</B> via
-	 * cbim:performance
+	 * Link <B>State</B> to <B>Performance</B> via cbim:performance
 	 * 
 	 * @param context
 	 *            context or graph
-	 * @param object
-	 *            Identifier of <B>State</B> or <B>FunctionFulfiller</B>
+	 * @param state
+	 *            Identifier of <B>State</B>
 	 * @param performance
 	 *            Identifier of the <B>Performance</B> object
 	 * @param modifier
@@ -2379,12 +2855,43 @@ public class CoinsApiWebService {
 	 * @return OK if success
 	 */
 	@POST
-	@Path(PATH_LINK_PERFORMANCE)
+	@Path(PATH_LINK_STATE_PERFORMANCE)
 	@Consumes(MIME_TYPE)
-	public Response linkPerformance(@QueryParam(CONTEXT) String context,
-			@QueryParam(OBJECT) String object,
+	public Response linkStatePerformance(@QueryParam(CONTEXT) String context,
+			@QueryParam(STATE) String state,
 			@QueryParam(PERFORMANCE) String performance,
 			@QueryParam(MODIFIER) String modifier) {
+		return linkPerformance(context, state, performance, modifier);
+	}
+
+	/**
+	 * Link <B>FunctionFulfiller</B> to <B>Performance</B> via cbim:performance
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param functionFulfiller
+	 *            Identifier of <B>FunctionFulfiller</B>
+	 * @param performance
+	 *            Identifier of the <B>Performance</B> object
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_FUNCTION_FULFILLER_PERFORMANCE)
+	@Consumes(MIME_TYPE)
+	public Response linkFunctionFulfillerPerformance(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
+			@QueryParam(PERFORMANCE) String performance,
+			@QueryParam(MODIFIER) String modifier) {
+		return linkPerformance(context, functionFulfiller, performance,
+				modifier);
+	}
+
+	private Response linkPerformance(String context, String object,
+			String performance, String modifier) {
 		try {
 			mCoinsService.linkPerformance(context, object, performance,
 					modifier);
@@ -2573,13 +3080,12 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Link an Explicit3DRepresentation to a <B>PhysicalObject</B> A Physical
-	 * Object can only have one shape
+	 * Link an Explicit3DRepresentation to a <B>FunctionFulfiller</B>
 	 * 
 	 * @param context
 	 *            Context / Graph
-	 * @param physicalObject
-	 *            id of <B>PhysicalObject</B>
+	 * @param functionFulfiller
+	 *            id of <B>FunctionFulfiller</B>
 	 * @param shape
 	 *            id of Explicit3DRepresentation
 	 * @param modifier
@@ -2589,17 +3095,17 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_SHAPE)
 	@Consumes(MIME_TYPE)
 	public Response linkShape(@QueryParam(CONTEXT) String context,
-			@QueryParam(PHYSICAL_OBJECT) String physicalObject,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
 			@QueryParam(SHAPE) String shape,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.setShape(context, physicalObject, shape, modifier);
+			mCoinsService.setShape(context, functionFulfiller, shape, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response
 					.serverError()
-					.entity("Setting physical parent of <" + physicalObject
+					.entity("Setting physical parent of <" + functionFulfiller
 							+ "> to <" + shape + "> failed").build();
 		}
 		return Response.ok().build();
@@ -2711,6 +3217,70 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Situate a <B>PhysicalObject</B> in a <B>Space</B> (cbim:isSituatedIn)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param physicalObject
+	 *            id of <B>PhysicalObject</B>
+	 * @param space
+	 *            id of <B>Space</B>
+	 * @param modifier
+	 *            who did this modification
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_IS_SITUATED_IN)
+	@Consumes(MIME_TYPE)
+	public Response linkIsSituatedIn(@QueryParam(CONTEXT) String context,
+			@QueryParam(PHYSICAL_OBJECT) String physicalObject,
+			@QueryParam(SPACE) String space,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkIsSituatedIn(context, physicalObject, space,
+					modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking NonFunctionalRequirements failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Situate a list of <B>PhysicalObject</B>s in a <B>Space</B> (cbim:situates)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param physicalObject
+	 *            id of <B>PhysicalObject</B>
+	 * @param space
+	 *            id of <B>Space</B>
+	 * @param modifier
+	 *            who did this modification
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_SITUATES)
+	@Consumes(MIME_TYPE)
+	public Response linkSituates(@QueryParam(CONTEXT) String context,
+			@QueryParam(PHYSICAL_OBJECT) String[] physicalObject,
+			@QueryParam(SPACE) String space,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkSituates(context, physicalObject, space,
+					modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking NonFunctionalRequirements failed").build();
+		}
+		return Response.ok().build();
+	}
+	
+	/**
 	 * Add <B>NonFunctionalRequirement</B>(s) to <B>FunctionFulfillers</B>.
 	 * Leaves previously linked NonFunctionalRequirements untouched.
 	 * 
@@ -2772,6 +3342,217 @@ public class CoinsApiWebService {
 				| UpdateExecutionException | MarmottaException e) {
 			e.printStackTrace();
 			return Response.serverError().entity("Linking Documents failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link <B>Requirement</B> to <B>Verification</B>
+	 * (cbim:verificationRequirement)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param requirement
+	 *            <B>Requirement</B> Id
+	 * @param verification
+	 *            Identifier of <B>Verification</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_VERIFICATION_REQUIREMENT)
+	@Consumes(MIME_TYPE)
+	public Response linkVerificationRequirement(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(REQUIREMENT) String requirement,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					requirement, CoinsFormat.CBIM_VERIFICATION_REQUIREMENT,
+					modifier, FieldType.RESOURCE);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking Requirement to Verification failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link <B>NonFunctionalRequirement</B> to <B>Verification</B>
+	 * (cbimfs:verificationRequirement)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param requirement
+	 *            <B>NonFunctionalRequirement</B> Id
+	 * @param verification
+	 *            Identifier of <B>Verification</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_VERIFICATION_NON_FUNCTIONAL_REQUIREMENT)
+	@Consumes(MIME_TYPE)
+	public Response linkVerificationNonFunctionalRequirement(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(REQUIREMENT) String requirement,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					requirement, CoinsFormat.CBIMFS_VERIFICATION_REQUIREMENT,
+					modifier, FieldType.RESOURCE);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking Requirement to Verification failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link performer (<B>PersonOrOrganisation</B>) to <B>Verification</B>
+	 * (cbim:verificationPerformer)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param performer
+	 *            <B>PersonOrOrganisation</B> Id
+	 * @param verification
+	 *            Identifier of <B>Verification</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_VERIFICATION_PERFORMER)
+	@Consumes(MIME_TYPE)
+	public Response linkVerificationPerformer(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(PERFORMER) String performer,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					performer, CoinsFormat.CBIM_VERIFICATION_PERFORMER,
+					modifier, FieldType.RESOURCE);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking Performer to Verification failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link planned performer (<B>PersonOrOrganisation</B>) to
+	 * <B>Verification</B> (cbimfs:verificationPlannedPerformer)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param performer
+	 *            <B>PersonOrOrganisation</B> Id
+	 * @param verification
+	 *            Identifier of <B>Verification</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_VERIFICATION_PLANNED_PERFORMER)
+	@Consumes(MIME_TYPE)
+	public Response linkVerificationPlannedPerformer(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(PERFORMER) String performer,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					performer,
+					CoinsFormat.CBIMFS_VERIFICATION_PLANNED_PERFORMER,
+					modifier, FieldType.RESOURCE);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking planned Performer to Verification failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link authorizer (<B>PersonOrOrganisation</B>) to <B>Verification</B>
+	 * (cbimfs:verificationAuthorizedBy)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param authorizer
+	 *            <B>PersonOrOrganisation</B> Id
+	 * @param verification
+	 *            Identifier of <B>Verification</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_VERIFICATION_AUTHORIZED_BY)
+	@Consumes(MIME_TYPE)
+	public Response linkVerificationAuthorizedBy(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(AUTHORIZER) String authorizer,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					authorizer, CoinsFormat.CBIMFS_VERIFICATION_AUTHORIZED_BY,
+					modifier, FieldType.RESOURCE);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking authorizer to Verification failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link <B>FunctionFulfiller</B> to <B>Verification</B>
+	 * (cbim:verificationFunctionFulfiller)
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param functionFulfiller
+	 *            <B>FunctionFulfiller</B> Id
+	 * @param verification
+	 *            Identifier of <B>Verification</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_VERIFICATION_FUNCTION_FULFILLER)
+	@Consumes(MIME_TYPE)
+	public Response linkVerificationFunctionFulfiller(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(VERIFICATION) String verification,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.setVerificationAttribute(context, verification,
+					functionFulfiller,
+					CoinsFormat.CBIM_VERIFICATION_FUNCTION_FULFILLER, modifier,
+					FieldType.RESOURCE);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking FunctionFulfiller to Verification failed")
 					.build();
 		}
 		return Response.ok().build();
@@ -2875,36 +3656,84 @@ public class CoinsApiWebService {
 		return Response.ok().build();
 	}
 
+	private Response linkLocator(String pContext, String pObject,
+			String pLocator, String pModifier) {
+		try {
+			mCoinsService.linkLocator(pContext, pObject, pLocator, pModifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Linking locator failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
 	/**
-	 * Link a locator to an <B>Amount/FunctionFulfiller/Terminal</B> by the
-	 * locator property
+	 * Link a locator to an <B>Amount</B> by the locator property
 	 * 
 	 * @param context
 	 *            Context of Graph
-	 * @param object
-	 *            <B>Amount/FunctionFulfiller/Terminal</B> id
+	 * @param amount
+	 *            <B>Amount</B> id
 	 * @param locator
-	 *            id of <B>Locator<B> of the
-	 *            <B>Amount/FunctionFulfiller/Terminal</B>
+	 *            id of <B>Locator<B> of the <B>Amount</B>
 	 * @param modifier
 	 * @return OK if success
 	 */
 	@POST
-	@Path(PATH_LINK_LOCATOR)
+	@Path(PATH_AMOUNT_LINK_LOCATOR)
 	@Consumes(MIME_TYPE)
-	public Response linkLocator(@QueryParam(CONTEXT) String context,
-			@QueryParam(OBJECT) String object,
+	public Response linkAmountLocator(@QueryParam(CONTEXT) String context,
+			@QueryParam(AMOUNT) String amount,
 			@QueryParam(LOCATOR) String locator,
 			@QueryParam(MODIFIER) String modifier) {
-		try {
-			mCoinsService.linkLocator(context, object, locator, modifier);
-		} catch (InvalidArgumentException | MalformedQueryException
-				| UpdateExecutionException | MarmottaException e) {
-			e.printStackTrace();
-			return Response.serverError()
-					.entity("Linking locator fulfiller failed").build();
-		}
-		return Response.ok().build();
+		return linkLocator(context, amount, locator, modifier);
+	}
+
+	/**
+	 * Link a locator to a <B>FunctionFulfiller</B> by the locator property
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param functionFulfiller
+	 *            <B>FunctionFulfiller</B> id
+	 * @param locator
+	 *            id of <B>Locator<B> of the <B>FunctionFulfiller</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_FUNCTIONFULFILLER_LINK_LOCATOR)
+	@Consumes(MIME_TYPE)
+	public Response linkFunctionFulfillerLocator(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
+			@QueryParam(LOCATOR) String locator,
+			@QueryParam(MODIFIER) String modifier) {
+		return linkLocator(context, functionFulfiller, locator, modifier);
+	}
+
+	/**
+	 * Link a locator to a <B>Terminal</B> by the locator property
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param object
+	 *            <B>Terminal</B> id
+	 * @param locator
+	 *            id of <B>Locator<B> of the <B>Terminal</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_TERMINAL_LINK_LOCATOR)
+	@Consumes(MIME_TYPE)
+	public Response linkTerminalLocator(@QueryParam(CONTEXT) String context,
+			@QueryParam(TERMINAL) String object,
+			@QueryParam(LOCATOR) String locator,
+			@QueryParam(MODIFIER) String modifier) {
+		return linkLocator(context, object, locator, modifier);
 	}
 
 	/**
@@ -3102,8 +3931,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPerformance(context, 
-					name, userID, creator);
+			identifier = mCoinsService.createPerformance(context, name, userID,
+					creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -3144,7 +3973,7 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Delete a <B>Terminal</B>
+	 * Delete a <B>Performance</B>
 	 * 
 	 * @param context
 	 * @param id
@@ -3196,8 +4025,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createTerminal(context, name,
-					userID, locator, layerIndex, creator);
+			identifier = mCoinsService.createTerminal(context, name, userID,
+					locator, layerIndex, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -3291,8 +4120,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPropertyType(context, 
-					name, userID, unit, valueDomain, creator);
+			identifier = mCoinsService.createPropertyType(context, name,
+					userID, unit, valueDomain, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -3384,8 +4213,8 @@ public class CoinsApiWebService {
 		}
 		String identifier;
 		try {
-			identifier = mCoinsService.createPropertyValue(context, 
-					name, userID, propertyType, value, creator);
+			identifier = mCoinsService.createPropertyValue(context, name,
+					userID, propertyType, value, creator);
 			return Response.ok().entity(identifier).build();
 		} catch (MarmottaException e) {
 			e.printStackTrace();
@@ -3604,4 +4433,5 @@ public class CoinsApiWebService {
 		}
 		return Response.ok().build();
 	}
+	
 }

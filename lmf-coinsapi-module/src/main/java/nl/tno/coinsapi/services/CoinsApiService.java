@@ -608,7 +608,8 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeDate(CoinsFormat.CBIM_CREATION_DATE, new Date());
 		builder.addAttributeInteger(CoinsFormat.CBIM_LAYER_INDEX, layerindex);
 		builder.addAttributeResource(CoinsFormat.CBIM_CREATOR, creator);
-		builder.addAttributeResource(CoinsFormat.CBIM_REQUIREMENT_OF, requirementOf);
+		builder.addAttributeResource(CoinsFormat.CBIM_REQUIREMENT_OF,
+				requirementOf);
 		builder.addAttributeType(CoinsFormat.CBIM_REQUIREMENT);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 		return id;
@@ -708,7 +709,8 @@ public class CoinsApiService implements ICoinsApiService {
 				endDatePlanned);
 		builder.addAttributeString(CoinsFormat.CBIM_TASK_TYPE, taskType);
 		for (String physicalObjecId : affects) {
-			builder.addAttributeResource(CoinsFormat.CBIM_AFFECTS, physicalObjecId);
+			builder.addAttributeResource(CoinsFormat.CBIM_AFFECTS,
+					physicalObjecId);
 		}
 		builder.addAttributeResource(CoinsFormat.CBIM_CREATOR, creator);
 		builder.addAttributeType(CoinsFormat.CBIM_TASK);
@@ -868,7 +870,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeResource(OWL_IMPORTS, referenceFrame);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
-	
+
 	private String getModelURI(String pContext) throws MarmottaException {
 		String query = "SELECT ?modelURI WHERE { GRAPH <"
 				+ getFullContext(pContext)
@@ -900,7 +902,8 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addGraph(getFullContext(context));
 		builder.setId(physicalobject);
 		for (String docId : document) {
-			builder.addAttributeResource(CoinsFormat.CBIM_DOCUMENT_RELATION, docId);
+			builder.addAttributeResource(CoinsFormat.CBIM_DOCUMENT_RELATION,
+					docId);
 		}
 		builder.addAttributeDate(CoinsFormat.CBIM_MODIFICATION_DATE, new Date());
 		builder.addAttributeResource(CoinsFormat.CBIM_MODIFIER, modifier);
@@ -1351,6 +1354,52 @@ public class CoinsApiService implements ICoinsApiService {
 			}
 		}
 		return FieldType.STRING;
+	}
+
+	@Override
+	public void setVerificationAttribute(String context, String verification,
+			String objectId, String objectTypeId, String modifier,
+			FieldType pFieldType) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		updateAttribute(context, verification, objectTypeId, objectId,
+				modifier, pFieldType);
+	}
+
+	@Override
+	public void linkIsSituatedIn(String context, String physicalObject,
+			String space, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		updateAttribute(context, physicalObject, CoinsFormat.CBIM_IS_SITUATED_IN, space,
+				modifier, FieldType.RESOURCE);
+	}
+
+	@Override
+	public void linkSituates(String context, String[] physicalObject,
+			String space, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsFormat.PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(space);
+		for (String physicalObj : physicalObject) {
+			builder.addAttributeResource(CoinsFormat.CBIM_SITUATES,
+					physicalObj);
+		}
+		builder.addAttributeDate(CoinsFormat.CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CoinsFormat.CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		// The previous query might have caused two modificationDates/modifiers
+		// so...
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsFormat.PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(space);
+		builder.addAttributeDate(CoinsFormat.CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CoinsFormat.CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 
 }

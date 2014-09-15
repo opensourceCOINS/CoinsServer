@@ -408,6 +408,41 @@ public class CoinsFormat {
 	public static final String CBIM_VECTOR = CBIM + ":Vector";
 
 	/**
+	 * cbim:Verification 
+	 */
+	public static final String CBIM_VERIFICATION = CBIM + ":Verification";
+
+	/**
+	 * cbim:verificationDate 
+	 */	
+	public static final String CBIM_VERIFICATION_DATE = CBIM + ":verificationDate";
+
+	/**
+	 * cbim:verificationFunctionFulfiller 
+	 */
+	public static final String CBIM_VERIFICATION_FUNCTION_FULFILLER = CBIM + ":verificationFunctionFulfiller";
+
+	/**
+	 * cbim:verificationMethod 
+	 */
+	public static final String CBIM_VERIFICATION_METHOD = CBIM + ":verificationMethod";
+
+	/**
+	 * cbim:verificationPerformer 
+	 */
+	public static final String CBIM_VERIFICATION_PERFORMER = CBIM + ":verificationPerformer";
+
+	/**
+	 * cbim:verificationRequirement 
+	 */
+	public static final String CBIM_VERIFICATION_REQUIREMENT = CBIM + ":verificationRequirement";
+
+	/**
+	 * cbim:verificationResult 
+	 */
+	public static final String CBIM_VERIFICATION_RESULT = CBIM + ":verificationResult";
+
+	/**
 	 * cbim:xCoordinate
 	 */
 	public static final String CBIM_X_COORDINATE = CBIM + ":xCoordinate";
@@ -428,6 +463,61 @@ public class CoinsFormat {
 	public static final String CBIMFS_NON_FUNCTIONAL_REQUIREMENT = "cbimfs:NonFunctionalRequirement";
 
 	/**
+	 * cbimfs:authorizedBy
+	 */
+	public static final String CBIMFS_VERIFICATION_AUTHORIZED_BY = "cbimfs:authorizedBy";
+
+	/**
+	 * cbimfs:authorizationDate
+	 */
+	public static final String CBIMFS_AUTHORIZATION_DATE = "cbimfs:authorizationDate";
+
+	/**
+	 * cbimfs:authorizationMeasures
+	 */
+	public static final String CBIMFS_AUTHORIZATION_MEASURES = "cbimfs:authorizationMeasures";
+	
+	/**
+	 * cbimfs:authorizationRemarks
+	 */
+	public static final String CBIMFS_AUTHORIZATION_REMARKS = "cbimfs:authorizationRemarks";
+	
+	/**
+	 * cbimfs:authorizationDefects
+	 */
+	public static final String CBIMFS_AUTHORIZATION_DEFECTS = "cbimfs:authorizationDefects";
+
+	/**
+	 * cbimfs:plannedRemarks
+	 */
+	public static final String CBIMFS_PLANNED_REMARKS = "cbimfs:plannedRemarks";
+
+	/**
+	 * cbimfs:plannedVerificationDate
+	 */
+	public static final String CBIMFS_PLANNED_VERIFICATION_DATE = "cbimfs:plannedVerificationDate";
+
+	/**
+	 * cbimfs:plannedVerificationMethod
+	 */
+	public static final String CBIMFS_PLANNED_VERIFICATION_METHOD = "cbimfs:plannedVerificationMethod";
+
+	/**
+	 * cbimfs:plannedWorkPackage
+	 */
+	public static final String CBIMFS_PLANNED_WORK_PACKAGE = "cbimfs:plannedWorkPackage";
+
+	/**
+	 * cbimfs:verificationRisks
+	 */
+	public static final String CBIMFS_VERIFICATION_RISKS = "cbimfs:verificationRisks";
+
+	/**
+	 * cbimfs:plannedVerificationPerformer
+	 */
+	public static final String CBIMFS_VERIFICATION_PLANNED_PERFORMER = "cbimfs:plannedVerificationPerformer";
+
+	/**
 	 * cbimfs:nonFunctionalRequirement
 	 */
 	public static final String CBIMFS_NON_FUNCTIONAL_REQUIREMENT_RELATION = "cbimfs:nonFunctionalRequirement";
@@ -438,10 +528,20 @@ public class CoinsFormat {
 	public static final String CBIMFS_NON_FUNCTIONAL_REQUIREMENT_TYPE = "cbimfs:nonFunctionalRequirementType";
 
 	/**
+	 * cbimfs:propertyValue 
+	 */
+	public static final String CBIMFS_PROPERTY_VALUE_RELATION = "cbimfs:propertyValue";
+
+	/**
 	 * cbimfs:superRequirement
 	 */
 	public static final String CBIMFS_SUPER_REQUIREMENT = "cbimfs:superRequirement";
 
+	/**
+	 * cbimfs:verificationRequirement (NonFunctionalRequirement)
+	 */
+	public static final String CBIMFS_VERIFICATION_REQUIREMENT = "cbimfs:verificationRequirement";
+	
 	/**
 	 * Coins RDF format
 	 */
@@ -483,12 +583,12 @@ public class CoinsFormat {
 	 * PREFIX for sparql query cbim: <http://www.coinsweb.nl/cbim-1.1.owl#>
 	 */
 	public static final String PREFIX_CBIM1_1 = "cbim: <http://www.coinsweb.nl/cbim-1.1.owl#>";
-
+	
 	/**
 	 * PREFIX for sparql query
 	 */
 	public static final String PREFIX_CBIM = PREFIX_CBIM1_1;
-	
+
 	/**
 	 * PREFIX for sparql query cbimfs: <http://www.coinsweb.nl/c-bim-fs.owl#>
 	 */
@@ -504,30 +604,5 @@ public class CoinsFormat {
 	 * PREFIX for sparql query owl: <http://www.w3.org/2002/07/owl#>
 	 */
 	public static final String PREFIX_OWL = "owl: <http://www.w3.org/2002/07/owl#>";
-
-	/**
-	 * cbimfs:propertyValue 
-	 */
-	public static final String CBIMFS_PROPERTY_VALUE_RELATION = "cbimfs:propertyValue";
-
-	/**
-	 * cbim:verificationDate 
-	 */	
-	public static final String CBIM_VERIFICATION_DATE = CBIM + ":verificationDate";
-
-	/**
-	 * cbim:verificationMethod 
-	 */
-	public static final String CBIM_VERIFICATION_METHOD = CBIM + ":verificationMethod";
-
-	/**
-	 * cbim:verificationResult 
-	 */
-	public static final String CBIM_VERIFICATION_RESULT = CBIM + ":verificationResult";
-
-	/**
-	 * cbim:Verification 
-	 */
-	public static final String CBIM_VERIFICATION = CBIM + ":Verification";
 
 }

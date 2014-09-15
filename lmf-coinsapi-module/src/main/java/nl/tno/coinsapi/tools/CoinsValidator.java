@@ -172,6 +172,12 @@ public abstract class CoinsValidator {
 			result.add(new ResourceRelation(CoinsFormat.CBIM_NEXT_PARAMETER, CoinsFormat.CBIM_PARAMETER));
 			result.add(new ResourceRelation(CoinsFormat.CBIM_PERFORMANCE_RELATION, CoinsFormat.CBIM_PERFORMANCE));
 			result.add(new ResourceRelation(CoinsFormat.CBIM_PERFORMANCE_OF, CoinsFormat.CBIM_STATE, CoinsFormat.CBIM_FUNCTION_FULFILLER));
+			result.add(new ResourceRelation(CoinsFormat.CBIMFS_VERIFICATION_REQUIREMENT, CoinsFormat.CBIMFS_NON_FUNCTIONAL_REQUIREMENT));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_VERIFICATION_REQUIREMENT, CoinsFormat.CBIM_REQUIREMENT));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_VERIFICATION_PERFORMER, CoinsFormat.CBIM_PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CoinsFormat.CBIMFS_VERIFICATION_AUTHORIZED_BY, CoinsFormat.CBIM_PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CoinsFormat.CBIMFS_VERIFICATION_PLANNED_PERFORMER, CoinsFormat.CBIM_PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CoinsFormat.CBIM_VERIFICATION_FUNCTION_FULFILLER, CoinsFormat.CBIM_FUNCTION_FULFILLER));
 			//result.add(new ResourceRelation(CoinsFormat.CBIM_DOCUMENT_URI));
 			
 			result.add(new LiteralRelation(CoinsFormat.CBIM_END_DATE_ACTUAL, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
@@ -194,6 +200,14 @@ public abstract class CoinsValidator {
 			result.add(new LiteralRelation(CoinsFormat.CBIM_VERIFICATION_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
 			result.add(new LiteralRelation(CoinsFormat.CBIM_VERIFICATION_METHOD, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
 			result.add(new LiteralRelation(CoinsFormat.CBIM_VERIFICATION_RESULT, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_BOOLEAN));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_AUTHORIZATION_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_AUTHORIZATION_DEFECTS, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_AUTHORIZATION_MEASURES, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_AUTHORIZATION_REMARKS, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_PLANNED_REMARKS, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_PLANNED_VERIFICATION_METHOD, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_PLANNED_VERIFICATION_DATE, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+			result.add(new LiteralRelation(CoinsFormat.CBIMFS_VERIFICATION_RISKS, CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
 			for (Relation rel : result) {
 				if (rel instanceof ResourceRelation) {
 					ResourceRelation relation = (ResourceRelation)rel;

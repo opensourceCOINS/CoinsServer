@@ -2,6 +2,7 @@ package nl.tno.coinsapi.services;
 
 import java.util.List;
 
+import nl.tno.coinsapi.tools.QueryBuilder.FieldType;
 import nl.tno.coinsapi.tools.ValidationAspect;
 
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
@@ -1134,5 +1135,53 @@ public interface ICoinsApiService {
 	public void addReferenceFrame(String context, String referenceFrame)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param verification
+	 * @param objectId
+	 * @param objectTypeId
+	 * @param modifier
+	 * @param pFieldType 
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void setVerificationAttribute(String context, String verification,
+			String objectId, String objectTypeId, String modifier,
+			FieldType pFieldType) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param physicalObject
+	 * @param space
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkIsSituatedIn(String context, String physicalObject,
+			String space, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param physicalObject
+	 * @param space
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkSituates(String context, String[] physicalObject,
+			String space, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
 
 }
