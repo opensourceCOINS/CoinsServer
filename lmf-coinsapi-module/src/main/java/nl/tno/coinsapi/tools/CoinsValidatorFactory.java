@@ -2,6 +2,7 @@ package nl.tno.coinsapi.tools;
 
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAffectsValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsAllValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsBaselineValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsCurrentStateStateOfValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsFemaleTerminalValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsFirstParamaterValidator;
@@ -110,6 +111,9 @@ public class CoinsValidatorFactory {
 			break;
 		case REQUIREMENT_OF:
 			validator = new CoinsRequirementOfValidator();
+			break;
+		case BASELINE:
+			validator = new CoinsBaselineValidator();
 			break;
 		case SUPER_REQUIREMENT:
 			validator = new CoinsSuperRequirement();

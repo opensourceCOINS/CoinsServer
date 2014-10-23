@@ -117,6 +117,16 @@ public class CoinsApiWebService {
 			+ "/issituatedin";
 
 	/**
+	 * CbimObject 
+	 */
+	public static final String PATH_CBIM_OBJECT = "/cbimobject";
+	
+	/**
+	 * Link a CbimObject to a Baseline
+	 */
+	public static final String PATH_LINK_BASELINE = PATH_CBIM_OBJECT + "/baseline";
+	
+	/**
 	 * Edit physical parent relation
 	 */
 	public static final String PATH_LINK_PHYSICAL_PARENT = PATH_PHYSICAL_OBJECT
@@ -296,11 +306,58 @@ public class CoinsApiWebService {
 	public static final String PATH_ADD_ATTRIBUTE = "/addattribute";
 
 	/**
+	 * Update attribute 
+	 */
+	public static final String PATH_UPDATE_ATTRIBUTE = "/updateattribute";
+
+	/**
+	 * Update attribute boolean 
+	 */
+	public static final String PATH_UPDATE_ATTRIBUTE_BOOLEAN = PATH_UPDATE_ATTRIBUTE + 
+			"/boolean";
+
+	/**
+	 * Update attribute String
+	 */
+	public static final String PATH_UPDATE_ATTRIBUTE_STRING = PATH_UPDATE_ATTRIBUTE
+			+ "/string";
+
+	/**
+	 * Update attribute float
+	 */
+	public static final String PATH_UPDATE_ATTRIBUTE_FLOAT = PATH_UPDATE_ATTRIBUTE
+			+ "/float";
+
+	/**
+	 * Update attribute integer
+	 */
+	public static final String PATH_UPDATE_ATTRIBUTE_INTEGER = PATH_UPDATE_ATTRIBUTE
+			+ "/int";
+
+	/**
+	 * Update attribute date
+	 */
+	public static final String PATH_UPDATE_ATTRIBUTE_DATE = PATH_UPDATE_ATTRIBUTE
+			+ "/date";
+
+	/**
+	 * Update attribute resource
+	 */
+	public static final String PATH_UPDATE_ATTRIBUTE_RESOURCE = PATH_UPDATE_ATTRIBUTE
+			+ "/resource";
+	
+	/**
 	 * Add attribute string
 	 */
 	public static final String PATH_ADD_ATTRIBUTE_STRING = PATH_ADD_ATTRIBUTE
 			+ "/string";
 
+	/**
+	 * Add attribute boolean 
+	 */
+	public static final String PATH_ADD_ATTRIBUTE_BOOLEAN = PATH_ADD_ATTRIBUTE + 
+			"/boolean";
+	
 	/**
 	 * Add attribute float
 	 */
@@ -373,6 +430,14 @@ public class CoinsApiWebService {
 	 * Reference Frame
 	 */
 	public static final String PATH_ADD_REFERENCE_FRAME = "/referenceframe";
+	/**
+	 * Baseline
+	 */
+	public static final String PATH_BASELINE = "/baseline";
+	/**
+	 * Link a Baseline to a CbimObject
+	 */
+	public static final String PATH_LINK_CBIM_OBJECT = PATH_BASELINE + "/cbimobject";
 	/**
 	 * Verification
 	 */
@@ -547,6 +612,9 @@ public class CoinsApiWebService {
 	private static final String AMOUNT = "amount";
 	private static final String TERMINAL = "terminal";
 	private static final String SPACE = "space";
+	private static final String BASELINE_STATUS = "baselineStatus";
+	private static final String CBIM_OBJECT = "cbimObject";
+	private static final String BASELINE = "baseline";
 
 	@Inject
 	private ConfigurationService mConfigurationService;
@@ -1515,6 +1583,102 @@ public class CoinsApiWebService {
 		return Response
 				.serverError()
 				.entity("Something went wrong when creating the PhysicalObject")
+				.build();
+	}
+
+	/**
+	 * Create a new <B>Baseline</B>
+	 * 
+	 * @param context
+	 *            The context or named graph
+	 * @param name
+	 *            The name of the <B>Baseline</B>
+	 * @param layerIndex
+	 *            The layer index of the <B>Baseline</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param baselineStatus
+	 *            (true=open or false=closed) 
+	 * @param creator
+	 *            URI referring to the user that created this
+	 *            <B>BaseLine</B>
+	 * @return The id of the created <B>Baseline</B>
+	 */
+	@POST
+	@Path(PATH_BASELINE)
+	@Consumes(MIME_TYPE)
+	public Response createBaseLine(@QueryParam(CONTEXT) String context,
+			@QueryParam(NAME) String name,
+			@QueryParam(LAYER_INDEX) int layerIndex,
+			@QueryParam(USER_ID) String userID,
+			@QueryParam(BASELINE_STATUS) boolean baselineStatus,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createBaseline(context, name,
+					layerIndex, userID, baselineStatus, creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response
+				.serverError()
+				.entity("Something went wrong when creating the Baseline")
+				.build();
+	}
+
+	/**
+	 * Get a <B>Baseline</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>Baseline</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>Baseline</B> formatted the way specified by means of
+	 *         the output
+	 */
+	@GET
+	@Path(PATH_BASELINE)
+	@Consumes(MIME_TYPE)
+	public Response getBaseline(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getBaselineQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>Baseline</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>Baseline</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_BASELINE)
+	@Consumes(MIME_TYPE)
+	public Response deleteBaseline(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteBaseline(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete Baseline")
 				.build();
 	}
 
@@ -2769,6 +2933,80 @@ public class CoinsApiWebService {
 		return Response.ok().build();
 	}
 
+	/**
+	 * Link a <B>CbimObject</B> to a <B>Baseline</B>
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param cbimObject
+	 *            Identifier of the <B>CbimObject</B>
+	 * @param baseline
+	 *            Identifier of the <B>Baseline</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_BASELINE)
+	@Consumes(MIME_TYPE)
+	public Response linkBaseline(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(CBIM_OBJECT) String cbimObject,
+			@QueryParam(BASELINE) String baseline,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkBaseline(context, cbimObject,
+					baseline, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Linking CbimObject <"
+							+ cbimObject + "> to Baseline <" + baseline
+							+ "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Link a <B>Baseline</B> to a <B>CbimObject</B>
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param cbimObject
+	 *            Identifier of the <B>CbimObject</B>
+	 * @param baseline
+	 *            Identifier of the <B>Baseline</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_CBIM_OBJECT)
+	@Consumes(MIME_TYPE)
+	public Response linkCbimObject(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(CBIM_OBJECT) String cbimObject,
+			@QueryParam(BASELINE) String baseline,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkCbimObject(context, cbimObject,
+					baseline, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Linking BaseLine <"
+							+ baseline + "> to CbimObject <" + cbimObject
+							+ "> failed").build();
+		}
+		return Response.ok().build();
+	}
+	
 	/**
 	 * Link a property value to <B>Performance</B> via cbimfs:propertyValue
 	 * 
@@ -4274,9 +4512,9 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Insert an attribute of type String This method ignores the fact that
-	 * duplicate entries may result if it is executed No validation on attribute
-	 * names is done either The modification date is not updated
+	 * Insert an attribute of type String. This method ignores the fact that
+	 * duplicate entries may result if it is executed. No validation on
+	 * attribute names is done either. The modification date is not updated.
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -4306,9 +4544,9 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Insert an attribute of type Float This method ignores the fact that
-	 * duplicate entries may result if it is executed No validation on attribute
-	 * names is done either The modification date is not updated
+	 * Insert an attribute of type Float. This method ignores the fact that
+	 * duplicate entries may result if it is executed. No validation on
+	 * attribute names is done either. The modification date is not updated.
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -4338,9 +4576,9 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Insert an attribute of type Resource (URL) This method ignores the fact
-	 * that duplicate entries may result if it is executed No validation on
-	 * attribute names is done either The modification date is not updated
+	 * Insert an attribute of type Resource (URL). This method ignores the fact
+	 * that duplicate entries may result if it is executed. No validation on
+	 * attribute names is done either. The modification date is not updated.
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -4370,9 +4608,9 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Insert an attribute of type Integer This method ignores the fact that
-	 * duplicate entries may result if it is executed No validation on attribute
-	 * names is done either The modification date is not updated
+	 * Insert an attribute of type Integer. This method ignores the fact that
+	 * duplicate entries may result if it is executed. No validation on attribute
+	 * names is done either. The modification date is not updated.
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -4402,10 +4640,10 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Insert an attribute of type Date This method ignores the fact that
-	 * duplicate entries may result if it is executed No validation on attribute
-	 * names is done either The modification date is not updated Formatting the
-	 * date in the correct format is left to the user
+	 * Insert an attribute of type Date. This method ignores the fact that
+	 * duplicate entries may result if it is executed. No validation on
+	 * attribute names is done either. The modification date is not updated.
+	 * Formatting the date in the correct format is left to the user.
 	 * 
 	 * @param context
 	 *            Context or Graph
@@ -4433,5 +4671,241 @@ public class CoinsApiWebService {
 		}
 		return Response.ok().build();
 	}
+
+	/**
+	 * Insert an attribute of type Boolean. This method ignores the fact that
+	 * duplicate entries may result if it is executed. No validation on
+	 * attribute names is done either. The modification date is not updated.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_ADD_ATTRIBUTE_BOOLEAN)
+	@Consumes(MIME_TYPE)
+	public Response addAttributeBoolean(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) boolean value) {
+		try {
+			mCoinsService.addAttributeBoolean(context, object, name, value);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Adding attribute failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
 	
+	/**
+	 * Update an attribute of type Boolean. No validation on attribute names is
+	 * done. The modification date is updated as well as the modifier.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @param modifier 
+	 * 			  id of the user updating the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPDATE_ATTRIBUTE_BOOLEAN)
+	@Consumes(MIME_TYPE)
+	public Response updateAttributeBoolean(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) boolean value,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.updateAttributeBoolean(context, object, name, value, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Updating attribute failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+	
+	/**
+	 * Update an attribute of type String. No validation on attribute names is
+	 * done. The modification date is updated as well as the modifier.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @param modifier 
+	 *            id of the user updating the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPDATE_ATTRIBUTE_STRING)
+	@Consumes(MIME_TYPE)	
+	public Response updateAttributeString(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) String value,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.updateAttributeString(context, object, name, value, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Updating attribute failed")
+					.build();
+		}		
+		return Response.ok().build();
+	}
+
+	/**
+	 * Update an attribute of type Float. No validation on attribute names is
+	 * done. The modification date is updated as well as the modifier.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @param modifier 
+	 *            id of the user updating the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPDATE_ATTRIBUTE_FLOAT)
+	@Consumes(MIME_TYPE)	
+	public Response updateAttributeFloat(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) double value,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.updateAttributeFloat(context, object, name, value, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Updating attribute failed")
+					.build();
+		}		
+		return Response.ok().build();
+	}
+
+	/**
+	 * Update an attribute of type Integer. No validation on attribute names is
+	 * done. The modification date is updated as well as the modifier.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @param modifier 
+	 *            id of the user updating the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPDATE_ATTRIBUTE_INTEGER)
+	@Consumes(MIME_TYPE)		
+	public Response updateAttributeInteger(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) int value,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.updateAttributeInt(context, object, name, value, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Updating attribute failed")
+					.build();
+		}		
+		return Response.ok().build();
+	}
+
+	/**
+	 * Update an attribute of type Resource (URL). No validation on attribute
+	 * names is done. The modification date is updated as well as the modifier.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @param modifier
+	 *            id of the user updating the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPDATE_ATTRIBUTE_RESOURCE)
+	@Consumes(MIME_TYPE)		
+	public Response updateAttributeResource(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) String value,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.updateAttributeResource(context, object, name, value, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Updating attribute failed")
+					.build();
+		}		
+		return Response.ok().build();
+	}
+
+	/**
+	 * Update an attribute of type Date. No validation on attribute names is
+	 * done. The modification date is updated as well as the modifier.
+	 * Formatting the date in the correct format is left to the user
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param object
+	 *            id of the object
+	 * @param name
+	 *            name of the attribute
+	 * @param value
+	 *            value of the attribute
+	 * @param modifier
+	 *            id of the user updating the attribute
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPDATE_ATTRIBUTE_DATE)
+	@Consumes(MIME_TYPE)		
+	public Response updateAttributeDate(@QueryParam(CONTEXT) String context,
+			@QueryParam(OBJECT) String object, @QueryParam(NAME) String name,
+			@QueryParam(VALUE) String value,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.updateAttributeDate(context, object, name, value, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Updating attribute failed")
+					.build();
+		}		
+		return Response.ok().build();
+	}	
 }

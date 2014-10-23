@@ -586,6 +586,53 @@ public interface ICoinsApiService {
 	 * @param object
 	 * @param name
 	 * @param value
+	 * @param modifier
+	 * @throws InvalidArgumentException 
+	 * @throws MalformedQueryException 
+	 * @throws UpdateExecutionException 
+	 * @throws MarmottaException 
+	 */
+	public void updateAttributeString(String context, String object,
+			String name, String value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @param modifier 
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void updateAttributeBoolean(String context, String object,
+			String name, boolean value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void addAttributeBoolean(String context, String object,
+			String name, boolean value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+	
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
 	 * @throws InvalidArgumentException
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
@@ -601,6 +648,22 @@ public interface ICoinsApiService {
 	 * @param object
 	 * @param name
 	 * @param value
+	 * @param modifier
+	 * @throws InvalidArgumentException 
+	 * @throws MalformedQueryException 
+	 * @throws UpdateExecutionException 
+	 * @throws MarmottaException 
+	 */
+	public void updateAttributeResource(String context, String object,
+			String name, String value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+	
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
 	 * @throws InvalidArgumentException
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
@@ -608,6 +671,22 @@ public interface ICoinsApiService {
 	 */
 	public void addAttributeFloat(String context, String object, String name,
 			double value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @param modifier
+	 * @throws InvalidArgumentException 
+	 * @throws MalformedQueryException 
+	 * @throws UpdateExecutionException 
+	 * @throws MarmottaException 
+	 */
+	public void updateAttributeFloat(String context, String object,
+			String name, double value, String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
 
@@ -631,6 +710,22 @@ public interface ICoinsApiService {
 	 * @param object
 	 * @param name
 	 * @param value
+	 * @param modifier
+	 * @throws InvalidArgumentException 
+	 * @throws MalformedQueryException 
+	 * @throws UpdateExecutionException 
+	 * @throws MarmottaException 
+	 */
+	public void updateAttributeInt(String context, String object,
+			String name, int value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+	
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
 	 * @throws InvalidArgumentException
 	 * @throws MalformedQueryException
 	 * @throws UpdateExecutionException
@@ -641,6 +736,22 @@ public interface ICoinsApiService {
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
 
+	/**
+	 * @param context
+	 * @param object
+	 * @param name
+	 * @param value
+	 * @param modifier
+	 * @throws InvalidArgumentException 
+	 * @throws MalformedQueryException 
+	 * @throws UpdateExecutionException 
+	 * @throws MarmottaException 
+	 */
+	public void updateAttributeDate(String context, String object,
+			String name, String value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+	
 	/**
 	 * @param context
 	 * @param id
@@ -1181,6 +1292,68 @@ public interface ICoinsApiService {
 	 */
 	public void linkSituates(String context, String[] physicalObject,
 			String space, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param name
+	 * @param layerIndex
+	 * @param userID
+	 * @param baselineStatus
+	 * @param creator
+	 * @return id of baseline
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public String createBaseline(String context, String name, int layerIndex,
+			String userID, boolean baselineStatus, String creator) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return baseline query
+	 */
+	public String getBaselineQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if success
+	 */
+	public boolean deleteBaseline(String context, String id);
+
+	/**
+	 * @param context
+	 * @param cbimObject
+	 * @param baseline
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkBaseline(String context, String cbimObject,
+			String baseline, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param cbimObject
+	 * @param baseline
+	 * @param modifier
+	 * @throws InvalidArgumentException 
+	 * @throws MalformedQueryException 
+	 * @throws UpdateExecutionException 
+	 * @throws MarmottaException 
+	 */
+	public void linkCbimObject(String context, String cbimObject,
+			String baseline, String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
 

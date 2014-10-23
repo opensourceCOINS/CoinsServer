@@ -396,6 +396,14 @@ public abstract class QueryBuilder {
 		}
 	}
 
+	/**
+	 * @param pValue
+	 * @return value as string for query
+	 */
+	public static String doubleToString(double pValue) {
+		return DOUBLE_NUMBER_FORMAT.format(pValue);
+	}
+	
 	static {
 		DOUBLE_NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
 		DOUBLE_NUMBER_FORMAT.setGroupingUsed(false);

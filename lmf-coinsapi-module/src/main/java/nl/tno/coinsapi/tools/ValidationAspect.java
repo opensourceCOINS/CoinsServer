@@ -49,6 +49,10 @@ public enum ValidationAspect {
 	 */
 	FIRST_PARAMETER,
 	/**
+	 * Baseline
+	 */
+	BASELINE,
+	/**
 	 * Requirement of (<= 1)
 	 */
 	REQUIREMENT_OF,

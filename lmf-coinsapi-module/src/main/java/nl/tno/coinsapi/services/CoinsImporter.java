@@ -24,11 +24,19 @@ import javax.inject.Inject;
 import nl.tno.coinsapi.CoinsFormat;
 import nl.tno.coinsapi.webservices.CoinsApiWebService;
 
+import org.apache.marmotta.kiwi.loader.KiWiLoaderConfiguration;
+import org.apache.marmotta.kiwi.loader.generic.KiWiHandler;
+import org.apache.marmotta.kiwi.loader.mysql.KiWiMySQLHandler;
+import org.apache.marmotta.kiwi.loader.pgsql.KiWiPostgresHandler;
+import org.apache.marmotta.kiwi.persistence.mysql.MySQLDialect;
+import org.apache.marmotta.kiwi.persistence.pgsql.PostgreSQLDialect;
+import org.apache.marmotta.kiwi.sail.KiWiStore;
 import org.apache.marmotta.platform.core.api.config.ConfigurationService;
 import org.apache.marmotta.platform.core.api.importer.ImportService;
 import org.apache.marmotta.platform.core.api.importer.Importer;
 import org.apache.marmotta.platform.core.api.task.Task;
 import org.apache.marmotta.platform.core.api.task.TaskManagerService;
+import org.apache.marmotta.platform.core.api.triplestore.SesameService;
 import org.apache.marmotta.platform.core.exception.InvalidArgumentException;
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.apache.marmotta.platform.core.exception.io.MarmottaImportException;
@@ -39,6 +47,16 @@ import org.openrdf.model.Value;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.UpdateExecutionException;
+import org.openrdf.repository.Repository;
+import org.openrdf.repository.base.RepositoryWrapper;
+import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFParseException;
+import org.openrdf.rio.RDFParser;
+import org.openrdf.rio.Rio;
+import org.openrdf.sail.Sail;
+import org.openrdf.sail.helpers.SailWrapper;
 import org.slf4j.Logger;
 
 /**
@@ -57,6 +75,9 @@ public class CoinsImporter implements Importer {
 
 	@Inject
 	private TaskManagerService mTaskManagerService;
+
+	@Inject
+	private SesameService mSesameService;
 
 	@Inject
 	private ImportService mImportService;
@@ -214,17 +235,74 @@ public class CoinsImporter implements Importer {
 		}
 	}
 
+	protected KiWiStore getStore(Repository repository) {
+		if (repository instanceof SailRepository) {
+			return getStore(((SailRepository) repository).getSail());
+		}
+		if (repository instanceof RepositoryWrapper) {
+			return getStore(((RepositoryWrapper) repository).getDelegate());
+		}
+		return null;
+	}
+
+	/**
+	 * Get the root sail in the wrapped sail stack
+	 * 
+	 * @param sail
+	 * @return
+	 */
+	protected KiWiStore getStore(Sail sail) {
+		if (sail instanceof KiWiStore) {
+			return (KiWiStore) sail;
+		}
+		if (sail instanceof SailWrapper) {
+			return getStore(((SailWrapper) sail).getBaseSail());
+		}
+		return null;
+	}
+
 	private int importData(File pFile, Resource pUser, URI pContext,
 			String pBaseUri) throws MarmottaImportException {
 		int result = 0;
 		if (pFile.getName().endsWith("owl")) {
-			try {
-				FileInputStream fis = new FileInputStream(pFile);
-				result = mImportService.importData(fis, "application/rdf+xml",
-						pUser, pContext);
-				fis.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			KiWiStore store = getStore(mSesameService.getRepository());
+			if (store == null) {
+				// Low performance...
+				try {
+					FileInputStream fis = new FileInputStream(pFile);
+					result = mImportService.importData(fis,
+							"application/rdf+xml", pUser, pContext);
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				// Much higher performance via KiWiLoader
+				KiWiHandler handler;
+				KiWiLoaderConfiguration c = new KiWiLoaderConfiguration();
+				c.setContext(pContext.stringValue());
+				if (store.getPersistence().getDialect() instanceof PostgreSQLDialect) {
+					handler = new KiWiPostgresHandler(store, c);
+				} else if (store.getPersistence().getDialect() instanceof MySQLDialect) {
+					handler = new KiWiMySQLHandler(store, c);
+				} else {
+					handler = new KiWiHandler(store, c);
+				}
+				try {
+					RDFParser parser = Rio.createParser(RDFFormat.RDFXML);
+					parser.setRDFHandler(handler);
+					FileInputStream fis = new FileInputStream(pFile);
+					parser.parse(fis, "");
+					fis.close();
+				} catch (RDFParseException | RDFHandlerException | IOException e1) {
+					e1.printStackTrace();
+				} finally {
+					try {
+						handler.shutdown();
+					} catch (RDFHandlerException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		} else {
 			mFileServer.importFile(pFile, pContext);
@@ -299,8 +377,7 @@ public class CoinsImporter implements Importer {
 						+ " ?documentUri .\n" + "?object "
 						+ CoinsFormat.CBIM_DOCUMENT_ALIAS_FILE_PATH
 						+ " ?documentAliasFilePath .\n" + "?object a "
-						+ CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION
-						+ " .\n}}";
+						+ CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION + " .\n}}";
 				List<Map<String, Value>> result = mSparqlService.query(
 						QueryLanguage.SPARQL, query);
 				for (Map<String, Value> item : result) {
@@ -316,23 +393,17 @@ public class CoinsImporter implements Importer {
 								+ "\"^^<http://www.w3.org/2001/XMLSchema#string>";
 					}
 					if (fileSet.contains(fileName)) {
-						query = "PREFIX "
-								+ getBIMPrefix()
-								+ "\n\nWITH <"
-								+ mContext
-								+ "> \nDELETE { ?object "
-								+ CoinsFormat.CBIM_DOCUMENT_URI
-								+ " "
-								+ oldUri
+						query = "PREFIX " + getBIMPrefix() + "\n\nWITH <"
+								+ mContext + "> \nDELETE { ?object "
+								+ CoinsFormat.CBIM_DOCUMENT_URI + " " + oldUri
 								+ " } \nINSERT { ?object "
-								+ CoinsFormat.CBIM_DOCUMENT_URI
-								+ " <"
+								+ CoinsFormat.CBIM_DOCUMENT_URI + " <"
 								+ composeUrl(fileName, mContext)
 								+ "> } \nWHERE\n { ?object a "
 								+ CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION
 								+ " .\n ?object "
-								+ CoinsFormat.CBIM_DOCUMENT_URI + " "
-								+ oldUri + "\n}";
+								+ CoinsFormat.CBIM_DOCUMENT_URI + " " + oldUri
+								+ "\n}";
 						try {
 							mSparqlService.update(QueryLanguage.SPARQL, query);
 						} catch (InvalidArgumentException

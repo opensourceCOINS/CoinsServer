@@ -33,6 +33,7 @@ nl\tno\coinsapi\services\ICoinsDateConversion.class
 nl\tno\coinsapi\services\CoinsWriter$3.class
 nl\tno\coinsapi\tools\CoinsValidatorFactory$1.class
 nl\tno\coinsapi\services\CoinsWriter.class
+nl\tno\coinsapi\tools\CoinsValidator$CoinsBaselineValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsPrimaryOrientationValidator.class
 nl\tno\coinsapi\webservices\CoinsApiWebService.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsAllValidator.class

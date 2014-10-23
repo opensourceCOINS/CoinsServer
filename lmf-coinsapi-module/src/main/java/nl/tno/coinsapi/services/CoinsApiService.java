@@ -1402,4 +1402,131 @@ public class CoinsApiService implements ICoinsApiService {
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 
+	@Override
+	public void updateAttributeString(String context, String object,
+			String name, String value, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		updateAttribute(context, object, name, value, modifier, FieldType.STRING);
+	}
+
+	@Override
+	public void updateAttributeResource(String context, String object,
+			String name, String value, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		updateAttribute(context, object, name, value, modifier, FieldType.RESOURCE);
+	}
+
+	@Override
+	public void updateAttributeFloat(String context, String object,
+			String name, double value, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		updateAttribute(context, object, name, QueryBuilder.doubleToString(value), modifier, FieldType.DOUBLE);
+	}
+
+	@Override
+	public void updateAttributeInt(String context, String object, String name,
+			int value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		updateAttribute(context, object, name, Integer.toString(value), modifier, FieldType.INT);
+	}
+
+	@Override
+	public void updateAttributeDate(String context, String object, String name,
+			String value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		updateAttribute(context, object, name, value, modifier, FieldType.DATE);
+	}
+
+	@Override
+	public void updateAttributeBoolean(String context, String object,
+			String name, boolean value, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		updateAttribute(context, object, name, String.valueOf(value), modifier, FieldType.BOOLEAN);		
+	}
+
+	@Override
+	public void addAttributeBoolean(String context, String object, String name,
+			boolean value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsFormat.PREFIX_CBIM);
+		builder.addPrefix(CoinsFormat.PREFIX_CBIMFS);
+		builder.addGraph(getFullContext(context));
+		builder.setId(object);
+		builder.addAttributeBoolean(name, value);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());		
+	}
+
+	@Override
+	public String createBaseline(String context, String name, int layerIndex,
+			String userID, boolean baselineStatus, String creator)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		String id = constructId(context);
+		InsertQueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsFormat.PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(id);
+		builder.addAttributeString(CoinsFormat.CBIM_NAME, name);
+		builder.addAttributeDate(CoinsFormat.CBIM_CREATION_DATE, new Date());
+		builder.addAttributeString(CoinsFormat.CBIM_USER_ID, userID);
+		builder.addAttributeInteger(CoinsFormat.CBIM_LAYER_INDEX, layerIndex);
+		builder.addAttributeBoolean(CoinsFormat.CBIM_BASELINE_STATUS, baselineStatus);
+		builder.addAttributeResource(CoinsFormat.CBIM_CREATOR, creator);
+		builder.addAttributeType(CoinsFormat.CBIM_BASELINE);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		return id;
+	}
+
+	@Override
+	public String getBaselineQuery(String context, String id) {
+		return getSelectQuery(context, id, CoinsFormat.CBIM_BASELINE, CoinsFormat.PREFIX_CBIM);
+	}
+
+	@Override
+	public boolean deleteBaseline(String context, String id) {
+		return deleteItem(context, id, CoinsFormat.CBIM_BASELINE, CoinsFormat.PREFIX_CBIM);
+	}
+
+	@Override
+	public void linkBaseline(String context, String cbimObject,
+			String baseline, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		updateAttribute(context, cbimObject, CoinsFormat.CBIM_BASELINE_REFERENCE, baseline, modifier,
+				FieldType.RESOURCE);
+	}
+
+	@Override
+	public void linkCbimObject(String context, String cbimObject,
+			String baseline, String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsFormat.PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(baseline);
+		builder.addAttributeResource(CoinsFormat.CBIM_BASELINE_OBJECT,
+				cbimObject);
+		builder.addAttributeDate(CoinsFormat.CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CoinsFormat.CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		// The previous query might have caused two modificationDates/modifiers
+		// so...
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsFormat.PREFIX_CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(baseline);
+		builder.addAttributeDate(CoinsFormat.CBIM_MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CoinsFormat.CBIM_MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());		
+	}
+
 }

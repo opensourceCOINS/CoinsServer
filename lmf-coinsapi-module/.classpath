@@ -14,7 +14,10 @@
 	<classpathentry kind="var" path="M2_REPO/commons-configuration/commons-configuration/1.10/commons-configuration-1.10.jar"/>
 	<classpathentry kind="lib" path="E:/workspaces/coins/apache-marmotta-3.2.1/platform/marmotta-core/target/marmotta-core-3.2.1.jar" sourcepath="E:/workspaces/coins/apache-marmotta-3.2.1/platform/marmotta-core/target/marmotta-core-3.2.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-model/2.7.11/sesame-model-2.7.11.jar"/>
-    <classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-util/2.7.11/sesame-util-2.7.11.jar"/>	
+	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-util/2.7.11/sesame-util-2.7.11.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-repository-sail/2.7.11/sesame-repository-sail-2.7.11.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-repository-api/2.7.11/sesame-repository-api-2.7.11.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-sail-api/2.7.11/sesame-sail-api-2.7.11.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.7.6/slf4j-api-1.7.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/inject/javax.inject/1/javax.inject-1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junit/junit/4.11/junit-4.11.jar"/>
@@ -26,5 +29,7 @@
 	<classpathentry kind="src" path="/marmotta-sparql"/>
 	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-query/2.7.11/sesame-query-2.7.11.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/openrdf/sesame/sesame-rio-api/2.7.11/sesame-rio-api-2.7.11.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/marmotta/kiwi-triplestore/3.2.1/kiwi-triplestore-3.2.1.jar" sourcepath="M2_REPO/org/apache/marmotta/kiwi-triplestore/3.2.1/kiwi-triplestore-3.2.1-sources.jar"/>
+	<classpathentry kind="src" path="/kiwi-loader"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

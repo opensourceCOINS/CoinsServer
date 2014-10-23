@@ -31,6 +31,26 @@ public class CoinsFormat {
 	public static final String CBIM_AMOUNT = CBIM + ":Amount";
 
 	/**
+	 * cbim:Baseline
+	 */
+	public static final String CBIM_BASELINE = CBIM + ":Baseline";
+	
+	/**
+	 * cbim:baseline
+	 */
+	public static final String CBIM_BASELINE_REFERENCE = CBIM + ":baseline";
+
+	/**
+	 * cbim:baselineObject 
+	 */
+	public static final String CBIM_BASELINE_OBJECT = CBIM + ":baselineObject";
+
+	/**
+	 * cbim:baselineStatus (boolean)
+	 */
+	public static final String CBIM_BASELINE_STATUS = CBIM + ":baselineStatus";
+
+	/**
 	 * cbim:CataloguePart
 	 */
 	public static final String CBIM_CATALOGUE_PART = CBIM + ":CataloguePart";

@@ -926,5 +926,33 @@ public abstract class CoinsValidator {
 		}
 		
 	}
-	
+
+	/**
+	 * cbim:baseline
+	 * cbim:baselineObject
+	 */
+	public static class CoinsBaselineValidator extends CoinsTwoWayRelationValidator {
+
+		@Override
+		protected String getTo() {
+			return CoinsFormat.CBIM_BASELINE_REFERENCE;
+		}
+
+		@Override
+		protected String getToDescription() {
+			return "Baseline";
+		}
+
+		@Override
+		protected String getFrom() {
+			return CoinsFormat.CBIM_BASELINE_OBJECT;
+		}
+
+		@Override
+		protected String getFromDescription() {
+			return "CbimObject";
+		}
+		
+	}
+
 }
