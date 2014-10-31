@@ -21,7 +21,9 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import nl.tno.coinsapi.CoinsFormat;
+import nl.tno.coinsapi.CoinsPrefix;
+import nl.tno.coinsapi.keys.CbimAttributeKey;
+import nl.tno.coinsapi.keys.CbimObjectKey;
 import nl.tno.coinsapi.webservices.CoinsApiWebService;
 
 import org.apache.marmotta.kiwi.loader.KiWiLoaderConfiguration;
@@ -206,15 +208,15 @@ public class CoinsImporter implements Importer {
 		new ReferenceUpdater(pContext, mSparqlService, mFileServer,
 				mConfigurationService) {
 			@Override
-			protected String getBIMPrefix() {
-				return CoinsFormat.PREFIX_CBIM1_0;
+			protected CoinsPrefix getPrefix() {
+				return CoinsPrefix.CBIM1_0;
 			}
 		}.execute();
 		new ReferenceUpdater(pContext, mSparqlService, mFileServer,
 				mConfigurationService) {
 			@Override
-			protected String getBIMPrefix() {
-				return CoinsFormat.PREFIX_CBIM1_1;
+			protected CoinsPrefix getPrefix() {
+				return CoinsPrefix.CBIM1_1;
 			}
 		}.execute();
 	}
@@ -352,7 +354,7 @@ public class CoinsImporter implements Importer {
 			mConfigurationService = pConfigurationService;
 		}
 
-		protected abstract String getBIMPrefix();
+		protected abstract CoinsPrefix getPrefix();
 
 		/**
 		 * 
@@ -371,13 +373,13 @@ public class CoinsImporter implements Importer {
 				fileSet.add(s);
 			}
 			try {
-				String query = "PREFIX " + getBIMPrefix()
+				String query = "PREFIX " + getPrefix()
 						+ "\n\nSELECT * WHERE { GRAPH <" + mContext + "> {\n"
-						+ "?object " + CoinsFormat.CBIM_DOCUMENT_URI
+						+ "?object " + CbimAttributeKey.DOCUMENT_URI
 						+ " ?documentUri .\n" + "?object "
-						+ CoinsFormat.CBIM_DOCUMENT_ALIAS_FILE_PATH
+						+ CbimAttributeKey.DOCUMENT_ALIAS_FILE_PATH
 						+ " ?documentAliasFilePath .\n" + "?object a "
-						+ CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION + " .\n}}";
+						+ CbimObjectKey.EXPLICIT3D_REPRESENTATION + " .\n}}";
 				List<Map<String, Value>> result = mSparqlService.query(
 						QueryLanguage.SPARQL, query);
 				for (Map<String, Value> item : result) {
@@ -393,16 +395,16 @@ public class CoinsImporter implements Importer {
 								+ "\"^^<http://www.w3.org/2001/XMLSchema#string>";
 					}
 					if (fileSet.contains(fileName)) {
-						query = "PREFIX " + getBIMPrefix() + "\n\nWITH <"
+						query = "PREFIX " + getPrefix() + "\n\nWITH <"
 								+ mContext + "> \nDELETE { ?object "
-								+ CoinsFormat.CBIM_DOCUMENT_URI + " " + oldUri
+								+ CbimAttributeKey.DOCUMENT_URI + " " + oldUri
 								+ " } \nINSERT { ?object "
-								+ CoinsFormat.CBIM_DOCUMENT_URI + " <"
+								+ CbimAttributeKey.DOCUMENT_URI + " <"
 								+ composeUrl(fileName, mContext)
 								+ "> } \nWHERE\n { ?object a "
-								+ CoinsFormat.CBIM_EXPLICIT3D_REPRESENTATION
+								+ CbimObjectKey.EXPLICIT3D_REPRESENTATION
 								+ " .\n ?object "
-								+ CoinsFormat.CBIM_DOCUMENT_URI + " " + oldUri
+								+ CbimAttributeKey.DOCUMENT_URI + " " + oldUri
 								+ "\n}";
 						try {
 							mSparqlService.update(QueryLanguage.SPARQL, query);

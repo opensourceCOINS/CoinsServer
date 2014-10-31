@@ -2,6 +2,7 @@ package nl.tno.coinsapi.services;
 
 import java.util.List;
 
+import nl.tno.coinsapi.keys.IAttributeKey;
 import nl.tno.coinsapi.tools.QueryBuilder.FieldType;
 import nl.tno.coinsapi.tools.ValidationAspect;
 
@@ -922,7 +923,7 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public void linkBoundingBox(String context, String cbim_id,
+	public void linkBoundingBox(String context, IAttributeKey cbim_id,
 			String boundingBox, String locator, String modifier)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
@@ -938,7 +939,7 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public void linkTerminal(String context, String cbim_id, String terminal,
+	public void linkTerminal(String context, IAttributeKey cbim_id, String terminal,
 			String connection, String modifier)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
@@ -1260,7 +1261,7 @@ public interface ICoinsApiService {
 	 * @throws MarmottaException
 	 */
 	public void setVerificationAttribute(String context, String verification,
-			String objectId, String objectTypeId, String modifier,
+			String objectId, IAttributeKey objectTypeId, String modifier,
 			FieldType pFieldType) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
@@ -1357,4 +1358,48 @@ public interface ICoinsApiService {
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
 
+	/**
+	 * @param context
+	 * @param id
+	 * @return the LibraryReferenceQuery
+	 */
+	public String getLibraryReferenceQuery(String context, String id);
+
+	/**
+	 * @param context
+	 * @param id
+	 * @return true if successful
+	 */
+	public boolean deleteLibraryReference(String context, String id);
+
+	/**
+	 * @param context
+	 * @param name
+	 * @param userID
+	 * @param creator
+	 * @return the id of the created LibraryReference
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public String createLibraryReference(String context, String name,
+			String userID, String creator) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException;
+
+	/**
+	 * @param context
+	 * @param cbimObject
+	 * @param libraryReference
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkCbimObjectToLibraryReference(String context,
+			String cbimObject, String libraryReference, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
 }

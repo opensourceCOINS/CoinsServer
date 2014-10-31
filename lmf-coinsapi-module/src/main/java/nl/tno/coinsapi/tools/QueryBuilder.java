@@ -8,10 +8,14 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 
-import org.apache.marmotta.platform.core.exception.MarmottaException;
-
-import nl.tno.coinsapi.CoinsFormat;
+import nl.tno.coinsapi.CoinsPrefix;
+import nl.tno.coinsapi.W3Schema;
+import nl.tno.coinsapi.keys.IAttributeKey;
+import nl.tno.coinsapi.keys.IObjectKey;
+import nl.tno.coinsapi.keys.SPARQL_AttributeKey;
 import nl.tno.coinsapi.services.ICoinsDateConversion;
+
+import org.apache.marmotta.platform.core.exception.MarmottaException;
 
 /**
  * Class used for creating SPARQL Queries
@@ -48,7 +52,7 @@ public abstract class QueryBuilder {
 		BOOLEAN;
 	}
 
-	protected List<String> mPrefixes = new Vector<String>();
+	protected List<CoinsPrefix> mPrefixes = new Vector<CoinsPrefix>();
 	private Set<String> mPrefixKeys = new HashSet<String>();
 	protected String mGraph;
 	protected String mId;
@@ -68,8 +72,8 @@ public abstract class QueryBuilder {
 	 * @param pPrefix
 	 *            For instance cbim: <http://www.coinsweb.nl/c-bim.owl#>
 	 */
-	public void addPrefix(String pPrefix) {
-		mPrefixKeys.add(pPrefix.split(":")[0]);
+	public void addPrefix(CoinsPrefix pPrefix) {
+		mPrefixKeys.add(pPrefix.getKey());
 		mPrefixes.add(pPrefix);
 	}
 
@@ -104,23 +108,23 @@ public abstract class QueryBuilder {
 	 * @param pValue
 	 * @param pType
 	 */
-	public void addAttribute(String pName, String pValue, FieldType pType) {
+	public void addAttribute(IAttributeKey pName, String pValue, FieldType pType) {
 		switch (pType) {
 		case BOOLEAN:
 			mAttributes.add(new TypedItem(pName, pValue,
-					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_BOOLEAN));
+					W3Schema.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_BOOLEAN));
 			break;
 		case DATE:
 			mAttributes.add(new TypedItem(pName, pValue,
-					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
+					W3Schema.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
 			break;
 		case DOUBLE:
 			mAttributes.add(new TypedItem(pName, pValue,
-					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
+					W3Schema.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_FLOAT));
 			break;
 		case INT:
 			mAttributes.add(new TypedItem(pName, pValue,
-					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT));
+					W3Schema.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_INT));
 			break;
 		case RESOURCE:
 			if (isPrefixedValue(pValue)) {
@@ -131,7 +135,7 @@ public abstract class QueryBuilder {
 			break;
 		case STRING:
 			mAttributes.add(new TypedItem(pName, pValue,
-					CoinsFormat.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
+					W3Schema.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_STRING));
 			break;
 		}
 	}
@@ -139,8 +143,8 @@ public abstract class QueryBuilder {
 	/**
 	 * @param pValue
 	 */
-	public void addAttributeType(String pValue) {
-		mAttributes.add(new Item("a", pValue));
+	public void addAttributeType(IObjectKey pValue) {
+		mAttributes.add(new Item(SPARQL_AttributeKey.A, pValue.toString()));
 	}
 
 	/**
@@ -149,7 +153,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeString(String pName, String pValue) {
+	public void addAttributeString(IAttributeKey pName, String pValue) {
 		addAttribute(pName, pValue, FieldType.STRING);
 	}
 
@@ -159,7 +163,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeResource(String pName, String pValue) {
+	public void addAttributeResource(IAttributeKey pName, String pValue) {
 		addAttribute(pName, pValue, FieldType.RESOURCE);
 	}
 
@@ -169,7 +173,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeDate(String pName, Date pValue) {
+	public void addAttributeDate(IAttributeKey pName, Date pValue) {
 		addAttribute(pName, mDateConversion.toString(pValue), FieldType.DATE);
 	}
 
@@ -179,7 +183,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeDate(String pName, String pValue) {
+	public void addAttributeDate(IAttributeKey pName, String pValue) {
 		addAttribute(pName, pValue, FieldType.DATE);
 	}
 
@@ -189,7 +193,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeInteger(String pName, int pValue) {
+	public void addAttributeInteger(IAttributeKey pName, int pValue) {
 		addAttribute(pName, String.valueOf(pValue), FieldType.INT);
 	}
 
@@ -199,7 +203,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeBoolean(String pName, boolean pValue) {
+	public void addAttributeBoolean(IAttributeKey pName, boolean pValue) {
 		addAttribute(pName, String.valueOf(pValue), FieldType.BOOLEAN);
 	}
 
@@ -209,7 +213,7 @@ public abstract class QueryBuilder {
 	 * @param pName
 	 * @param pValue
 	 */
-	public void addAttributeDouble(String pName, double pValue) {
+	public void addAttributeDouble(IAttributeKey pName, double pValue) {
 		addAttribute(pName, DOUBLE_NUMBER_FORMAT.format(pValue),
 				FieldType.DOUBLE);
 	}
@@ -241,7 +245,7 @@ public abstract class QueryBuilder {
 		@Override
 		public String build() {
 			StringBuilder result = new StringBuilder();
-			for (String prefix : mPrefixes) {
+			for (CoinsPrefix prefix : mPrefixes) {
 				result.append("PREFIX ");
 				result.append(prefix);
 				result.append("\n");
@@ -306,7 +310,7 @@ public abstract class QueryBuilder {
 		@Override
 		public String build() {
 			StringBuilder result = new StringBuilder();
-			for (String prefix : mPrefixes) {
+			for (CoinsPrefix prefix : mPrefixes) {
 				result.append("PREFIX ");
 				result.append(prefix);
 				result.append("\n");
@@ -323,7 +327,7 @@ public abstract class QueryBuilder {
 				}
 				result.append(item.getName());
 				result.append(" ?");
-				result.append(composeVariableName(item));
+				result.append(item.getName().getNonPrefixedName());
 				isFirst = false;
 			}
 			result.append(". }\nINSERT {\n <");
@@ -349,40 +353,33 @@ public abstract class QueryBuilder {
 				}
 				result.append(item.getName());
 				result.append(" ?");
-				result.append(composeVariableName(item));
+				result.append(item.getName().getNonPrefixedName());
 				isFirst = false;
 			}
 			result.append(". }");
 			return result.toString();
 		}
 
-		private String composeVariableName(Item item) {
-			int index = item.getName().indexOf(':');
-			if (index == -1) {
-				index = item.getName().indexOf('#');
-			}
-			return item.getName().substring(index + 1);
-		}
 	}
 
 	private static class TypedItem extends Item {
 
-		public TypedItem(String pName, String pValue, String pType) {
-			super(pName, "\"" + pValue + "\"^^<" + pType + ">");
+		public TypedItem(IAttributeKey pName, String pValue, W3Schema pType) {
+			super(pName, "\"" + pValue + "\"^^<" + pType.toString() + ">");
 		}
 
 	}
 
 	private static class Item {
-		private final String mName;
+		private final IAttributeKey mName;
 		private final String mValue;
 
-		public Item(String pName, String pValue) {
+		public Item(IAttributeKey pName, String pValue) {
 			mName = pName;
 			mValue = pValue;
 		}
 
-		public String getName() {
+		public IAttributeKey getName() {
 			return mName;
 		}
 
@@ -403,7 +400,7 @@ public abstract class QueryBuilder {
 	public static String doubleToString(double pValue) {
 		return DOUBLE_NUMBER_FORMAT.format(pValue);
 	}
-	
+
 	static {
 		DOUBLE_NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
 		DOUBLE_NUMBER_FORMAT.setGroupingUsed(false);

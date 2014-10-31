@@ -19,7 +19,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import nl.tno.coinsapi.CoinsFormat;
+import nl.tno.coinsapi.keys.CbimAttributeKey;
+import nl.tno.coinsapi.keys.CbimfsAttributeKey;
 import nl.tno.coinsapi.services.ICoinsApiService;
 import nl.tno.coinsapi.services.ICoinsDocFileService;
 import nl.tno.coinsapi.tools.QueryBuilder.FieldType;
@@ -69,14 +70,28 @@ public class CoinsApiWebService {
 	 * NonFunctionRequirement
 	 */
 	public static final String PATH_NON_FUNCTIONAL_REQUIREMENT = "/nonfunctionalrequirement";
+	
 	/**
 	 * PersonOrOrganisation
 	 */
 	public static final String PATH_PERSON_OR_ORGANISATION = "/personorganisation";
+	
+	/**
+	 * LibraryReference
+	 */
+	public static final String PATH_LIBRARY_REFERENCE = "/libraryreference";
+
+	/**
+	 * LibraryReference
+	 */
+	public static final String PATH_LINK_CBIM_OBJECT_TO_LIBRARY_REFERENCE = PATH_LIBRARY_REFERENCE
+			+ "/objectreference";
+
 	/**
 	 * State
 	 */
 	public static final String PATH_STATE = "/state";
+	
 	/**
 	 * State stateOf FunctionFulfiller
 	 */
@@ -122,9 +137,9 @@ public class CoinsApiWebService {
 	public static final String PATH_CBIM_OBJECT = "/cbimobject";
 	
 	/**
-	 * Link a CbimObject to a Baseline
+	 * Link a Baseline to a CbimObject
 	 */
-	public static final String PATH_LINK_BASELINE = PATH_CBIM_OBJECT + "/baseline";
+	public static final String PATH_LINK_BASELINE_TO_CBIM_OBJECT = PATH_CBIM_OBJECT + "/baseline";
 	
 	/**
 	 * Edit physical parent relation
@@ -430,18 +445,22 @@ public class CoinsApiWebService {
 	 * Reference Frame
 	 */
 	public static final String PATH_ADD_REFERENCE_FRAME = "/referenceframe";
+	
 	/**
 	 * Baseline
 	 */
 	public static final String PATH_BASELINE = "/baseline";
+	
 	/**
-	 * Link a Baseline to a CbimObject
+	 * Link a CbimObject to the a BaseLine
 	 */
-	public static final String PATH_LINK_CBIM_OBJECT = PATH_BASELINE + "/cbimobject";
+	public static final String PATH_LINK_CBIM_OBJECT_TO_BASE_LINE = PATH_BASELINE + "/cbimobject";
+	
 	/**
 	 * Verification
 	 */
 	public static final String PATH_VERIFICATION = "/verification";
+	
 	/**
 	 * Link function fulfiller to Verification
 	 * (cbim:verificationFunctionFulfiller)
@@ -615,6 +634,7 @@ public class CoinsApiWebService {
 	private static final String BASELINE_STATUS = "baselineStatus";
 	private static final String CBIM_OBJECT = "cbimObject";
 	private static final String BASELINE = "baseline";
+	private static final String LIBRARY_REFERENCE = "libraryReference";
 
 	@Inject
 	private ConfigurationService mConfigurationService;
@@ -1002,7 +1022,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					authorizationDate, CoinsFormat.CBIMFS_AUTHORIZATION_DATE,
+					authorizationDate, CbimfsAttributeKey.AUTHORIZATION_DATE,
 					modifier, FieldType.DATE);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1044,7 +1064,7 @@ public class CoinsApiWebService {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
 					authorizationDefects,
-					CoinsFormat.CBIMFS_AUTHORIZATION_DEFECTS, modifier,
+					CbimfsAttributeKey.AUTHORIZATION_DEFECTS, modifier,
 					FieldType.STRING);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1086,7 +1106,7 @@ public class CoinsApiWebService {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
 					authorizationMeasures,
-					CoinsFormat.CBIMFS_AUTHORIZATION_MEASURES, modifier,
+					CbimfsAttributeKey.AUTHORIZATION_MEASURES, modifier,
 					FieldType.STRING);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1128,7 +1148,7 @@ public class CoinsApiWebService {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
 					authorizationRemarks,
-					CoinsFormat.CBIMFS_AUTHORIZATION_REMARKS, modifier,
+					CbimfsAttributeKey.AUTHORIZATION_REMARKS, modifier,
 					FieldType.STRING);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1169,7 +1189,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					plannedRemarks, CoinsFormat.CBIMFS_PLANNED_REMARKS,
+					plannedRemarks, CbimfsAttributeKey.PLANNED_REMARKS,
 					modifier, FieldType.STRING);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1210,7 +1230,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					plannedDate, CoinsFormat.CBIMFS_PLANNED_VERIFICATION_DATE,
+					plannedDate, CbimfsAttributeKey.PLANNED_VERIFICATION_DATE,
 					modifier, FieldType.DATE);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1251,7 +1271,7 @@ public class CoinsApiWebService {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
 					plannedMethod,
-					CoinsFormat.CBIMFS_PLANNED_VERIFICATION_METHOD, modifier,
+					CbimfsAttributeKey.PLANNED_VERIFICATION_METHOD, modifier,
 					FieldType.STRING);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1293,7 +1313,7 @@ public class CoinsApiWebService {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
 					plannedWorkPackage,
-					CoinsFormat.CBIMFS_PLANNED_WORK_PACKAGE, modifier,
+					CbimfsAttributeKey.PLANNED_WORK_PACKAGE, modifier,
 					FieldType.STRING);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -1333,7 +1353,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					risks, CoinsFormat.CBIMFS_VERIFICATION_RISKS, modifier,
+					risks, CbimfsAttributeKey.VERIFICATION_RISKS, modifier,
 					FieldType.STRING);
 			return Response.ok().build();
 		} catch (MarmottaException e) {
@@ -2934,7 +2954,7 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Link a <B>CbimObject</B> to a <B>Baseline</B>
+	 * Link a <B>Baseline</B> to a <B>CbimObject</B> 
 	 * 
 	 * @param context
 	 *            context or graph
@@ -2948,9 +2968,9 @@ public class CoinsApiWebService {
 	 * @return OK if success
 	 */
 	@POST
-	@Path(PATH_LINK_BASELINE)
+	@Path(PATH_LINK_BASELINE_TO_CBIM_OBJECT)
 	@Consumes(MIME_TYPE)
-	public Response linkBaseline(
+	public Response linkBaselineToCbimObject(
 			@QueryParam(CONTEXT) String context,
 			@QueryParam(CBIM_OBJECT) String cbimObject,
 			@QueryParam(BASELINE) String baseline,
@@ -2971,7 +2991,7 @@ public class CoinsApiWebService {
 	}
 
 	/**
-	 * Link a <B>Baseline</B> to a <B>CbimObject</B>
+	 * Link a <B>CbimObject</B> to the <B>Baseline</B> 
 	 * 
 	 * @param context
 	 *            context or graph
@@ -2985,9 +3005,9 @@ public class CoinsApiWebService {
 	 * @return OK if success
 	 */
 	@POST
-	@Path(PATH_LINK_CBIM_OBJECT)
+	@Path(PATH_LINK_CBIM_OBJECT_TO_BASE_LINE)
 	@Consumes(MIME_TYPE)
-	public Response linkCbimObject(
+	public Response linkCbimObjectToBaseLine(
 			@QueryParam(CONTEXT) String context,
 			@QueryParam(CBIM_OBJECT) String cbimObject,
 			@QueryParam(BASELINE) String baseline,
@@ -3006,7 +3026,44 @@ public class CoinsApiWebService {
 		}
 		return Response.ok().build();
 	}
-	
+
+	/**
+	 * Link a <B>CbimObject</B> to a <B>LibraryReference</B> 
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param cbimObject
+	 *            Identifier of the <B>CbimObject</B>
+	 * @param libraryReference
+	 *            Identifier of the <B>LibraryReference</B>
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_CBIM_OBJECT_TO_LIBRARY_REFERENCE)
+	@Consumes(MIME_TYPE)
+	public Response linkCbimObjectToLibraryReference (
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(CBIM_OBJECT) String cbimObject,
+			@QueryParam(LIBRARY_REFERENCE) String libraryReference,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkCbimObjectToLibraryReference(context, cbimObject,
+					libraryReference, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Linking CbimObject <"
+							+ cbimObject + "> to LibraryReference <" + libraryReference
+							+ "> failed").build();
+		}
+		return Response.ok().build();
+	}
+
 	/**
 	 * Link a property value to <B>Performance</B> via cbimfs:propertyValue
 	 * 
@@ -3608,7 +3665,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					requirement, CoinsFormat.CBIM_VERIFICATION_REQUIREMENT,
+					requirement, CbimAttributeKey.VERIFICATION_REQUIREMENT,
 					modifier, FieldType.RESOURCE);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -3643,7 +3700,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					requirement, CoinsFormat.CBIMFS_VERIFICATION_REQUIREMENT,
+					requirement, CbimfsAttributeKey.VERIFICATION_REQUIREMENT,
 					modifier, FieldType.RESOURCE);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -3678,7 +3735,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					performer, CoinsFormat.CBIM_VERIFICATION_PERFORMER,
+					performer, CbimAttributeKey.VERIFICATION_PERFORMER,
 					modifier, FieldType.RESOURCE);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -3713,7 +3770,7 @@ public class CoinsApiWebService {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
 					performer,
-					CoinsFormat.CBIMFS_VERIFICATION_PLANNED_PERFORMER,
+					CbimfsAttributeKey.VERIFICATION_PLANNED_PERFORMER,
 					modifier, FieldType.RESOURCE);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -3748,7 +3805,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
-					authorizer, CoinsFormat.CBIMFS_VERIFICATION_AUTHORIZED_BY,
+					authorizer, CbimfsAttributeKey.VERIFICATION_AUTHORIZED_BY,
 					modifier, FieldType.RESOURCE);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -3784,7 +3841,7 @@ public class CoinsApiWebService {
 		try {
 			mCoinsService.setVerificationAttribute(context, verification,
 					functionFulfiller,
-					CoinsFormat.CBIM_VERIFICATION_FUNCTION_FULFILLER, modifier,
+					CbimAttributeKey.VERIFICATION_FUNCTION_FULFILLER, modifier,
 					FieldType.RESOURCE);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -3995,7 +4052,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkBoundingBox(context,
-					CoinsFormat.CBIM_MIN_BOUNDING_BOX, minBoundingBox, locator,
+					CbimAttributeKey.MIN_BOUNDING_BOX, minBoundingBox, locator,
 					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -4027,7 +4084,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkTerminal(context,
-					CoinsFormat.CBIM_FEMALE_TERMINAL, femaleTerminal,
+					CbimAttributeKey.FEMALE_TERMINAL, femaleTerminal,
 					connection, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -4058,7 +4115,7 @@ public class CoinsApiWebService {
 			@QueryParam(MALE_TERMINAL) String maleTerminal,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
-			mCoinsService.linkTerminal(context, CoinsFormat.CBIM_MALE_TERMINAL,
+			mCoinsService.linkTerminal(context, CbimAttributeKey.MALE_TERMINAL,
 					maleTerminal, connection, modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -4090,7 +4147,7 @@ public class CoinsApiWebService {
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.linkBoundingBox(context,
-					CoinsFormat.CBIM_MAX_BOUNDING_BOX, maxBoundingBox, locator,
+					CbimAttributeKey.MAX_BOUNDING_BOX, maxBoundingBox, locator,
 					modifier);
 		} catch (InvalidArgumentException | MalformedQueryException
 				| UpdateExecutionException | MarmottaException e) {
@@ -4511,6 +4568,97 @@ public class CoinsApiWebService {
 				.build();
 	}
 
+	/**
+	 * Get a <B>LibraryReference</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param id
+	 *            The id of the <B>LibraryReference</B>
+	 * @param output
+	 *            The way the output should be formatted
+	 *            (json/xml/csv/html/tabs)
+	 * @param request
+	 * @return the <B>LibraryReference</B> formatted the way specified by means of
+	 *         the output
+	 */
+	@GET
+	@Path(PATH_LIBRARY_REFERENCE)
+	@Consumes(MIME_TYPE)
+	public Response getLibraryReference(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id, @QueryParam(OUTPUT) String output,
+			@Context HttpServletRequest request) {
+		String query = mCoinsService.getLibraryReferenceQuery(context, id);
+		return mSparqlWebService.selectPostForm(query, output, request);
+	}
+
+	/**
+	 * Delete a <B>LibraryReference</B>
+	 * 
+	 * @param context
+	 * @param id
+	 * @return OK if the <B>LibraryReference</B> was deleted
+	 */
+	@DELETE
+	@Path(PATH_LIBRARY_REFERENCE)
+	@Consumes(MIME_TYPE)
+	public Response deleteLibraryReference(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String id) {
+		if (mCoinsService.deleteLibraryReference(context, id)) {
+			return Response.ok().build();
+		}
+		return Response.serverError().entity("Cannot delete LibraryReference")
+				.build();
+	}
+
+	/**
+	 * Create a new <B>LibraryReference</B>
+	 * 
+	 * @param context
+	 *            The context or graph
+	 * @param name
+	 *            The name of the <B>LibraryReference</B>
+	 * @param userID
+	 *            A user defined identifier (for convenience)
+	 * @param creator
+	 *            URI referring to the user that created this <B>LibraryReference</B>
+	 * @return The id of the created <B>LibraryReference</B>
+	 */
+	@POST
+	@Path(PATH_LIBRARY_REFERENCE)
+	@Consumes(MIME_TYPE)
+	public Response createLibraryReference(@QueryParam(CONTEXT) String context,
+			@QueryParam(NAME) String name, @QueryParam(USER_ID) String userID,
+			@QueryParam(CREATOR) String creator) {
+		if (name == null) {
+			return Response.serverError().entity("Name cannot be null").build();
+		}
+		if (userID == null) {
+			return Response.serverError().entity("Userid cannot be null")
+					.build();
+		}
+		if (context == null) {
+			context = mConfigurationService.getDefaultContext();
+		}
+		String identifier;
+		try {
+			identifier = mCoinsService.createLibraryReference(context, name, userID,
+					creator);
+			return Response.ok().entity(identifier).build();
+		} catch (MarmottaException e) {
+			e.printStackTrace();
+		} catch (InvalidArgumentException e) {
+			e.printStackTrace();
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+		} catch (UpdateExecutionException e) {
+			e.printStackTrace();
+		}
+		return Response.serverError()
+				.entity("Something went wrong when creating the LibraryReference")
+				.build();
+	}
+	
 	/**
 	 * Insert an attribute of type String. This method ignores the fact that
 	 * duplicate entries may result if it is executed. No validation on
