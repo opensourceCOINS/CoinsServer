@@ -1,6 +1,9 @@
 package nl.tno.coinsapi.webservices;
 
 import static com.jayway.restassured.RestAssured.given;
+
+import java.util.List;
+
 import nl.tno.coinsapi.util.TestUtil;
 
 import org.junit.Assert;
@@ -109,6 +112,73 @@ public class TestContext extends TestCoinsApiWebService {
 				.get(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_REQUIREMENT).body();
 		Assert.assertTrue(TestUtil.isEmpty(body.asString()));
+	}
+	
+	/**
+	 * Test of validator with context / full context
+	 */
+	@Test
+	public void testValidator() {
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Parent B")
+				.queryParam("layerIndex", 2)
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "B")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PHYSICAL_OBJECT).body();
+		String parentB = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Child")
+				.queryParam("layerIndex", 2)
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "C 1")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_PHYSICAL_OBJECT).body();
+		String child = body.asString();
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("child", child)
+				.queryParam("parent", parentB)
+				.queryParam("modifier", mCreatorId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
+		// full context
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATEALL)
+				.body();
+		List<String> result = TestUtil.getStringList(body);
+		Assert.assertEquals(1, result.size());		
+		Assert.assertEquals("OK", result.get(0));
+		// Skip server name
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", "marmotta")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH + CoinsApiWebService.PATH_VALIDATEALL)
+				.body();
+		result = TestUtil.getStringList(body);
+		Assert.assertEquals(1, result.size());
+		Assert.assertEquals("OK", result.get(0));	
 	}
 	
 }

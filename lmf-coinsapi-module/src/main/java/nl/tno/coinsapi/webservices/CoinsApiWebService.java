@@ -4169,7 +4169,7 @@ public class CoinsApiWebService {
 	@Produces(MIME_TYPE)
 	public Response validateAll(@QueryParam(CONTEXT) String context) {
 		List<String> result = mCoinsService.validate(context,
-				ValidationAspect.ALL);
+				ValidationAspect.ALL);		
 		return Response.ok().entity(result).build();
 	}
 

@@ -1202,7 +1202,7 @@ public class CoinsApiService implements ICoinsApiService {
 	@Override
 	public List<String> validate(String pContext, ValidationAspect aspect) {
 		CoinsValidator validator = CoinsValidatorFactory.getValidator(aspect,
-				pContext, mSparqlService);
+				getFullContext(pContext), mSparqlService);
 		if (validator.validate()) {
 			List<String> result = new Vector<String>();
 			result.add(OK);
