@@ -1,5 +1,7 @@
 package nl.tno.coinsapi.keys;
 
+import nl.tno.coinsapi.CoinsPrefix;
+
 
 /**
  * Object keys for owl
@@ -14,7 +16,7 @@ public enum OwlObjectKey implements IObjectKey {
 	private final String mStringRepresentation;
 
 	OwlObjectKey(String pName) {
-		mStringRepresentation = getPrefix() + ":" + pName;
+		mStringRepresentation = getPrefix().getKey() + ":" + pName;
 	}
 
 	@Override
@@ -25,8 +27,8 @@ public enum OwlObjectKey implements IObjectKey {
 	/**
 	 * @return the prefix (cbimfs)
 	 */
-	public String getPrefix() {
-		return "owl";
+	public CoinsPrefix getPrefix() {
+		return CoinsPrefix.OWL;
 	}
 
 }

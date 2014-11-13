@@ -1,5 +1,7 @@
 package nl.tno.coinsapi.keys;
 
+import nl.tno.coinsapi.CoinsPrefix;
+
 
 /**
  * cbimfs object keyt
@@ -14,7 +16,7 @@ public enum CbimfsObjectKey implements IObjectKey {
 	private final String mStringRepresentation;
 
 	CbimfsObjectKey(String pName) {
-		mStringRepresentation = getPrefix() + ":" + pName;
+		mStringRepresentation = getPrefix().getKey() + ":" + pName;
 	}
 
 	@Override
@@ -25,7 +27,7 @@ public enum CbimfsObjectKey implements IObjectKey {
 	/**
 	 * @return the prefix (cbimfs)
 	 */
-	public String getPrefix() {
-		return "cbimfs";
+	public CoinsPrefix getPrefix() {
+		return CoinsPrefix.CBIMFS;
 	}
 }

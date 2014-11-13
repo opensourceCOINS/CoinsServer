@@ -23,7 +23,7 @@ public class TestLibraryReference extends TestCoinsApiWebService {
 	 * @throws JsonProcessingException
 	 */
 	@Test
-	public void testLibraryReference() throws JsonProcessingException {
+	public void testLibraryReference() throws JsonProcessingException { 
 		String cbimObjectId = TestPhysicalObject.createPhysicalObject();
 		// POST Library Reference
 		ResponseBody body = given()
@@ -136,6 +136,252 @@ public class TestLibraryReference extends TestCoinsApiWebService {
 				.get(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
 		Assert.assertTrue(TestUtil.isEmpty(body.asString()));
+	}
+
+	/**
+	 * Test upgrading a LibraryReference to a FunctionTypeReference
+	 */
+	@Test
+	public void testFunctionTypeReference() {
+		String functionTypeId = TestCataloguePart.createFunctionType();
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Library reference name")
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "lr 2")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("libraryReference", id)
+				.queryParam("functionType", functionTypeId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_UPGRADE_TO_FUNCTION_TYPE_REFERENCE).body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		Map<String, String> result = TestUtil.toKeyValueMapping(body.asString());
+		Assert.assertEquals("Library reference name",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#name"));
+		Assert.assertEquals("lr 2",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#userID"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/cbim-otl-1.1.owl#FunctionTypeReference",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(mCreatorId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
+		Assert.assertEquals(mModifierId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
+		Assert.assertEquals(
+				functionTypeId,
+				result.get("http://www.coinsweb.nl/cbim-otl-1.1.owl#functionTypeReference"));
+		validate(mContext);
+		// DELETE library reference
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE);
+		// GET library reference to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		Assert.assertTrue(TestUtil.isEmpty(body.asString()));		
+	}
+
+	/**
+	 * Test upgrading a LibraryReference to a PerformanceTypeReference
+	 */
+	@Test
+	public void testPerformanceTypeReference() {
+		String performanceTypeId = TestCataloguePart.createPerformanceType();
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Library reference name")
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "lr 2")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("libraryReference", id)
+				.queryParam("performanceType", performanceTypeId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_UPGRADE_TO_PERFORMANCE_TYPE_REFERENCE).body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		Map<String, String> result = TestUtil.toKeyValueMapping(body.asString());
+		Assert.assertEquals("Library reference name",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#name"));
+		Assert.assertEquals("lr 2",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#userID"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/cbim-otl-1.1.owl#PerformanceTypeReference",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(mCreatorId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
+		Assert.assertEquals(mModifierId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
+		Assert.assertEquals(
+				performanceTypeId,
+				result.get("http://www.coinsweb.nl/cbim-otl-1.1.owl#performanceTypeReference"));
+		validate(mContext);
+		// DELETE library reference
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE);
+		// GET library reference to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		Assert.assertTrue(TestUtil.isEmpty(body.asString()));		
+	}
+
+	/**
+	 * Test upgrading a LibraryReference to a RequirementTypeReference
+	 */
+	@Test
+	public void testRequirementTypeReference() {
+		String requirementTypeId = TestCataloguePart.createRequirementType();
+		ResponseBody body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("name", "Library reference name")
+				.queryParam("creator", mCreatorId)
+				.queryParam("userID", "lr 2")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		String id = body.asString();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("libraryReference", id)
+				.queryParam("requirementType", requirementTypeId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_UPGRADE_TO_REQUIREMENT_TYPE_REFERENCE).body();
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		Map<String, String> result = TestUtil.toKeyValueMapping(body.asString());
+		Assert.assertEquals("Library reference name",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#name"));
+		Assert.assertEquals("lr 2",
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#userID"));
+		Assert.assertEquals(
+				"http://www.coinsweb.nl/cbim-otl-1.1.owl#RequirementTypeReference",
+				result.get("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+		Assert.assertEquals(mCreatorId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#creator"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#creationDate"));
+		Assert.assertNotNull(result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#modificationDate"));
+		Assert.assertEquals(mModifierId,
+				result.get("http://www.coinsweb.nl/cbim-1.1.owl#modifier"));
+		Assert.assertEquals(
+				requirementTypeId,
+				result.get("http://www.coinsweb.nl/cbim-otl-1.1.owl#requirementTypeReference"));
+		validate(mContext);
+		// DELETE library reference
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.delete(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE);
+		// GET library reference to check it has been removed
+		body = given()
+				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("id", id)
+				.queryParam("output", "csv")
+				.expect()
+				.statusCode(OK)
+				.when()
+				.get(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LIBRARY_REFERENCE).body();
+		Assert.assertTrue(TestUtil.isEmpty(body.asString()));		
 	}
 
 }

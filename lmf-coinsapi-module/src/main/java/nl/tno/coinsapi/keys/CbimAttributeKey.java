@@ -1,5 +1,7 @@
 package nl.tno.coinsapi.keys;
 
+import nl.tno.coinsapi.CoinsPrefix;
+
 
 /**
  * cbim attribute keys
@@ -346,7 +348,7 @@ public enum CbimAttributeKey implements IAttributeKey {
 	private final String mNonPrefixedName;
 
 	CbimAttributeKey(String pName) {
-		mStringRepresentation = getPrefix() + ":" + pName;
+		mStringRepresentation = getPrefix().getKey() + ":" + pName;
 		mNonPrefixedName = pName;
 	}
 
@@ -358,8 +360,8 @@ public enum CbimAttributeKey implements IAttributeKey {
 	/**
 	 * @return the prefix (cbimfs)
 	 */
-	public String getPrefix() {
-		return "cbim";
+	public CoinsPrefix getPrefix() {
+		return CoinsPrefix.CBIM;
 	}
 
 	@Override

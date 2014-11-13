@@ -16,10 +16,13 @@ import nl.tno.coinsapi.keys.CbimObjectKey;
 import nl.tno.coinsapi.keys.CbimfsAttributeKey;
 import nl.tno.coinsapi.keys.CbimfsObjectKey;
 import nl.tno.coinsapi.keys.CbimotlAttributeKey;
+import nl.tno.coinsapi.keys.CbimotlObjectKey;
 import nl.tno.coinsapi.keys.IAttributeKey;
 import nl.tno.coinsapi.keys.IObjectKey;
 import nl.tno.coinsapi.keys.OwlAttributeKey;
 import nl.tno.coinsapi.keys.OwlObjectKey;
+import nl.tno.coinsapi.keys.SPARQL_AttributeKey;
+import nl.tno.coinsapi.model.CoinsHierarchyFactory;
 import nl.tno.coinsapi.tools.CoinsValidator;
 import nl.tno.coinsapi.tools.CoinsValidatorFactory;
 import nl.tno.coinsapi.tools.QueryBuilder;
@@ -103,12 +106,18 @@ public class CoinsApiService implements ICoinsApiService {
 			String name, String value) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException {
+		addAttributeResource(context, object, new AttributeKey(name), value);
+	}
+
+	private void addAttributeResource(String context, String object,
+			IAttributeKey name, String value) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
 		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
-		builder.addPrefix(CoinsPrefix.CBIM);
-		builder.addPrefix(CoinsPrefix.CBIMFS);
+		builder.addPrefix(name.getPrefix());
 		builder.addGraph(getFullContext(context));
 		builder.setId(object);
-		builder.addAttributeResource(new AttributeKey(name), value);
+		builder.addAttributeResource(name, value);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 	}
 
@@ -150,14 +159,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteAmount(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.AMOUNT,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.AMOUNT);
 	}
 
 	@Override
 	public String getAmountQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.AMOUNT,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.AMOUNT);
 	}
 
 	@Override
@@ -181,14 +188,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteCataloguePart(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.CATALOGUE_PART,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.CATALOGUE_PART);
 	}
 
 	@Override
 	public String getCataloguePartQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.CATALOGUE_PART,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.CATALOGUE_PART);
 	}
 
 	@Override
@@ -212,14 +217,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteConnection(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.CONNECTION,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.CONNECTION);
 	}
 
 	@Override
 	public String getConnectionQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.CONNECTION,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.CONNECTION);
 	}
 
 	@Override
@@ -242,14 +245,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteDocument(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.DOCUMENT,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.DOCUMENT);
 	}
 
 	@Override
 	public String getDocumentQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.DOCUMENT,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.DOCUMENT);
 	}
 
 	@Override
@@ -277,15 +278,13 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteExplicit3DRepresentation(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.EXPLICIT3D_REPRESENTATION,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.EXPLICIT3D_REPRESENTATION);
 	}
 
 	@Override
 	public String getExplicit3DRepresentationQuery(String context, String id) {
 		return getSelectQuery(context, id,
-				CbimObjectKey.EXPLICIT3D_REPRESENTATION,
-				CoinsPrefix.CBIM);
+				CbimObjectKey.EXPLICIT3D_REPRESENTATION);
 	}
 
 	@Override
@@ -310,14 +309,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteFunction(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.FUNCTION,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.FUNCTION);
 	}
 
 	@Override
 	public String getFunctionQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.FUNCTION,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.FUNCTION);
 	}
 
 	@Override
@@ -346,14 +343,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteLocator(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.LOCATOR,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.LOCATOR);
 	}
 
 	@Override
 	public String getLocatorQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.LOCATOR,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.LOCATOR);
 	}
 
 	@Override
@@ -390,15 +385,13 @@ public class CoinsApiService implements ICoinsApiService {
 	@Override
 	public boolean deleteNonFunctionalRequirement(String context, String id) {
 		return deleteItem(context, id,
-				CbimfsObjectKey.NON_FUNCTIONAL_REQUIREMENT,
-				CoinsPrefix.CBIMFS);
+				CbimfsObjectKey.NON_FUNCTIONAL_REQUIREMENT);
 	}
 
 	@Override
 	public String getNonFunctionalRequirementQuery(String context, String id) {
 		return getSelectQuery(context, id,
-				CbimfsObjectKey.NON_FUNCTIONAL_REQUIREMENT,
-				CoinsPrefix.CBIMFS);
+				CbimfsObjectKey.NON_FUNCTIONAL_REQUIREMENT);
 	}
 
 	@Override
@@ -423,14 +416,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteParameter(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.PARAMETER,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.PARAMETER);
 	}
 
 	@Override
 	public String getParameterQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.PARAMETER,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.PARAMETER);
 	}
 
 	@Override
@@ -453,14 +444,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deletePerformance(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.PERFORMANCE,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.PERFORMANCE);
 	}
 
 	@Override
 	public String getPerformanceQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.PERFORMANCE,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.PERFORMANCE);
 	}
 
 	@Override
@@ -481,14 +470,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deletePersonOrOrganisation(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.PERSON_OR_ORGANISATION,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.PERSON_OR_ORGANISATION);
 	}
 
 	@Override
 	public String getPersonOrOrganisationQuery(String context, String id) {
-		return getSelectQuery(context, id,
-				CbimObjectKey.PERSON_OR_ORGANISATION, CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.PERSON_OR_ORGANISATION);
 	}
 
 	@Override
@@ -513,14 +500,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public String getPhysicalObjectQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.PHYSICAL_OBJECT,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.PHYSICAL_OBJECT);
 	}
 
 	@Override
 	public boolean deletePhysicalObject(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.PHYSICAL_OBJECT,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.PHYSICAL_OBJECT);
 	}
 
 	@Override
@@ -538,8 +523,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeString(CbimAttributeKey.NAME, name);
 		builder.addAttributeString(CbimAttributeKey.USER_ID, userID);
 		builder.addAttributeString(CbimAttributeKey.UNIT, unit);
-		builder.addAttributeResource(CbimAttributeKey.VALUE_DOMAIN,
-				valuedomain);
+		builder.addAttributeResource(CbimAttributeKey.VALUE_DOMAIN, valuedomain);
 		builder.addAttributeDate(CbimAttributeKey.CREATION_DATE, new Date());
 		builder.addAttributeResource(CbimAttributeKey.CREATOR, creator);
 		builder.addAttributeType(CbimObjectKey.PROPERTY_TYPE);
@@ -549,14 +533,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deletePropertyType(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.PROPERTY_TYPE,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.PROPERTY_TYPE);
 	}
 
 	@Override
 	public String getPropertyTypeQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.PROPERTY_TYPE,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.PROPERTY_TYPE);
 	}
 
 	@Override
@@ -586,14 +568,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deletePropertyValue(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.PROPERTY_VALUE,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.PROPERTY_VALUE);
 	}
 
 	@Override
 	public String getPropertyValueQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.PROPERTY_VALUE,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.PROPERTY_VALUE);
 	}
 
 	@Override
@@ -620,14 +600,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteRequirement(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.REQUIREMENT,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.REQUIREMENT);
 	}
 
 	@Override
 	public String getRequirementQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.REQUIREMENT,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.REQUIREMENT);
 	}
 
 	@Override
@@ -652,14 +630,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteSpace(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.SPACE,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.SPACE);
 	}
 
 	@Override
 	public String getSpaceQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.SPACE,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.SPACE);
 	}
 
 	@Override
@@ -683,14 +659,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteState(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.STATE,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.STATE);
 	}
 
 	@Override
 	public String getStateQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.STATE,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.STATE);
 	}
 
 	@Override
@@ -723,14 +697,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteTask(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.TASK,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.TASK);
 	}
 
 	@Override
 	public String getTaskQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.TASK,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.TASK);
 	}
 
 	@Override
@@ -756,14 +728,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteTerminal(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.TERMINAL,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.TERMINAL);
 	}
 
 	@Override
 	public String getTerminalQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.TERMINAL,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.TERMINAL);
 	}
 
 	@Override
@@ -789,14 +759,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteVector(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.VECTOR,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.VECTOR);
 	}
 
 	@Override
 	public String getVectorQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.VECTOR,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.VECTOR);
 	}
 
 	@Override
@@ -827,14 +795,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public boolean deleteVerification(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.VERIFICATION,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.VERIFICATION);
 	}
 
 	@Override
 	public String getVerificationQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.VERIFICATION,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.VERIFICATION);
 	}
 
 	@Override
@@ -905,8 +871,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addGraph(getFullContext(context));
 		builder.setId(physicalobject);
 		for (String docId : document) {
-			builder.addAttributeResource(CbimAttributeKey.DOCUMENT,
-					docId);
+			builder.addAttributeResource(CbimAttributeKey.DOCUMENT, docId);
 		}
 		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
 		builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
@@ -964,8 +929,8 @@ public class CoinsApiService implements ICoinsApiService {
 			String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException {
-		updateAttribute(context, object, CbimAttributeKey.LOCATOR,
-				locator, modifier, FieldType.RESOURCE);
+		updateAttribute(context, object, CbimAttributeKey.LOCATOR, locator,
+				modifier, FieldType.RESOURCE);
 	}
 
 	@Override
@@ -1003,8 +968,8 @@ public class CoinsApiService implements ICoinsApiService {
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
 		updateAttribute(context, performance,
-				CbimfsAttributeKey.PROPERTY_VALUE, propertyvalue,
-				modifier, FieldType.RESOURCE);
+				CbimfsAttributeKey.PROPERTY_VALUE, propertyvalue, modifier,
+				FieldType.RESOURCE);
 	}
 
 	@Override
@@ -1233,28 +1198,54 @@ public class CoinsApiService implements ICoinsApiService {
 		return mConfigurationService.getBaseContext() + "/" + pContext;
 	}
 
-	private String getSelectQuery(String context, String id, IObjectKey type,
-			CoinsPrefix prefix) {
-		StringBuilder result = new StringBuilder();
-		result.append("PREFIX ");
-		result.append(prefix);
-		result.append("\n\nSELECT ?name ?value WHERE {\n\tGRAPH <");
+	private String getSelectQuery(String context, String id, IObjectKey type) {
+		// Select all of this type so include children
+		List<IObjectKey> keys = CoinsHierarchyFactory.getChildKeys(type);
+		keys.add(type);
+		StringBuilder result = new StringBuilder();		
+		QueryBuilder.appendPrefixesForKeys(result, keys);
+		result.append("SELECT ?name ?value WHERE {\n\tGRAPH <");
 		result.append(getFullContext(context));
-		result.append("> {\n\t\t<");
-		result.append(id);
-		result.append("> ?name ?value ;\n\t\t\ta ");
-		result.append(type);
-		result.append("\n\t}\n}");
+		result.append(">\n\t{\n");
+		boolean isFirst = true;
+		for (IObjectKey key : keys) {
+			if (!isFirst) {
+				result.append("\tUNION\n");				
+			}
+			result.append("\t\t{\n\t\t\t<");
+			result.append(id);
+			result.append("> ?name ?value ;");
+			result.append("\n\t\t\t\ta ");
+			result.append(key);
+			result.append("\n\t\t}\n");
+			isFirst = false;
+		}
+		result.append("\t}\n}");
 		return result.toString();
 	}
 
-	private boolean deleteItem(String context, String id, IObjectKey type,
-			CoinsPrefix prefix) {
-		String query = "PREFIX " + prefix + "\nDELETE WHERE { GRAPH <"
-				+ getFullContext(context) + "> { <" + id
-				+ "> ?name ?value ; a " + type + " }}";
+	private boolean deleteItem(String context, String id, IObjectKey type) {
+		StringBuilder query = new StringBuilder();
+		List<IObjectKey> keys = CoinsHierarchyFactory.getChildKeys(type);
+		keys.add(type);
+		QueryBuilder.appendPrefixesForKeys(query, keys);
+		boolean isFirst = true;
+		for (IObjectKey key : keys) {
+			if (!isFirst) {
+				query.append(";\n");
+			}
+			query.append("DELETE WHERE { GRAPH <");
+			query.append(getFullContext(context));
+			query.append("> { ");
+			query.append("<");
+			query.append(id);
+			query.append("> ?name ?value ; a ");
+			query.append(key);
+			query.append(" }}");
+			isFirst = false;
+		}
 		try {
-			mSparqlService.update(QueryLanguage.SPARQL, query);
+			mSparqlService.update(QueryLanguage.SPARQL, query.toString());
 			return true;
 		} catch (InvalidArgumentException e) {
 			e.printStackTrace();
@@ -1286,13 +1277,16 @@ public class CoinsApiService implements ICoinsApiService {
 			String modifier, FieldType fieldType)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException {
-		// TODO one query?
 		for (QueryBuilder builder : new QueryBuilder[] {
 				new InsertQueryBuilder(mDateConversion),
 				new UpdateQueryBuilder(mDateConversion) }) {
+			builder.addPrefix(argumentIdentifier.getPrefix());
 			builder.addPrefix(CoinsPrefix.CBIM);
-			if (argumentIdentifier.toString().startsWith("cbimfs")) {
+			if (argumentValue.startsWith("cbimfs")) {
 				builder.addPrefix(CoinsPrefix.CBIMFS);
+			}
+			else if (argumentValue.startsWith("cbimotl")) {
+				builder.addPrefix(CoinsPrefix.CBIMOTL);
 			}
 			builder.addGraph(getFullContext(context));
 			builder.setId(objectId);
@@ -1302,7 +1296,6 @@ public class CoinsApiService implements ICoinsApiService {
 			builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
 			mSparqlService.update(QueryLanguage.SPARQL, builder.build());
 		}
-
 	}
 
 	private boolean isURI(String pString) {
@@ -1497,14 +1490,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public String getBaselineQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.BASELINE,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.BASELINE);
 	}
 
 	@Override
 	public boolean deleteBaseline(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.BASELINE,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.BASELINE);
 	}
 
 	@Override
@@ -1512,9 +1503,8 @@ public class CoinsApiService implements ICoinsApiService {
 			String baseline, String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException {
-		updateAttribute(context, cbimObject,
-				CbimAttributeKey.BASELINE, baseline, modifier,
-				FieldType.RESOURCE);
+		updateAttribute(context, cbimObject, CbimAttributeKey.BASELINE,
+				baseline, modifier, FieldType.RESOURCE);
 	}
 
 	@Override
@@ -1544,14 +1534,12 @@ public class CoinsApiService implements ICoinsApiService {
 
 	@Override
 	public String getLibraryReferenceQuery(String context, String id) {
-		return getSelectQuery(context, id, CbimObjectKey.LIBRARY_REFERENCE,
-				CoinsPrefix.CBIM);
+		return getSelectQuery(context, id, CbimObjectKey.LIBRARY_REFERENCE);
 	}
 
 	@Override
 	public boolean deleteLibraryReference(String context, String id) {
-		return deleteItem(context, id, CbimObjectKey.LIBRARY_REFERENCE,
-				CoinsPrefix.CBIM);
+		return deleteItem(context, id, CbimObjectKey.LIBRARY_REFERENCE);
 	}
 
 	@Override
@@ -1597,6 +1585,78 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
 		builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+	}
+
+	@Override
+	public void upgradeToFunctionTypeReference(String context,
+			String libraryReference, String functionType, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		context = getFullContext(context);
+		updateAttribute(context, libraryReference, SPARQL_AttributeKey.A,
+				CbimotlObjectKey.FUNCTION_TYPE_REFERENCE.toString(), modifier,
+				FieldType.RESOURCE);
+		addAttributeResource(context, libraryReference,
+				CbimotlAttributeKey.FUNCTION_TYPE_REFERENCE, functionType);
+	}
+
+	@Override
+	public void upgradeToFunctionType(String context, String cataloguePart,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		context = getFullContext(context);
+		updateAttribute(context, cataloguePart, SPARQL_AttributeKey.A,
+				CbimotlObjectKey.FUNCTION_TYPE.toString(), modifier,
+				FieldType.RESOURCE);
+	}
+
+	@Override
+	public void upgradeToPerformanceTypeReference(String context,
+			String libraryReference, String performanceType, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		context = getFullContext(context);
+		updateAttribute(context, libraryReference, SPARQL_AttributeKey.A,
+				CbimotlObjectKey.PERFORMANCE_TYPE_REFERENCE.toString(), modifier,
+				FieldType.RESOURCE);
+		addAttributeResource(context, libraryReference,
+				CbimotlAttributeKey.PERFORMANCE_TYPE_REFERENCE, performanceType);
+	}
+
+	@Override
+	public void upgradeToPerformanceType(String context, String cataloguePart,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		context = getFullContext(context);
+		updateAttribute(context, cataloguePart, SPARQL_AttributeKey.A,
+				CbimotlObjectKey.PERFORMANCE_TYPE.toString(), modifier,
+				FieldType.RESOURCE);
+	}
+
+	@Override
+	public void upgradeToRequirementType(String context, String cataloguePart,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException {
+		context = getFullContext(context);
+		updateAttribute(context, cataloguePart, SPARQL_AttributeKey.A,
+				CbimotlObjectKey.REQUIREMENT_TYPE.toString(), modifier,
+				FieldType.RESOURCE);
+	}
+
+	@Override
+	public void upgradeToRequirementTypeReference(String context,
+			String libraryReference, String requirementType, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		context = getFullContext(context);
+		updateAttribute(context, libraryReference, SPARQL_AttributeKey.A,
+				CbimotlObjectKey.REQUIREMENT_TYPE_REFERENCE.toString(), modifier,
+				FieldType.RESOURCE);
+		addAttributeResource(context, libraryReference,
+				CbimotlAttributeKey.REQUIREMENT_TYPE_REFERENCE.toString(), requirementType);
 	}
 
 }

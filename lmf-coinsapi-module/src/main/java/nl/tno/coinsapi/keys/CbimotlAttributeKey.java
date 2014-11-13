@@ -1,5 +1,6 @@
 package nl.tno.coinsapi.keys;
 
+import nl.tno.coinsapi.CoinsPrefix;
 
 /**
  * Attribute keys for cbim otl
@@ -7,15 +8,30 @@ package nl.tno.coinsapi.keys;
 public enum CbimotlAttributeKey implements IAttributeKey {
 
 	/**
-	 * cbimotl:objectReference 
+	 * cbimotl:objectReference
 	 */
-	OBJECT_REFERENCE ("objectReference");
-	
+	OBJECT_REFERENCE("objectReference"),
+
+	/**
+	 * cbimotl:functionTypeReference
+	 */
+	FUNCTION_TYPE_REFERENCE("functionTypeReference"),
+
+	/**
+	 * cbimotl:performanceTypeReference
+	 */
+	PERFORMANCE_TYPE_REFERENCE("performanceTypeReference"),
+
+	/**
+	 * cbimotl:requirementTypeReference
+	 */
+	REQUIREMENT_TYPE_REFERENCE("requirementTypeReference");
+
 	private final String mStringRepresentation;
 	private final String mNonPrefixedName;
 
 	CbimotlAttributeKey(String pName) {
-		mStringRepresentation = getPrefix() + ":" + pName;
+		mStringRepresentation = getPrefix().getKey() + ":" + pName;
 		mNonPrefixedName = pName;
 	}
 
@@ -27,8 +43,8 @@ public enum CbimotlAttributeKey implements IAttributeKey {
 	/**
 	 * @return the prefix (cbimotl)
 	 */
-	public String getPrefix() {
-		return "cbimotl";
+	public CoinsPrefix getPrefix() {
+		return CoinsPrefix.CBIMOTL;
 	}
 
 	@Override

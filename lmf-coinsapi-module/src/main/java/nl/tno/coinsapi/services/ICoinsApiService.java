@@ -1402,4 +1402,89 @@ public interface ICoinsApiService {
 			String cbimObject, String libraryReference, String modifier)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param libraryReference
+	 * @param functionType
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void upgradeToFunctionTypeReference(String context,
+			String libraryReference, String functionType, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param cataloguePart
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void upgradeToFunctionType(String context, String cataloguePart,
+			String modifier) throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param libraryReference
+	 * @param performanceType
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void upgradeToPerformanceTypeReference(String context,
+			String libraryReference, String performanceType, String modifier) throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param cataloguePart
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void upgradeToPerformanceType(String context, String cataloguePart,
+			String modifier) throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param cataloguePart
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void upgradeToRequirementType(String context, String cataloguePart,
+			String modifier) throws InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException,
+			MarmottaException;
+
+	/**
+	 * @param context
+	 * @param libraryReference
+	 * @param requirementType
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void upgradeToRequirementTypeReference(String context,
+			String libraryReference, String requirementType, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
 }

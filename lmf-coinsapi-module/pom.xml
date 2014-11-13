@@ -22,15 +22,6 @@
          <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
-                    <!--
-                    <execution>
-                        <id>aggregate</id>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <phase>site</phase>
-                    </execution>
-                    -->
                     <execution>
                         <!-- configure how the REST API documentation will be produced -->
                         <id>restapi</id>
@@ -53,10 +44,6 @@
                                 -jaxrscontext {BASE}
                                 -charset UTF-8
                             </additionalparam>
-
-                            <!--
-                                                        <stylesheetfile>${project.parent.basedir}/config/doc/doclet.css</stylesheetfile>
-                            -->
 
                             <header><![CDATA[<!--###BEGIN_CONTENT###--><div class="javadoc">]]></header>
                             <footer><![CDATA[</div><!--###END_CONTENT###-->]]></footer>
@@ -81,7 +68,7 @@
     <dependency>
       <groupId>org.apache.marmotta</groupId>
       <artifactId>marmotta-core</artifactId>
-      <version>3.2.1</version>
+      <version>${project.version}</version>
     </dependency>  
     <dependency>
       <groupId>org.webjars</groupId>
@@ -90,12 +77,12 @@
     <dependency>
       <groupId>org.apache.marmotta</groupId>
       <artifactId>kiwi-loader</artifactId>
-      <version>3.2.1</version>
+       <version>${project.version}</version>
     </dependency>      
     <dependency>
       <groupId>org.apache.marmotta</groupId>
       <artifactId>marmotta-sparql</artifactId>
-      <version>3.2.1</version>
+      <version>${project.version}</version>
     </dependency>      
     <!-- TESTING -->
     <dependency>

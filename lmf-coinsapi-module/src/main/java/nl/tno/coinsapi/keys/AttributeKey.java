@@ -1,5 +1,7 @@
 package nl.tno.coinsapi.keys;
 
+import nl.tno.coinsapi.CoinsPrefix;
+
 
 /**
  * Attribute key object
@@ -32,8 +34,9 @@ public class AttributeKey implements IAttributeKey {
 	/**
 	 * @return the prefix
 	 */
-	public String getPrefix() {
-		return mPrefix;
+	public CoinsPrefix getPrefix() {
+		return (mPrefix == null) ? null : CoinsPrefix
+				.convertFromString(mPrefix);
 	}
 
 	@Override

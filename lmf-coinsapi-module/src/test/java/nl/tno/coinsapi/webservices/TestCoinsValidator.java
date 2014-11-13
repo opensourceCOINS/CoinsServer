@@ -127,7 +127,8 @@ public class TestCoinsValidator {
 				.when()
 				.post(CoinsApiWebService.PATH
 						+ CoinsApiWebService.PATH_ADD_ATTRIBUTE_RESOURCE)
-				.body();
+				.body();		
+		
 		body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)

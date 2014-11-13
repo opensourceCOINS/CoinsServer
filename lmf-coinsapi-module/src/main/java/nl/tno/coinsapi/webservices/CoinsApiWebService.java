@@ -88,6 +88,24 @@ public class CoinsApiWebService {
 			+ "/objectreference";
 
 	/**
+	 * Upgrade a cbim:LibraryReference to a cbimotl:FunctionTypeReference
+	 */
+	public static final String PATH_UPGRADE_TO_FUNCTION_TYPE_REFERENCE = PATH_LIBRARY_REFERENCE
+			+ "/tofunctiontypereference";
+
+	/**
+	 * Upgrade a cbim:LibraryReference to a cbimotl:PerformanceTypeReference
+	 */
+	public static final String PATH_UPGRADE_TO_PERFORMANCE_TYPE_REFERENCE = PATH_LIBRARY_REFERENCE
+			+ "/toperformancetypereference";
+
+	/**
+	 * Upgrade a cbim:LibraryReference to a cbimotl:RequirementTypeReference
+	 */
+	public static final String PATH_UPGRADE_TO_REQUIREMENT_TYPE_REFERENCE = PATH_LIBRARY_REFERENCE
+			+ "/torequirementtypereference";
+
+	/**
 	 * State
 	 */
 	public static final String PATH_STATE = "/state";
@@ -226,6 +244,25 @@ public class CoinsApiWebService {
 	 * CataloguePart
 	 */
 	public static final String PATH_CATALOGUE_PART = "/cataloguepart";
+	
+	/**
+	 * Upgrade a cbim:CataloguePart to a cbimotl:FunctionType
+	 */
+	public static final String PATH_UPGRADE_TO_FUNCTION_TYPE = PATH_CATALOGUE_PART
+			+ "/tofunctiontype";
+	
+	/**
+	 * Upgrade a cbim:CataloguePart to a cbimotl:PerformanceType
+	 */
+	public static final String PATH_UPGRADE_TO_PERFORMANCE_TYPE = PATH_CATALOGUE_PART
+			+ "/toperformancetype";
+
+	/**
+	 * Upgrade a cbim:CataloguePart to a cbimotl:RequirementType
+	 */
+	public static final String PATH_UPGRADE_TO_REQUIREMENT_TYPE = PATH_CATALOGUE_PART
+			+ "/torequirementtype";
+
 	/**
 	 * Connection
 	 */
@@ -635,6 +672,9 @@ public class CoinsApiWebService {
 	private static final String CBIM_OBJECT = "cbimObject";
 	private static final String BASELINE = "baseline";
 	private static final String LIBRARY_REFERENCE = "libraryReference";
+	private static final String FUNCTION_TYPE = "functionType";
+	private static final String PERFORMANCE_TYPE = "performanceType";
+	private static final String REQUIREMENT_TYPE = "requirementType";
 
 	@Inject
 	private ConfigurationService mConfigurationService;
@@ -658,7 +698,6 @@ public class CoinsApiWebService {
 	 */
 	@Path(PATH_VERSION)
 	@GET
-	@Produces(MIME_TYPE)
 	public Response getVersion() {
 		return Response.ok().entity("v0.2").build();
 	}
@@ -4658,7 +4697,196 @@ public class CoinsApiWebService {
 				.entity("Something went wrong when creating the LibraryReference")
 				.build();
 	}
-	
+
+	/**
+	 * Upgrade a <B>cbim:LibraryReference</B> object to a
+	 * <B>cbimotl:FunctionTypeReference</B>
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param libraryReference
+	 *            Identifier of the <B>LibraryReference</B> to be upgraded
+	 * @param functionType
+	 *            cbimotl:FunctionType
+	 * @param modifier
+	 *            id of the <B>PersonOrOrganisation</B> that modified the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPGRADE_TO_FUNCTION_TYPE_REFERENCE)
+	@Consumes(MIME_TYPE)
+	public Response upgradeToFunctionTypeReference(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(LIBRARY_REFERENCE) String libraryReference,
+			@QueryParam(FUNCTION_TYPE) String functionType,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.upgradeToFunctionTypeReference(context, libraryReference, functionType, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Upgrading failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Upgrade a <B>cbim:LibraryReference</B> object to a
+	 * <B>cbimotl:PerformanceTypeReference</B>
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param libraryReference
+	 *            Identifier of the <B>LibraryReference</B> to be upgraded
+	 * @param performanceType
+	 *            cbimotl:PerfomanceType
+	 * @param modifier
+	 *            id of the <B>PersonOrOrganisation</B> that modified the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPGRADE_TO_PERFORMANCE_TYPE_REFERENCE)
+	@Consumes(MIME_TYPE)
+	public Response upgradeToPerformanceTypeReference(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(LIBRARY_REFERENCE) String libraryReference,
+			@QueryParam(PERFORMANCE_TYPE) String performanceType,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.upgradeToPerformanceTypeReference(context, libraryReference, performanceType, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Upgrading failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Upgrade a <B>cbim:LibraryReference</B> object to a
+	 * <B>cbimotl:RequirementTypeReference</B>
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param libraryReference
+	 *            Identifier of the <B>LibraryReference</B> to be upgraded
+	 * @param requirementType
+	 *            cbimotl:RequirementType
+	 * @param modifier
+	 *            id of the <B>PersonOrOrganisation</B> that modified the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPGRADE_TO_REQUIREMENT_TYPE_REFERENCE)
+	@Consumes(MIME_TYPE)
+	public Response upgradeToRequirementTypeReference(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(LIBRARY_REFERENCE) String libraryReference,
+			@QueryParam(REQUIREMENT_TYPE) String requirementType,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.upgradeToRequirementTypeReference(context, libraryReference, requirementType, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Upgrading failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Upgrade a <B>cbim:CataloguePart</B> object to a
+	 * <B>cbimotl:FunctionType</B>
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param cataloguePart
+	 *            Identifier of the <B>CataloguePart</B> to be upgraded
+	 * @param modifier
+	 *            id of the <B>PersonOrOrganisation</B> that modified the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPGRADE_TO_FUNCTION_TYPE)
+	@Consumes(MIME_TYPE)
+	public Response upgradeToFunctionType(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(CATALOGUE_PART) String cataloguePart,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.upgradeToFunctionType(context, cataloguePart, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Upgrading failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Upgrade a <B>cbim:CataloguePart</B> object to a
+	 * <B>cbimotl:PerformanceType</B>
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param cataloguePart
+	 *            Identifier of the <B>CataloguePart</B> to be upgraded
+	 * @param modifier
+	 *            id of the <B>PersonOrOrganisation</B> that modified the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPGRADE_TO_PERFORMANCE_TYPE)
+	@Consumes(MIME_TYPE)
+	public Response upgradeToPerformanceType(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(CATALOGUE_PART) String cataloguePart,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.upgradeToPerformanceType(context, cataloguePart, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Upgrading failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * Upgrade a <B>cbim:CataloguePart</B> object to a
+	 * <B>cbimotl:ReuirementType</B>
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param cataloguePart
+	 *            Identifier of the <B>CataloguePart</B> to be upgraded
+	 * @param modifier
+	 *            id of the <B>PersonOrOrganisation</B> that modified the object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_UPGRADE_TO_REQUIREMENT_TYPE)
+	@Consumes(MIME_TYPE)
+	public Response upgradeToRequirementType(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(CATALOGUE_PART) String cataloguePart,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.upgradeToRequirementType(context, cataloguePart, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Upgrading failed")
+					.build();
+		}
+		return Response.ok().build();
+	}
+
 	/**
 	 * Insert an attribute of type String. This method ignores the fact that
 	 * duplicate entries may result if it is executed. No validation on

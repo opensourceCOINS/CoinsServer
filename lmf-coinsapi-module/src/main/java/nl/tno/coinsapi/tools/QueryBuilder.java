@@ -52,7 +52,7 @@ public abstract class QueryBuilder {
 		BOOLEAN;
 	}
 
-	protected List<CoinsPrefix> mPrefixes = new Vector<CoinsPrefix>();
+	protected Set<CoinsPrefix> mPrefixes = new HashSet<CoinsPrefix>();
 	private Set<String> mPrefixKeys = new HashSet<String>();
 	protected String mGraph;
 	protected String mId;
@@ -73,8 +73,10 @@ public abstract class QueryBuilder {
 	 *            For instance cbim: <http://www.coinsweb.nl/c-bim.owl#>
 	 */
 	public void addPrefix(CoinsPrefix pPrefix) {
-		mPrefixKeys.add(pPrefix.getKey());
-		mPrefixes.add(pPrefix);
+		if (pPrefix != null) {
+			mPrefixKeys.add(pPrefix.getKey());
+			mPrefixes.add(pPrefix);
+		}
 	}
 
 	/**
@@ -404,6 +406,24 @@ public abstract class QueryBuilder {
 	static {
 		DOUBLE_NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.US);
 		DOUBLE_NUMBER_FORMAT.setGroupingUsed(false);
+	}
+
+	/**
+	 * Append prefixes to the StringBuilder
+	 * @param result
+	 * @param keys
+	 */
+	public static void appendPrefixesForKeys(StringBuilder result,
+			List<IObjectKey> keys) {
+		Set<CoinsPrefix> prefixes = new HashSet<CoinsPrefix>();
+		for (IObjectKey key : keys) {
+			prefixes.add(key.getPrefix());
+		}
+		for (CoinsPrefix prefix : prefixes) {
+			result.append("PREFIX ");
+			result.append(prefix);
+			result.append("\n");
+		}
 	}
 
 }

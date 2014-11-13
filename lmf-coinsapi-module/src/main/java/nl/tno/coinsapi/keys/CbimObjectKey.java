@@ -1,5 +1,7 @@
 package nl.tno.coinsapi.keys;
 
+import nl.tno.coinsapi.CoinsPrefix;
+
 
 /**
  * Cbim object key
@@ -17,10 +19,20 @@ public enum CbimObjectKey implements IObjectKey {
 	BASELINE("Baseline"),
 
 	/**
+	 * cbim:Building
+	 */
+	BUILDING("Building"),
+	
+	/**
 	 * cbim:CataloguePart
 	 */
 	CATALOGUE_PART("CataloguePart"),
 
+	/**
+	 * cbim:CbimObject
+	 */
+	CBIM_OBJECT("CbimObject"),
+	
 	/**
 	 * cbim:Connection
 	 */
@@ -124,12 +136,18 @@ public enum CbimObjectKey implements IObjectKey {
 	/**
 	 * cbim:Verification
 	 */
-	VERIFICATION("Verification");
+	VERIFICATION("Verification"),
+	
+	/**
+	 * VISI Message
+	 * cbim:VisiMessage
+	 */
+	VISI_MESSAGE("VisiMessage");
 
 	private final String mStringRepresentation;
 
 	CbimObjectKey(String pName) {
-		mStringRepresentation = getPrefix() + ":" + pName;
+		mStringRepresentation = getPrefix().getKey() + ":" + pName;
 	}
 
 	@Override
@@ -140,7 +158,7 @@ public enum CbimObjectKey implements IObjectKey {
 	/**
 	 * @return the prefix (cbim)
 	 */
-	public String getPrefix() {
-		return "cbim";
+	public CoinsPrefix getPrefix() {
+		return CoinsPrefix.CBIM;
 	}
 }

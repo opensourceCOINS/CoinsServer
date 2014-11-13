@@ -54,6 +54,23 @@ public enum CoinsPrefix {
 	}
 
 	/**
+	 * @param pValue like cbim
+	 * @return maybe null
+	 */
+	public static CoinsPrefix convertFromString(String pValue) {
+		final String value = pValue.toLowerCase();
+		for (CoinsPrefix result : values()) {
+			if (result.getKey().equals(value)) {
+				if (result == CBIM1_0) {
+					return CBIM;
+				}
+				return result;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * @return the key (cbim / cbimfs etc)
 	 */
 	public String getKey() {

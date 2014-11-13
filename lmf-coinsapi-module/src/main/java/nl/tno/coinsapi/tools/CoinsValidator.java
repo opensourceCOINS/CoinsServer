@@ -12,8 +12,11 @@ import nl.tno.coinsapi.keys.CbimAttributeKey;
 import nl.tno.coinsapi.keys.CbimObjectKey;
 import nl.tno.coinsapi.keys.CbimfsAttributeKey;
 import nl.tno.coinsapi.keys.CbimfsObjectKey;
+import nl.tno.coinsapi.keys.CbimotlAttributeKey;
+import nl.tno.coinsapi.keys.CbimotlObjectKey;
 import nl.tno.coinsapi.keys.IAttributeKey;
 import nl.tno.coinsapi.keys.IObjectKey;
+import nl.tno.coinsapi.model.CoinsHierarchyFactory;
 
 import org.apache.marmotta.platform.core.exception.MarmottaException;
 import org.apache.marmotta.platform.sparql.api.sparql.SparqlService;
@@ -123,6 +126,8 @@ public abstract class CoinsValidator {
 			queryBuilder.append(CoinsPrefix.CBIM);
 			queryBuilder.append("\nPREFIX ");
 			queryBuilder.append(CoinsPrefix.CBIMFS);
+			queryBuilder.append("\nPREFIX ");
+			queryBuilder.append(CoinsPrefix.CBIMOTL);
 			queryBuilder.append("\n\nSELECT ?object ?value WHERE {\n\tGRAPH <");
 			queryBuilder.append(mContext);
 			queryBuilder.append("> {\n\t\t?object %s ?value }}");
@@ -183,6 +188,10 @@ public abstract class CoinsValidator {
 			result.add(new ResourceRelation(CbimfsAttributeKey.VERIFICATION_AUTHORIZED_BY, CbimObjectKey.PERSON_OR_ORGANISATION));
 			result.add(new ResourceRelation(CbimfsAttributeKey.VERIFICATION_PLANNED_PERFORMER, CbimObjectKey.PERSON_OR_ORGANISATION));
 			result.add(new ResourceRelation(CbimAttributeKey.VERIFICATION_FUNCTION_FULFILLER, CbimObjectKey.FUNCTION_FULFILLER));
+			result.add(new ResourceRelation(CbimotlAttributeKey.FUNCTION_TYPE_REFERENCE, CbimotlObjectKey.FUNCTION_TYPE));
+			result.add(new ResourceRelation(CbimotlAttributeKey.PERFORMANCE_TYPE_REFERENCE, CbimotlObjectKey.PERFORMANCE_TYPE));
+			result.add(new ResourceRelation(CbimotlAttributeKey.REQUIREMENT_TYPE_REFERENCE, CbimotlObjectKey.REQUIREMENT_TYPE));
+			result.add(new ResourceRelation(CbimotlAttributeKey.OBJECT_REFERENCE, CbimObjectKey.CBIM_OBJECT));
 			//result.add(new ResourceRelation(CbimAttributeKey.DOCUMENT_URI));
 			
 			result.add(new LiteralRelation(CbimAttributeKey.END_DATE_ACTUAL, W3Schema.HTTP_WWW_W3_ORG_2001_XML_SCHEMA_DATE_TIME));
@@ -279,13 +288,10 @@ public abstract class CoinsValidator {
 				super(pRelation);
 				List<IObjectKey> dataTypeList = new Vector<IObjectKey>();
 				for (IObjectKey dt : pDataTypes) {
-					if (dt.equals(CbimObjectKey.FUNCTION_FULFILLER)) {
-						dataTypeList.add(CbimObjectKey.PHYSICAL_OBJECT);
-						dataTypeList.add(CbimObjectKey.SPACE);
+					for (IObjectKey child : CoinsHierarchyFactory.getChildKeys(dt)){
+						dataTypeList.add(child);
 					}
-					else {
-						dataTypeList.add(dt);
-					}
+					dataTypeList.add(dt);
 				}
 				mDataTypes = dataTypeList.toArray(new IObjectKey[dataTypeList.size()]);
 			}
@@ -314,6 +320,8 @@ public abstract class CoinsValidator {
 					query.append(CoinsPrefix.CBIM);
 					query.append("\nPREFIX ");
 					query.append(CoinsPrefix.CBIMFS);
+					query.append("\nPREFIX ");
+					query.append(CoinsPrefix.CBIMOTL);
 					query.append("\nSELECT (COUNT(?value) as ?counter) WHERE {\n\tGRAPH <");
 					query.append(mContext);
 					query.append("> {\n");
@@ -355,8 +363,6 @@ public abstract class CoinsValidator {
 	
 	protected static abstract class CoinsMaxCardinalityOneValidator extends CoinsValidator {
 
-		protected abstract CoinsPrefix getPrefix();
-
 		protected abstract IAttributeKey getRelation();
 
 		@Override
@@ -366,7 +372,7 @@ public abstract class CoinsValidator {
 			Set<String> children = new HashSet<String>();
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX ");
-			query.append(getPrefix());
+			query.append(getRelation().getPrefix());
 			query.append("\n\nSELECT ?child ?parent WHERE {\n\tGRAPH <");
 			query.append(mContext);
 			query.append("> {\n\t\t?child ");
@@ -401,11 +407,6 @@ public abstract class CoinsValidator {
 	public static class CoinsRequirementOfValidator extends CoinsMaxCardinalityOneValidator {
 
 		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
-
-		@Override
 		protected IAttributeKey getRelation() {
 			return CbimAttributeKey.REQUIREMENT_OF;
 		}
@@ -416,11 +417,6 @@ public abstract class CoinsValidator {
 	 * A requirement can be the super requirement of at most one requirement
 	 */
 	public static class CoinsSuperRequirement extends CoinsMaxCardinalityOneValidator {
-
-		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIMFS;
-		}
 
 		@Override
 		protected IAttributeKey getRelation() {
@@ -435,11 +431,6 @@ public abstract class CoinsValidator {
 	public static class CoinsMaleTerminalValidator extends CoinsMaxCardinalityOneValidator {
 
 		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
-
-		@Override
 		protected IAttributeKey getRelation() {
 			return CbimAttributeKey.MALE_TERMINAL;
 		}
@@ -450,11 +441,6 @@ public abstract class CoinsValidator {
 	 * A Connection can have at most one female terminal
 	 */
 	public static class CoinsFemaleTerminalValidator extends CoinsMaxCardinalityOneValidator {
-
-		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
 
 		@Override
 		protected IAttributeKey getRelation() {
@@ -469,11 +455,6 @@ public abstract class CoinsValidator {
 	public static class CoinsSupertypeValidator extends CoinsMaxCardinalityOneValidator {
 
 		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
-
-		@Override
 		protected IAttributeKey getRelation() {
 			return CbimAttributeKey.SUPER_TYPE;
 		}
@@ -484,11 +465,6 @@ public abstract class CoinsValidator {
 	 * An amount can have at most one locator
 	 */
 	public static class CoinsLocatorValidator extends CoinsMaxCardinalityOneValidator {
-
-		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
 
 		@Override
 		protected IAttributeKey getRelation() {
@@ -503,11 +479,6 @@ public abstract class CoinsValidator {
 	public static class CoinsFirstParamaterValidator extends CoinsMaxCardinalityOneValidator {
 
 		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
-
-		@Override
 		protected IAttributeKey getRelation() {
 			return CbimAttributeKey.FIRST_PARAMETER;
 		}
@@ -518,11 +489,6 @@ public abstract class CoinsValidator {
 	 * A paramater can only have one next parameter
 	 */
 	public static class CoinsNextParamaterValidator extends CoinsMaxCardinalityOneValidator {
-
-		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
 
 		@Override
 		protected IAttributeKey getRelation() {
@@ -537,11 +503,6 @@ public abstract class CoinsValidator {
 	public static class CoinsMaxBoundingBoxValidator extends CoinsMaxCardinalityOneValidator {
 
 		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
-
-		@Override
 		protected IAttributeKey getRelation() {
 			return CbimAttributeKey.MAX_BOUNDING_BOX;
 		}
@@ -552,11 +513,6 @@ public abstract class CoinsValidator {
 	 * Locator can have at most one min bounding box
 	 */
 	public static class CoinsMinBoundingBoxValidator extends CoinsMaxCardinalityOneValidator {
-
-		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
 
 		@Override
 		protected IAttributeKey getRelation() {
@@ -571,11 +527,6 @@ public abstract class CoinsValidator {
 	public static class CoinsPrimaryOrientationValidator extends CoinsMaxCardinalityOneValidator {
 
 		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
-
-		@Override
 		protected IAttributeKey getRelation() {
 			return CbimAttributeKey.PRIMARY_ORIENTATION;
 		}
@@ -586,11 +537,6 @@ public abstract class CoinsValidator {
 	 * Secondary orientation <= 1
 	 */
 	public static class CoinsSecondaryOrientationValidator extends CoinsMaxCardinalityOneValidator {
-
-		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
 
 		@Override
 		protected IAttributeKey getRelation() {
@@ -605,11 +551,6 @@ public abstract class CoinsValidator {
 	public static class CoinsTranslationValidator extends CoinsMaxCardinalityOneValidator {
 
 		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
-
-		@Override
 		protected IAttributeKey getRelation() {
 			return CbimAttributeKey.TRANSLATION;
 		}
@@ -621,11 +562,6 @@ public abstract class CoinsValidator {
 	 * Physical Parent validator
 	 */
 	public static class CoinsPhysicalParentValidator extends CoinsMaxCardinalityOneValidator {
-
-		@Override
-		protected CoinsPrefix getPrefix() {
-			return CoinsPrefix.CBIM;
-		}
 
 		@Override
 		protected IAttributeKey getRelation() {

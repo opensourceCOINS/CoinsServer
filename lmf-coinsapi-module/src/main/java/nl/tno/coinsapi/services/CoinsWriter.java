@@ -149,7 +149,7 @@ public class CoinsWriter implements RDFWriter {
 	@Override
 	public void handleStatement(final Statement pStatement)
 			throws RDFHandlerException {
-		retrieveFileName(pStatement.getSubject().toString());
+		retrieveFileName(pStatement);
 		if (pStatement.getPredicate() != null
 				&& pStatement.getPredicate().getNamespace()
 						.contains("http://www.coinsweb.nl/c-bim")
@@ -169,14 +169,26 @@ public class CoinsWriter implements RDFWriter {
 
 	}
 
-	private void retrieveFileName(String pSubject) {
+	private void retrieveFileName(final Statement pStatement) {
 		if (mFileName != null) {
 			return;
 		}
+		String pSubject = pStatement.getSubject().toString();
 		if (pSubject == null) {
 			return;
 		}
 		String[] items = pSubject.split("#");
+		if (items.length == 1) {
+			if (pStatement.getObject() instanceof Resource){
+				if (((Resource)pStatement.getObject()).stringValue().startsWith("http://www.coinsweb.nl")){
+					int index = items[0].lastIndexOf('/');
+					if (index > 0) {
+						mFileName = items[0].substring(index + 1);
+					}					
+				}
+			}
+			return;
+		}
 		if (items.length != 2) {
 			return;
 		}

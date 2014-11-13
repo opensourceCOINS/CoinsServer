@@ -14,7 +14,7 @@ import com.jayway.restassured.response.ResponseBody;
 /**
  * Test modifications
  */
-public class TestModifify extends TestCoinsApiWebService {
+public class TestModify extends TestCoinsApiWebService {
 
 	/**
 	 * Testing modify integer
