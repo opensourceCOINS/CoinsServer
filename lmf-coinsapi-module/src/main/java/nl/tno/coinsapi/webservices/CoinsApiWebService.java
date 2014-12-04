@@ -19,6 +19,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import nl.tno.coinsapi.CoinsPrefix;
 import nl.tno.coinsapi.keys.CbimAttributeKey;
 import nl.tno.coinsapi.keys.CbimfsAttributeKey;
 import nl.tno.coinsapi.services.ICoinsApiService;
@@ -40,15 +41,6 @@ import org.openrdf.query.UpdateExecutionException;
 @ApplicationScoped
 @Path("/" + CoinsApiWebService.PATH)
 public class CoinsApiWebService {
-
-	private static final String[][] PREFIXES = new String[][] {
-			{ "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
-			{ "owl", "http://www.w3.org/2002/07/owl#" },
-			{ "xsd", "http://www.w3.org/2001/XMLSchema#" },
-			{ "cbimfs", "http://www.coinsweb.nl/c-bim-fs.owl#" },
-			{ "cbimotl", "http://www.coinsweb.nl/cbim-otl-1.1.owl#" },
-			{ "cbim", "http://www.coinsweb.nl/c-bim.owl#" },
-			{ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" } };
 
 	/**
 	 * API path
@@ -699,7 +691,7 @@ public class CoinsApiWebService {
 	@Path(PATH_VERSION)
 	@GET
 	public Response getVersion() {
-		return Response.ok().entity("v0.2").build();
+		return Response.ok().entity("v0.3").build();
 	}
 
 	/**
@@ -765,16 +757,18 @@ public class CoinsApiWebService {
 	@Produces(MIME_TYPE)
 	public Response setPrefixes() {
 		List<String> addedPrefixes = new Vector<String>();
-		for (int i = 0; i < PREFIXES.length; i++) {
-			String nameSpace = mPrefixService.getNamespace(PREFIXES[i][0]);
-			if (nameSpace == null) {
-				try {
-					mPrefixService.add(PREFIXES[i][0], PREFIXES[i][1]);
-					addedPrefixes.add(PREFIXES[i][0]);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
+		for (CoinsPrefix prefix : CoinsPrefix.values()) {
+			if (!prefix.isNumbered()) {
+				String nameSpace = mPrefixService.getNamespace(prefix.getKey());
+				if (nameSpace == null) {
+					try {
+						mPrefixService.add(prefix.getKey(), prefix.getURL());
+						addedPrefixes.add(prefix.toString());
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (URISyntaxException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
@@ -3318,7 +3312,7 @@ public class CoinsApiWebService {
 	 * @param context
 	 *            context or graph
 	 * @param child
-	 *            Child identifier
+	 *            Child identifier(s)
 	 * @param parent
 	 *            Parent identifier
 	 * @param modifier
@@ -3330,7 +3324,7 @@ public class CoinsApiWebService {
 	@Path(PATH_LINK_PHYSICAL_CHILD)
 	@Consumes(MIME_TYPE)
 	public Response linkPhysicalChild(@QueryParam(CONTEXT) String context,
-			@QueryParam(CHILD) String child, @QueryParam(PARENT) String parent,
+			@QueryParam(CHILD) String[] child, @QueryParam(PARENT) String parent,
 			@QueryParam(MODIFIER) String modifier) {
 		try {
 			mCoinsService.setPysicalChild(context, child, parent, modifier);

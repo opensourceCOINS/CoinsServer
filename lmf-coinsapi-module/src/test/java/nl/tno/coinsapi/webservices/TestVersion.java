@@ -19,7 +19,7 @@ public class TestVersion extends TestCoinsApiWebService {
 		Response resp = RestAssured.get(CoinsApiWebService.PATH
 				+ CoinsApiWebService.PATH_VERSION);
 		Assert.assertEquals(200, resp.getStatusCode());
-		Assert.assertEquals("v0.2", resp.getBody().asString());
+		Assert.assertEquals("v0.3", resp.getBody().asString());
 	}
 
 }

@@ -21,14 +21,23 @@
 <head>
     <!--###BEGIN_HEAD###-->
     <title>Coins api module</title>
+    <script type="text/javascript" src="../../webjars/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+		    $.ajax( { url: "../version" }).done( function(data) {
+        		var title = document.getElementById("title");
+        		var text = title.textContent;
+        		title.removeChild(title.firstChild);
+        		title.appendChild(document.createTextNode(text.replace("Enable javascript", data)));
+		    });
+        });
+    </script>
     <!--###END_HEAD###-->
 </head>
 <body>
 <!--###BEGIN_CONTENT###-->
 <img src="./coinslogo.png" alt="Coins logo">
-<h1>Coins API
-<iframe src="../version" style="border-style:none;overflow:hidden;color:white;" width="80" height="30" scrolling="no"></iframe>
-</h1>
+<h1 id="title">Coins API (Enable javascript)</h1>
 <h2>
     open source COINS
 </h2>

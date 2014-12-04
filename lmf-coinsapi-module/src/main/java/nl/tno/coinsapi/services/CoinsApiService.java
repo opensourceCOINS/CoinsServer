@@ -1099,7 +1099,7 @@ public class CoinsApiService implements ICoinsApiService {
 	}
 
 	@Override
-	public void setPysicalChild(String context, String child, String parent,
+	public void setPysicalChild(String context, String child[], String parent,
 			String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException {
@@ -1107,7 +1107,9 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addPrefix(CoinsPrefix.CBIM);
 		builder.addGraph(getFullContext(context));
 		builder.setId(parent);
-		builder.addAttributeResource(CbimAttributeKey.PHYSICAL_CHILD, child);
+		for (String ch : child) {			
+			builder.addAttributeResource(CbimAttributeKey.PHYSICAL_CHILD, ch);
+		}
 		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
 		builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());

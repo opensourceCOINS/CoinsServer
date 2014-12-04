@@ -1,133 +1,159 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.marmotta</groupId>
-    <artifactId>marmotta-parent</artifactId>
-    <version>3.2.1</version>
-    <relativePath>../../parent</relativePath>
-  </parent>
-  <groupId>nl.tno.coinsapi</groupId>
-  <artifactId>lmf-coinsapi-module</artifactId>
-  <version>3.2.1</version>
-  <name>lmf-coinsapi-module</name>
-  <description>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.apache.marmotta</groupId>
+		<artifactId>marmotta-parent</artifactId>
+		<version>3.2.1</version>
+		<relativePath>../../parent</relativePath>
+	</parent>
+	<groupId>nl.tno.coinsapi</groupId>
+	<artifactId>lmf-coinsapi-module</artifactId>
+	<version>3.2.1</version>
+	<name>lmf-coinsapi-module</name>
+	<description>
         The COINS-IO API is a platform independent interface to facilitate application programmers 
         with functions to read and write CBIM model files and importing and exporting COINS containers.
   </description>
-  <build>
-    <plugins>
-      <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- configure how the REST API documentation will be produced -->
-                        <id>restapi</id>
-                        <configuration>
-                            <doclet>com.lunatech.doclets.jax.jaxrs.JAXRSDoclet</doclet>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.marmotta</groupId>
+				<artifactId>buildinfo-maven-plugin</artifactId>
+				<configuration>
+					<systemProperties>
+						<systemProperty>user.name</systemProperty>
+						<systemProperty>user.timezone</systemProperty>
+						<systemProperty>java.vm.vendor</systemProperty>
+						<systemProperty>java.vm.version</systemProperty>
+						<systemProperty>java.vm.name</systemProperty>
+						<systemProperty>java.runtime.version</systemProperty>
+						<systemProperty>os.name</systemProperty>
+						<systemProperty>os.version</systemProperty>
+						<systemProperty>os.arch</systemProperty>
+					</systemProperties>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>extract</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<!-- configure how the REST API documentation will be produced -->
+						<id>restapi</id>
+						<configuration>
+							<doclet>com.lunatech.doclets.jax.jaxrs.JAXRSDoclet</doclet>
 
-                            <name>REST API</name>
-                            <description>REST API for LMF Webservices</description>
+							<name>REST API</name>
+							<description>REST API for LMF Webservices</description>
 
-                            <outputDirectory>${project.build.outputDirectory}/doc</outputDirectory>
-                            <reportOutputDirectory>${project.build.outputDirectory}/web/doc</reportOutputDirectory>
-                            <destDir>rest</destDir>
+							<outputDirectory>${project.build.outputDirectory}/doc</outputDirectory>
+							<reportOutputDirectory>${project.build.outputDirectory}/web/doc</reportOutputDirectory>
+							<destDir>rest</destDir>
 
-                            <docletArtifact>
-                                <groupId>com.lunatech.jax-doclets</groupId>
-                                <artifactId>doclets</artifactId>
-                                <version>0.10.0</version>
-                            </docletArtifact>
-                            <additionalparam>
-                                -jaxrscontext {BASE}
-                                -charset UTF-8
-                            </additionalparam>
+							<docletArtifact>
+								<groupId>com.lunatech.jax-doclets</groupId>
+								<artifactId>doclets</artifactId>
+								<version>0.10.0</version>
+							</docletArtifact>
+							<additionalparam>
+								-jaxrscontext {BASE}
+								-charset UTF-8
+							</additionalparam>
 
-                            <header><![CDATA[<!--###BEGIN_CONTENT###--><div class="javadoc">]]></header>
-                            <footer><![CDATA[</div><!--###END_CONTENT###-->]]></footer>
-                            <encoding>UTF-8</encoding>
-                            <detectOfflineLinks>false</detectOfflineLinks>
+							<header><![CDATA[<!--###BEGIN_CONTENT###--><div class="javadoc">]]></header>
+							<footer><![CDATA[</div><!--###END_CONTENT###-->]]></footer>
+							<encoding>UTF-8</encoding>
+							<detectOfflineLinks>false</detectOfflineLinks>
 
-                            <!-- For the project-reports page -->
-                        </configuration>
-                        <goals>
-                            <goal>javadoc</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-      </plugin>
-    </plugins>
-  </build>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.marmotta</groupId>
-      <artifactId>marmotta-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>  
-    <dependency>
-      <groupId>org.webjars</groupId>
-      <artifactId>jquery-ui</artifactId>
-    </dependency>    
-    <dependency>
-      <groupId>org.apache.marmotta</groupId>
-      <artifactId>kiwi-loader</artifactId>
-       <version>${project.version}</version>
-    </dependency>      
-    <dependency>
-      <groupId>org.apache.marmotta</groupId>
-      <artifactId>marmotta-sparql</artifactId>
-      <version>${project.version}</version>
-    </dependency>      
-    <!-- TESTING -->
-    <dependency>
-      <groupId>org.apache.marmotta</groupId>
-      <artifactId>marmotta-core</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>  
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <version>${jetty.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-      <version>${jetty.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.el</groupId>
-      <artifactId>javax.el-api</artifactId>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.jboss.weld.se</groupId>
-      <artifactId>weld-se-core</artifactId>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>com.jayway.restassured</groupId>
-      <artifactId>rest-assured</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>  
-  <url>www.coinsweb.nl</url>
-  <organization>
-  	<name>TNO</name>
-  	<url>www.tno.nl</url>
-  </organization>
+							<!-- For the project-reports page -->
+						</configuration>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.marmotta</groupId>
+			<artifactId>marmotta-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-ui</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.marmotta</groupId>
+			<artifactId>kiwi-loader</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.marmotta</groupId>
+			<artifactId>marmotta-sparql</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- TESTING -->
+		<dependency>
+			<groupId>org.apache.marmotta</groupId>
+			<artifactId>marmotta-core</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.restassured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<url>www.coinsweb.nl</url>
+	<organization>
+		<name>TNO</name>
+		<url>www.tno.nl</url>
+	</organization>
 </project>

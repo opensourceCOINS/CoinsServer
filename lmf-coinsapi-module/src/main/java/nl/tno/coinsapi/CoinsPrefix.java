@@ -3,10 +3,6 @@ package nl.tno.coinsapi;
 /**
  * Coins prefixes used in SPARQL Queries
  */
-/**
- * @author kunnenj
- *
- */
 public enum CoinsPrefix {
 
 	/**
@@ -38,13 +34,30 @@ public enum CoinsPrefix {
 	/**
 	 * PREFIX for sparql query owl: <http://www.w3.org/2002/07/owl#>
 	 */
-	OWL("owl", "http://www.w3.org/2002/07/owl#");
+	OWL("owl", "http://www.w3.org/2002/07/owl#"),
+
+	/**
+	 * rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+	 */
+	RDF("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
+	
+	/**
+	 * xsd: <http://www.w3.org/2001/XMLSchema#>
+	 */
+	XSD("xsd", "http://www.w3.org/2001/XMLSchema#"),
+	
+	/**
+	 * rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+	 */
+	RDFS("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 
 	private final String mStringRepresentation;
 	private final String mKey;
+	private final String mUrl;
 
 	CoinsPrefix(String pKey, String pLink) {
 		mKey = pKey;
+		mUrl = pLink;
 		mStringRepresentation = pKey + ": <" + pLink + ">";
 	}
 
@@ -71,9 +84,23 @@ public enum CoinsPrefix {
 	}
 	
 	/**
+	 * @return http://www.w3.org/2002/07/owl# etc
+	 */
+	public String getURL() {
+		return mUrl;
+	}
+	
+	/**
 	 * @return the key (cbim / cbimfs etc)
 	 */
 	public String getKey() {
 		return mKey;
+	}
+	
+	/**
+	 * @return true if it is a numbered prefix used for older versions 
+	 */
+	public boolean isNumbered() {
+		return (this==CoinsPrefix.CBIM1_0) || (this==CoinsPrefix.CBIM1_1); 
 	}
 }

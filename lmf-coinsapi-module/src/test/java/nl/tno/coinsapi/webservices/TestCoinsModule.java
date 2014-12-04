@@ -286,35 +286,58 @@ public class TestCoinsModule {
 						+ CoinsApiWebService.PATH_LINK_SHAPE).body();
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
-				.queryParam("child", fundatieSysteemId)
-				.queryParam("parent", steunLinksId, steunRechtsId)
+				.queryParam("parent", fundatieSysteemId)
+				.queryParam("child", steunLinksId, steunRechtsId)
 				.queryParam("modifier", mCreatorId)
 				.expect()
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_LINK_PHYSICAL_PARENT).body();
+						+ CoinsApiWebService.PATH_LINK_PHYSICAL_CHILD).body();
 
 		validate();
 
 		body = given().queryParam("format", "application/rdf+xml")
 				.queryParam("context", mContext).expect().statusCode(OK).when()
 				.get("export/download").body();
-		String owl = body.asString();
-		write(owl);
+		StringWrapper owl = new StringWrapper(body.asString());
+		write(owl.toString());
 		Assert.assertTrue(owl
 				.contains("http://www.coinsweb.nl/c-bim-fs.owl#AspectExecution"));
-		Assert.assertTrue(owl.contains("cbim:document"));
-		Assert.assertTrue(owl.contains("cbim:fulfills"));
-		Assert.assertTrue(owl.contains("cbim:isFulfilledBy"));
-		Assert.assertTrue(owl.contains("cbim:affects"));
-		Assert.assertTrue(owl.contains("cbim:isAffectedBy"));
-		Assert.assertTrue(owl.contains("cbim:physicalParent"));
-		Assert.assertTrue(owl.contains("cbim:shape"));
-		Assert.assertTrue(owl.contains("cbimfs:nonFunctionalRequirement"));
-		Assert.assertTrue(owl.contains("http://www.rws.nl/reference_frameworks/rf-rws.20131101.owl"));
+		Assert.assertEquals(2, owl.count("cbim:document "));
+		Assert.assertEquals(1, owl.count("cbim:fulfills "));
+		Assert.assertEquals(2, owl.count("cbim:isFulfilledBy "));
+		Assert.assertEquals(2, owl.count("cbim:affects "));
+		Assert.assertEquals(1, owl.count("cbim:isAffectedBy "));
+		Assert.assertEquals(3, owl.count("cbim:physicalParent "));
+		Assert.assertEquals(2, owl.count("cbim:physicalChild "));
+		Assert.assertEquals(1, owl.count("cbim:shape "));
+		Assert.assertEquals(2, owl.count("cbimfs:nonFunctionalRequirement "));
+		Assert.assertEquals(1, owl.count("http://www.rws.nl/reference_frameworks/rf-rws.20131101.owl"));
 	}
 
+	private static final class StringWrapper{
+		private final String mContents;
+		public StringWrapper(String pValue) {
+			mContents = pValue;
+		}
+		public boolean contains(String pValue) {
+			return mContents.contains(pValue);
+		}
+		public int count(String pValue) {
+			int result = 0;
+			int index = mContents.indexOf(pValue);
+			while (index >= 0) {
+				result+=1;
+				index = mContents.indexOf(pValue, index + 1);
+			}
+			return result;
+		}
+		public String toString () {
+			return mContents;
+		}
+ 	}
+	
 	private void validate() {
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)

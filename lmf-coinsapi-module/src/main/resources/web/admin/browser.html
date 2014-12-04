@@ -1,0 +1,185 @@
+<html>
+<head>
+    <title>Browser</title>
+    <script type="text/javascript">    
+	var _SERVER_URL = "http://localhost:8080/coinsapi/";
+	</script>
+    <!--###BEGIN_HEAD###-->
+    <LINK href="browser.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../../webjars/jquery/1.8.2/jquery.min.js"></script>    
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            function appendContext(ctx, id) {
+                var label = (ctx["label"] ? ctx["label"] : uri.replace(/.*[\/#](.*)/, "$1"));                
+                var contexts = document.getElementById("contexts");
+                var node = document.createElement("option");
+                node.setAttribute("value", ctx["uri"]);
+                node.appendChild(document.createTextNode(label));
+                contexts.appendChild(node);                
+            }            
+            $.getJSON("../../context/list", {labels:"true"}, function(data) {
+                var count = 0;
+                for (i in data) {                  
+                	appendContext(data[i], count++);
+                }
+                $("span#contexts-count")
+                    .attr("data-count", count)
+                    .text(count + " context" + (count==1?"":"s"));
+            });
+            
+            var button = document.getElementById("browse");
+            button.onclick = function() {
+            	var contexts = document.getElementById("contexts");
+           		var results = document.getElementById("results");
+           		var head = results.getElementsByTagName("H3");
+           		if (head.length==0) {
+           			var h3 = document.createElement("H3");
+           			h3.appendChild(document.createTextNode("PhysicalObjects"));
+           			results.appendChild(h3);
+           		}
+            	var ul = findChildUL(results);
+            	if (ul != null) {            		
+                	results.removeChild(ul);        			
+        		}
+        		ul = document.createElement("UL");
+        		results.appendChild(ul);
+           		var queryStr = "PREFIX cbim:<http://www.coinsweb.nl/cbim-1.1.owl#> SELECT ?object ?objectName " + 
+           				"WHERE { GRAPH <" + contexts.value +
+           				"> { ?object a cbim:PhysicalObject . " +
+           				"?object cbim:name ?objectName . " + 
+						"OPTIONAL { ?parent1 cbim:physicalChild ?object . } " +
+						"OPTIONAL { ?object cbim:physicalParent ?parent2 . } " +
+						"} FILTER ( ! bound(?parent1) && ! bound(?parent2)) } ";
+               	$.getJSON("../../sparql/select", { query:queryStr }, function(data) {					
+               		if (data["results"] != null) {
+               			var i = 0;
+                		var bindings = data["results"]["bindings"];
+                		for (i=0; i<bindings.length; i++) {                			
+			               	appendChild(document, ul, bindings[i]["objectName"].value, bindings[i]["object"].value);
+               			}
+			    	}
+                });
+            };
+        });
+        
+        function appendChild(document, ulNode, childName, childId) {
+           	var li = document.createElement("li");
+           	        	
+           	var a = document.createElement("a");
+           	a.setAttribute("id", childId);
+        	a.setAttribute("onclick", "clickParent(this)");
+        	var img = document.createElement("img");
+        	img.setAttribute("src", "triangle_right16.png");
+        	a.appendChild(img);
+        	li.appendChild(a);
+        	
+        	a = document.createElement("a");
+           	li.setAttribute("class", "blank");
+           	a.appendChild(document.createTextNode(childName));
+           	a.setAttribute("id", childId);
+        	a.setAttribute("onclick", "showDetails(this)");
+        	li.appendChild(a);
+			ulNode.appendChild(li);        	
+        }
+        
+        function findChildIMG(node) {
+        	var child = node.firstChild;
+        	while (child != null) {
+        		if (child.nodeName == "A") {
+        			var grandchild = child.firstChild;
+        			while (grandchild != null) {
+        				if (grandchild.nodeName == "IMG") {
+        					return grandchild;
+        				}
+        				grandchild = grandchild.nextSibling;
+        			}
+        		}
+        		child = child.nextSibling;
+        	}
+        	return null;
+        } 
+
+        function findChildUL(node) {
+        	var child = node.firstChild;
+        	while (child != null) {
+        		if (child.nodeName == "UL") {
+        			return child;
+        		}
+        		child = child.nextSibling;
+        	}
+        	return null;
+        } 
+
+        function clickParent(node) {
+        	var parentLi = node.parentNode; 
+        	var ul = findChildUL(parentLi);
+        	var img = findChildIMG(parentLi);
+        	if (ul == null) {
+        		img.setAttribute("src", "triangle_down16.png");
+         		var queryStr = "PREFIX cbim:<http://www.coinsweb.nl/cbim-1.1.owl#> SELECT ?child ?childname " + 
+					"WHERE { " +
+         			"{ ?child a cbim:PhysicalObject . ?child cbim:name ?childname . " +
+					"?child cbim:physicalParent <" + node.id + "> } " + 
+					"UNION " +
+         			"{?child a cbim:PhysicalObject . ?child cbim:name ?childname . " +
+					"<" + node.id + "> cbim:physicalChild ?child }} ";
+		    	$.getJSON("../../sparql/select", { query:queryStr }, function(data) {
+			    	if (data["results"] != null) {
+			    		var i = 0;
+			    		var bindings = data["results"]["bindings"];
+			    		ul = document.createElement("UL");
+			    		parentLi.appendChild(ul);
+			    		for (i=0; i<bindings.length; i++) {
+			               	appendChild(document, ul, bindings[i]["childname"].value, bindings[i]["child"].value);
+				        }
+			    	}				                            	
+				});
+        	}
+        	else {
+        		img.setAttribute("src", "triangle_right16.png");
+        		parentLi.removeChild(ul);
+        	}
+        }
+        
+        function showDetails(node) {
+        	var details = document.getElementById("details");
+         	var queryStr = "PREFIX cbim:<http://www.coinsweb.nl/cbim-1.1.owl#> SELECT ?name ?value " + 
+				"WHERE { <" + node.id +"> ?name ?value ; a cbim:PhysicalObject }";
+		    $.ajax( { url: "../../sparql/select", data: { query:queryStr, output:"html"} }).done( function(data) {
+		    	var parser = new DOMParser();
+		    	var xmlDoc = parser.parseFromString(data,"text/html");
+		    	var table = xmlDoc.getElementsByTagName("TABLE")[0];
+		    	var child = details.firstChild;
+		    	while (child != null){
+		    		details.removeChild(child);
+		    		child = details.firstChild;
+		    	}
+		    	var h2 = document.createElement("H2");
+		    	h2.appendChild(document.createTextNode(node.textContent + " (" + node.id + ")"));
+		    	details.appendChild(h2);
+		    	details.appendChild(table);
+			});        	
+        }
+    </script>
+   
+    <!--###END_HEAD###-->
+</head>
+<body>
+<!--###BEGIN_CONTENT###-->
+<h1>Browser</h1>
+<h2>
+    Browse the Coins Objects
+</h2>
+    <p>
+        Currently there are <strong><span id="contexts-count">0 contexts</span></strong> in Marmotta:
+    </p>
+    <select id="contexts"></select>
+    <button id="browse">Browse</button>    
+    <P id="results">
+    </P>
+    <P id="details">
+    </P>           
+<!--###END_CONTENT###-->
+</body>
+</html>
+

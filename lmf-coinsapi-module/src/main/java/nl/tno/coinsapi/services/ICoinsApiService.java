@@ -449,7 +449,7 @@ public interface ICoinsApiService {
 	 * @throws UpdateExecutionException
 	 * @throws MarmottaException
 	 */
-	public void setPysicalChild(String context, String child, String parent,
+	public void setPysicalChild(String context, String[] child, String parent,
 			String modifier) throws InvalidArgumentException,
 			MalformedQueryException, UpdateExecutionException,
 			MarmottaException;
