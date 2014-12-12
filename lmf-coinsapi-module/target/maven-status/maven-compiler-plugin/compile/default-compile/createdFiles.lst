@@ -56,6 +56,7 @@ nl\tno\coinsapi\tools\CoinsValidator$CoinsTwoWayRelationValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsFemaleTerminalValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsSupertypeValidator.class
 nl\tno\coinsapi\services\CoinsImporter$ReferenceUpdater.class
+nl\tno\coinsapi\services\CoinsImporter$Utf8FileInputStream.class
 nl\tno\coinsapi\keys\CbimAttributeKey.class
 nl\tno\coinsapi\services\ICoinsDateConversion.class
 nl\tno\coinsapi\services\CoinsWriter$3.class

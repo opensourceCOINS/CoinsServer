@@ -1,8 +1,11 @@
 package nl.tno.coinsapi.services;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -162,16 +165,23 @@ public class CoinsImporter implements Importer {
 				ZipEntry entry;
 				entry = zipStream.getNextEntry();
 				while (entry != null) {
-					String fileName = entry.getName();
-					File newFile = new File(tempFolder + File.separator
-							+ fileName);
-					new File(newFile.getParent()).mkdirs();
-					FileOutputStream fos = new FileOutputStream(newFile);
-					int len;
-					while ((len = zipStream.read(buffer)) > 0) {
-						fos.write(buffer, 0, len);
+					if (entry.isDirectory()) {
+						File newDir = new File(tempFolder + File.separator
+								+ entry.getName());
+						newDir.mkdir();
 					}
-					fos.close();
+					else {
+						String fileName = entry.getName();
+						File newFile = new File(tempFolder + File.separator
+								+ fileName);
+						new File(newFile.getParent()).mkdirs();
+						FileOutputStream fos = new FileOutputStream(newFile);
+						int len;
+						while ((len = zipStream.read(buffer)) > 0) {
+							fos.write(buffer, 0, len);
+						}
+						fos.close();
+					}
 					entry = zipStream.getNextEntry();
 				}
 				zipStream.closeEntry();
@@ -293,7 +303,8 @@ public class CoinsImporter implements Importer {
 				try {
 					RDFParser parser = Rio.createParser(RDFFormat.RDFXML);
 					parser.setRDFHandler(handler);
-					FileInputStream fis = new FileInputStream(pFile);
+					
+					Utf8FileInputStream fis = new Utf8FileInputStream(pFile);
 					parser.parse(fis, "");
 					fis.close();
 				} catch (RDFParseException | RDFHandlerException | IOException e1) {
@@ -436,6 +447,45 @@ public class CoinsImporter implements Importer {
 			return "error";
 		}
 
+	}
+
+	/**
+	 * The contents of the File should be passed to the database back end in UTF8. This is the most robust way for ProstgreSQL.
+	 */
+	private static class Utf8FileInputStream extends InputStream {
+
+		private final BufferedReader mReader;
+		private int mIndex = -1;
+		private byte[] mBuffer = null;
+		
+		public Utf8FileInputStream(File pFile) throws FileNotFoundException {
+			super();
+			mReader = new BufferedReader(new FileReader(pFile));
+		}
+
+		@Override
+		public int read() throws IOException {
+			if (mIndex == -1) {
+				String line = mReader.readLine();
+				if (line == null) {
+					return -1;
+				}
+				mBuffer = (line + '\n').getBytes("UTF-8");
+				mIndex = 0;
+			}
+			if (mIndex < mBuffer.length) {
+				byte result = mBuffer[mIndex];
+				mIndex++;
+				return result; 
+			}
+			mIndex = -1;
+			return read();
+		}
+		
+		public void close() throws IOException {
+			mReader.close();
+			super.close();
+		}
 	}
 
 }
