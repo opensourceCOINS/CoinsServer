@@ -1487,4 +1487,34 @@ public interface ICoinsApiService {
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
 
+	/**
+	 * @param context
+	 * @param terminal
+	 * @param functionfullfiller
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkTerminalOf(String context,
+			String terminal, String functionfullfiller, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @param functionFulfiller
+	 * @param terminal
+	 * @param modifier
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 * @throws MarmottaException
+	 */
+	public void linkFunctionFulfillerTerminal(String context,
+			String functionFulfiller, String[] terminal, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException;
+
 }

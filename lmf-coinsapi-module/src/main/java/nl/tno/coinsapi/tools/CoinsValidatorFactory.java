@@ -24,6 +24,7 @@ import nl.tno.coinsapi.tools.CoinsValidator.CoinsSituatedValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsSpaceParentChildValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsSuperRequirement;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsSupertypeValidator;
+import nl.tno.coinsapi.tools.CoinsValidator.CoinsTerminalValidator;
 import nl.tno.coinsapi.tools.CoinsValidator.CoinsTranslationValidator;
 
 import org.apache.marmotta.platform.sparql.api.sparql.SparqlService;
@@ -45,6 +46,9 @@ public class CoinsValidatorFactory {
 		switch (pAspect) {
 		case ALL:
 			validator = new CoinsAllValidator();
+			break;
+		case TERMINAL:
+			validator = new CoinsTerminalValidator();
 			break;
 		case PERFORMANCE:
 			validator = new CoinsPerformanceValidator();

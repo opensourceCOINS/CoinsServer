@@ -26,6 +26,7 @@ public class TestPhysicalObject extends TestCoinsApiWebService {
 	public void testPhysicalObject() throws JsonProcessingException {
 		String baselineId = TestBaseline.createBaseline();
 		String locatorId = TestLocator.createLocator();
+		String terminalId = TestTerminal.createTerminal();
 		// Post State
 		ResponseBody body = given()
 				.header("Content-Type", CoinsApiWebService.MIME_TYPE)
@@ -121,7 +122,18 @@ public class TestPhysicalObject extends TestCoinsApiWebService {
 				.statusCode(OK)
 				.when()
 				.post(CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_FUNCTIONFULFILLER_LINK_LOCATOR);
+						+ CoinsApiWebService.PATH_LINK_FUNCTIONFULFILLER_LOCATOR);
+		// Link terminal
+		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
+				.queryParam("context", mContext)
+				.queryParam("functionFulfiller", id)
+				.queryParam("terminal", terminalId)
+				.queryParam("modifier", mModifierId)
+				.expect()
+				.statusCode(OK)
+				.when()
+				.post(CoinsApiWebService.PATH
+						+ CoinsApiWebService.PATH_LINK_FUNCTION_FULFILLER_TERMINAL);
 		// Set current state
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)
 				.queryParam("context", mContext)
@@ -180,7 +192,9 @@ public class TestPhysicalObject extends TestCoinsApiWebService {
 		Assert.assertEquals(stateId,
 				result.get("http://www.coinsweb.nl/cbim-1.1.owl#currentState"));
 		Assert.assertEquals(baselineId, result
-				.get("http://www.coinsweb.nl/cbim-1.1.owl#baseline"));				
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#baseline"));
+		Assert.assertEquals(terminalId, result
+				.get("http://www.coinsweb.nl/cbim-1.1.owl#terminal"));						
 		validate(mContext);
 		// DELETE PhysicalObject
 		given().header("Content-Type", CoinsApiWebService.MIME_TYPE)

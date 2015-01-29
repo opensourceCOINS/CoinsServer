@@ -1107,7 +1107,7 @@ public class CoinsApiService implements ICoinsApiService {
 		builder.addPrefix(CoinsPrefix.CBIM);
 		builder.addGraph(getFullContext(context));
 		builder.setId(parent);
-		for (String ch : child) {			
+		for (String ch : child) {
 			builder.addAttributeResource(CbimAttributeKey.PHYSICAL_CHILD, ch);
 		}
 		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
@@ -1659,6 +1659,41 @@ public class CoinsApiService implements ICoinsApiService {
 				FieldType.RESOURCE);
 		addAttributeResource(context, libraryReference,
 				CbimotlAttributeKey.REQUIREMENT_TYPE_REFERENCE.toString(), requirementType);
+	}
+
+	@Override
+	public void linkTerminalOf(String context, String terminal,
+			String functionfullfiller, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		updateAttribute(context, terminal, CbimAttributeKey.TERMINAL_OF, functionfullfiller,
+				modifier, FieldType.RESOURCE);
+	}
+
+	@Override
+	public void linkFunctionFulfillerTerminal(String context,
+			String functionFulfiller, String[] terminals, String modifier)
+			throws InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException, MarmottaException {
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsPrefix.CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(functionFulfiller);
+		for (String terminal : terminals) {			
+			builder.addAttributeResource(CbimAttributeKey.TERMINAL, terminal);
+		}
+		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		// The previous query might have caused two modificationDates/modifiers
+		// so...
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsPrefix.CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(functionFulfiller);
+		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());		
 	}
 
 }

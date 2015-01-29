@@ -293,6 +293,11 @@ public class CoinsApiWebService {
 	public static final String PATH_FUNCTION_FULFILLER = "/functionfulfiller";
 
 	/**
+	 * Link a terminal to a Function fulfiller
+	 */
+	public static final String PATH_LINK_FUNCTION_FULFILLER_TERMINAL = PATH_FUNCTION_FULFILLER + "/terminal";
+
+	/**
 	 * Link NonFunctionalRequirements to a Function Fulfiller
 	 */
 	public static final String PATH_LINK_NON_FUNCTIONAL_REQUIREMENT = PATH_FUNCTION_FULFILLER
@@ -319,7 +324,7 @@ public class CoinsApiWebService {
 	/**
 	 * Link a function fulfiller to a locator
 	 */
-	public static final String PATH_FUNCTIONFULFILLER_LINK_LOCATOR = PATH_FUNCTION_FULFILLER
+	public static final String PATH_LINK_FUNCTIONFULFILLER_LOCATOR = PATH_FUNCTION_FULFILLER
 			+ "/locator";
 
 	/**
@@ -460,8 +465,13 @@ public class CoinsApiWebService {
 	/**
 	 * Terminal locator
 	 */
-	public static final String PATH_TERMINAL_LINK_LOCATOR = PATH_TERMINAL
+	public static final String PATH_LINK_TERMINAL_LOCATOR = PATH_TERMINAL			
 			+ "/locator";
+	/**
+	 * Terminal FunctionFulfiller
+	 */
+	public static final String PATH_LINK_TERMINAL_FUNCTION_FULFILLER = PATH_TERMINAL
+			+ "/terminalof";
 	/**
 	 * Property type
 	 */
@@ -3643,6 +3653,40 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Add <B>Terminal</B>(s) to <B>FunctionFulfillers</B>.
+	 * Leaves previously linked Terminals untouched.
+	 * 
+	 * @param context
+	 *            Context or Graph
+	 * @param functionFulfiller
+	 *            id of <B>FunctionFulfiller</B>
+	 * @param terminal
+	 *            list of <B>Terminal</B> id's
+	 * @param modifier
+	 *            who did this modification
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_FUNCTION_FULFILLER_TERMINAL)
+	@Consumes(MIME_TYPE)
+	public Response linkFunctionFulfillerTerminal(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(FUNCTION_FULFILLER) String functionFulfiller,
+			@QueryParam(TERMINAL) String[] terminal,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+ 		  mCoinsService.linkFunctionFulfillerTerminal(context,
+					functionFulfiller, terminal, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking terminal(s) to function fulfiller failed").build();
+		}
+		return Response.ok().build();
+	}
+	
+	/**
 	 * Add Document(s) to <B>PhysicalObjects</B>. Leaves previously linked
 	 * Documents untouched.
 	 * 
@@ -4032,7 +4076,7 @@ public class CoinsApiWebService {
 	 * @return OK if success
 	 */
 	@POST
-	@Path(PATH_FUNCTIONFULFILLER_LINK_LOCATOR)
+	@Path(PATH_LINK_FUNCTIONFULFILLER_LOCATOR)
 	@Consumes(MIME_TYPE)
 	public Response linkFunctionFulfillerLocator(
 			@QueryParam(CONTEXT) String context,
@@ -4055,7 +4099,7 @@ public class CoinsApiWebService {
 	 * @return OK if success
 	 */
 	@POST
-	@Path(PATH_TERMINAL_LINK_LOCATOR)
+	@Path(PATH_LINK_TERMINAL_LOCATOR)
 	@Consumes(MIME_TYPE)
 	public Response linkTerminalLocator(@QueryParam(CONTEXT) String context,
 			@QueryParam(TERMINAL) String object,
@@ -4064,6 +4108,36 @@ public class CoinsApiWebService {
 		return linkLocator(context, object, locator, modifier);
 	}
 
+	/**
+	 * Link a <B>FunctionFulfiller</B> to a <B>Terminal</B> by the terminalOf property
+	 * 
+	 * @param context
+	 *            Context of Graph
+	 * @param terminal
+	 *            <B>Terminal</B> id
+	 * @param functionfulfiller
+	 *            id of the <B>FunctionFulfiller</B>
+	 * @param modifier
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_TERMINAL_FUNCTION_FULFILLER)
+	@Consumes(MIME_TYPE)
+	public Response linkTerminalFunctionFulfiller(@QueryParam(CONTEXT) String context,
+			@QueryParam(TERMINAL) String terminal,
+			@QueryParam(FUNCTION_FULFILLER) String functionfulfiller,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkTerminalOf(context, terminal, functionfulfiller, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Linking Terminal to FunctionFullfiller failed").build();
+		}
+		return Response.ok().build();
+	}
+	
 	/**
 	 * Link a minimum bounding box (<B>Vector</B>) to a <B>Locator</B>
 	 * 

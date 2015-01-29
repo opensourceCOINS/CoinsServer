@@ -7,6 +7,7 @@ nl\tno\coinsapi\tools\CoinsValidator$CoinsPerformanceValidator.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsAffectsValidator.class
 nl\tno\coinsapi\model\CoinsHierarchyFactory.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsLiteralValidator$LiteralRelation.class
+nl\tno\coinsapi\tools\CoinsValidator$CoinsTerminalValidator.class
 nl\tno\coinsapi\services\CoinsImporter.class
 nl\tno\coinsapi\services\ICoinsDocFileService.class
 nl\tno\coinsapi\keys\CbimotlAttributeKey.class

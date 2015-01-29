@@ -180,6 +180,8 @@ public abstract class CoinsValidator {
 			result.add(new ResourceRelation(CbimAttributeKey.LOCATOR, CbimObjectKey.LOCATOR));
 			result.add(new ResourceRelation(CbimAttributeKey.FIRST_PARAMETER, CbimObjectKey.PARAMETER));
 			result.add(new ResourceRelation(CbimAttributeKey.NEXT_PARAMETER, CbimObjectKey.PARAMETER));
+			result.add(new ResourceRelation(CbimAttributeKey.TERMINAL, CbimObjectKey.TERMINAL));
+			result.add(new ResourceRelation(CbimAttributeKey.TERMINAL_OF, CbimObjectKey.FUNCTION_FULFILLER));
 			result.add(new ResourceRelation(CbimAttributeKey.PERFORMANCE_RELATION, CbimObjectKey.PERFORMANCE));
 			result.add(new ResourceRelation(CbimAttributeKey.PERFORMANCE_OF, CbimObjectKey.STATE, CbimObjectKey.FUNCTION_FULFILLER));
 			result.add(new ResourceRelation(CbimfsAttributeKey.VERIFICATION_REQUIREMENT, CbimfsObjectKey.NON_FUNCTIONAL_REQUIREMENT));
@@ -671,6 +673,33 @@ public abstract class CoinsValidator {
 		}
 		
 	}	
+	
+	/**
+	 * Validator for cbim:terminal and cbim:terminalOf
+	 */
+	public static class CoinsTerminalValidator extends CoinsTwoWayRelationValidator {
+
+		@Override
+		protected IAttributeKey getTo() {
+			return CbimAttributeKey.TERMINAL_OF;
+		}
+
+		@Override
+		protected String getToDescription() {
+			return "Terminal";
+		}
+
+		@Override
+		protected IAttributeKey getFrom() {
+			return CbimAttributeKey.TERMINAL;
+		}
+
+		@Override
+		protected String getFromDescription() {
+			return "function fulfiller";
+		}
+		
+	}
 	
 	/**
 	 * cbim:physicalParent

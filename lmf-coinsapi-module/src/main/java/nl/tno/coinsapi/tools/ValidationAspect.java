@@ -3,6 +3,10 @@ package nl.tno.coinsapi.tools;
 /**
  * What do we want to validate
  */
+/**
+ * @author kunnenj
+ *
+ */
 public enum ValidationAspect {
 	/**
 	 * All aspects that have been implemented
@@ -76,6 +80,10 @@ public enum ValidationAspect {
 	 * isFulfilledBy / fulfills
 	 */
 	FUNCTIONFULFILLERS,
+	/**
+	 * terminal / terminalOf
+	 */
+	TERMINAL,
 	/**
 	 * Literal object validation
 	 */

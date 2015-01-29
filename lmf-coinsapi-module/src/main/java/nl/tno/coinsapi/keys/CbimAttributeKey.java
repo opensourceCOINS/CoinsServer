@@ -14,6 +14,11 @@ public enum CbimAttributeKey implements IAttributeKey {
 	AFFECTS("affects"),
 
 	/**
+	 * cbim:amount 
+	 */
+	AMOUNT("amount"),
+
+	/**
 	 * cbim:baseline
 	 */
 	BASELINE("baseline"),
@@ -244,6 +249,7 @@ public enum CbimAttributeKey implements IAttributeKey {
 	 * cbim:startDate
 	 */
 	START_DATE("startDate"),
+	
 	/**
 	 * cbim:startDateActual
 	 */
@@ -269,6 +275,16 @@ public enum CbimAttributeKey implements IAttributeKey {
 	 */
 	TASK_TYPE("taskType"),
 
+	/**
+	 * cbim:terminal
+	 */
+	TERMINAL("terminal"),
+
+	/**
+	 * cbim:terminalOf
+	 */
+	TERMINAL_OF("terminalOf"),
+	
 	/**
 	 * cbim:translation
 	 */
@@ -337,12 +353,8 @@ public enum CbimAttributeKey implements IAttributeKey {
 	/**
 	 * cbim:zCoordinate
 	 */
-	Z_COORDINATE("zCoordinate"),
+	Z_COORDINATE("zCoordinate");
 
-	/**
-	 * cbim:amount 
-	 */
-	AMOUNT("amount");
 
 	private final String mStringRepresentation;
 	private final String mNonPrefixedName;
