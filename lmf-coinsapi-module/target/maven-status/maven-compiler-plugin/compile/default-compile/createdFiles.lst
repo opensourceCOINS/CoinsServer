@@ -44,6 +44,7 @@ nl\tno\coinsapi\tools\CoinsValidator$CoinsTranslationValidator.class
 nl\tno\coinsapi\tools\QueryBuilder$1.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsSuperRequirement.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsLiteralValidator$Relation.class
+nl\tno\coinsapi\tools\HTMLEscaper.class
 nl\tno\coinsapi\keys\OwlAttributeKey.class
 nl\tno\coinsapi\tools\QueryBuilder$TypedItem.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsSituatedValidator.class
@@ -70,6 +71,7 @@ nl\tno\coinsapi\services\DocFileService.class
 nl\tno\coinsapi\tools\CoinsValidator$CoinsPhysicalParentValidator.class
 nl\tno\coinsapi\services\ICoinsApiService.class
 nl\tno\coinsapi\keys\IObjectKey.class
+nl\tno\coinsapi\services\CoinsImporter$3.class
 nl\tno\coinsapi\tools\CoinsValidatorFactory.class
 nl\tno\coinsapi\tools\QueryBuilder$InsertQueryBuilder.class
 nl\tno\coinsapi\services\CoinsWriter$RDFTask.class

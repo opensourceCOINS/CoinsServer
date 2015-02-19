@@ -6,10 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -27,7 +28,7 @@ import javax.inject.Inject;
 import nl.tno.coinsapi.CoinsPrefix;
 import nl.tno.coinsapi.keys.CbimAttributeKey;
 import nl.tno.coinsapi.keys.CbimObjectKey;
-import nl.tno.coinsapi.webservices.CoinsApiWebService;
+import nl.tno.coinsapi.tools.HTMLEscaper;
 
 import org.apache.marmotta.kiwi.loader.KiWiLoaderConfiguration;
 import org.apache.marmotta.kiwi.loader.generic.KiWiHandler;
@@ -63,6 +64,13 @@ import org.openrdf.rio.Rio;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.helpers.SailWrapper;
 import org.slf4j.Logger;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Importer specific for COINS containers
@@ -215,15 +223,13 @@ public class CoinsImporter implements Importer {
 
 	private void updateReferences(URI pContext) {
 		// Update references for both version 1.0 and 1.1
-		new ReferenceUpdater(pContext, mSparqlService, mFileServer,
-				mConfigurationService) {
+		new ReferenceUpdater(pContext, mSparqlService, mFileServer) {
 			@Override
 			protected CoinsPrefix getPrefix() {
 				return CoinsPrefix.CBIM1_0;
 			}
 		}.execute();
-		new ReferenceUpdater(pContext, mSparqlService, mFileServer,
-				mConfigurationService) {
+		new ReferenceUpdater(pContext, mSparqlService, mFileServer) {
 			@Override
 			protected CoinsPrefix getPrefix() {
 				return CoinsPrefix.CBIM1_1;
@@ -277,6 +283,7 @@ public class CoinsImporter implements Importer {
 			String pBaseUri) throws MarmottaImportException {
 		int result = 0;
 		if (pFile.getName().endsWith("owl")) {
+			performEncoding(pFile);
 			KiWiStore store = getStore(mSesameService.getRepository());
 			if (store == null) {
 				// Low performance...
@@ -323,6 +330,186 @@ public class CoinsImporter implements Importer {
 		return result;
 	}
 
+	/**
+	 * The file may contain illegal characters for the triple store so we perform
+	 * HTML encoding on the values...
+	 * @param pFile
+	 */
+	private void performEncoding(File pFile) {
+		try {
+			File tmpFile = new File(pFile.getPath() + ".tmp");
+			final FileWriter writer = new FileWriter(tmpFile);
+			XMLReader reader = XMLReaderFactory.createXMLReader();
+			InputStream stream = new FileInputStream(pFile);
+			InputSource source = new InputSource(stream);
+			reader.setContentHandler(new ContentHandler() {
+				private int mIndent = -1;
+				private List<String> mPrefixes = new Vector<String>();
+				private boolean mIsCloseNeeded = false;
+				private boolean mIsNewLineWritten = false;
+				private boolean mIsFirstNewLine = true;
+				
+				private void write(String pLine) {					
+					mIsNewLineWritten = false;
+					try {
+						if (mIsCloseNeeded) {
+							writer.write(">");
+							mIsCloseNeeded = false;
+						}
+						writer.write(pLine);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				private void writeClose() {
+					mIsCloseNeeded = true;
+				}
+				
+				private void indent() {					
+					mIndent++;
+				}
+
+				private void unindent() {
+					mIndent--;
+				}
+				
+				private void newLine() {
+					if (mIsFirstNewLine) {
+						mIsFirstNewLine = false;
+						write("<?xml version=\"1.0\"?>\n");
+						return;
+					}
+					if (mIsNewLineWritten) {
+						write("  ");
+						return;
+					}
+					write("\n");
+					for (int i = 0; i < mIndent; i++) {
+						write("  ");
+					}
+					mIsNewLineWritten  = true;
+				}
+				
+				@Override
+				public void startPrefixMapping(String prefix, String uri)
+						throws SAXException {
+					if (prefix != null && prefix.trim().length() > 0) {
+						mPrefixes.add("xmlns:"+prefix + "=\"" + uri + "\"");
+					}
+					else {
+						mPrefixes.add("xmlns=\"" + uri + "\"");
+					}
+				}
+				
+				@Override
+				public void startElement(String uri, String localName, String qName,
+						Attributes atts) throws SAXException {
+					indent();
+					newLine();
+					if (atts==null || atts.getLength()==0) {
+						write("<" + qName);
+						writeClose();
+					}
+					else {
+						write("<" + qName + " ");
+						for (int i = 0; i < atts.getLength(); i++) {
+							write(atts.getQName(i));
+							write("=\"");
+							write(atts.getValue(i));
+							write("\" ");
+						}
+						if (qName.equals("rdf:RDF")) {
+							for (String prefix : mPrefixes) {
+								write(prefix + " ");
+							}
+						}
+						writeClose();
+					}
+				}
+				
+				@Override
+				public void startDocument() throws SAXException {
+					//
+				}
+				
+				@Override
+				public void skippedEntity(String name) throws SAXException {
+					//
+				}
+				
+				@Override
+				public void setDocumentLocator(Locator locator) {
+					//
+				}
+				
+				@Override
+				public void processingInstruction(String target, String data)
+						throws SAXException {
+					System.err.println(target);
+					System.err.println(data);
+				}
+				
+				@Override
+				public void ignorableWhitespace(char[] ch, int start, int length)
+						throws SAXException {
+					//
+				}
+				
+				@Override
+				public void endPrefixMapping(String prefix) throws SAXException {
+					// Ignore
+				}
+				
+				@Override
+				public void endElement(String uri, String localName, String qName)
+						throws SAXException {
+					unindent();
+					if (mIsCloseNeeded) {
+						mIsCloseNeeded = false;
+						write("/>");
+					}
+					else {						
+						write("</" + qName + ">");
+						newLine();
+					}
+				}
+				
+				@Override
+				public void endDocument() throws SAXException {
+					// ignore
+				}
+				
+				@Override
+				public void characters(char[] ch, int start, int length)
+						throws SAXException {
+					StringBuilder sb = new StringBuilder();
+					for (int i = 0; i < length; i++) {
+						char c = ch[start + i];
+					    sb.append(c);
+					}
+					processValue(sb.toString());
+				}
+				
+				private void processValue(String pValue) {
+					if (pValue.replace('\n', ' ').trim().length() > 0) {
+						write(HTMLEscaper.escape(pValue));
+					}
+				}
+			});
+			reader.parse(source);
+			stream.close();
+			writer.close();
+			
+			pFile.delete();
+			tmpFile.renameTo(pFile);
+		} catch (SAXException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public int importData(Reader reader, String format, Resource user,
 			URI context) throws MarmottaImportException {
@@ -348,7 +535,6 @@ public class CoinsImporter implements Importer {
 		private final URI mContext;
 		private final SparqlService mSparqlService;
 		private final ICoinsDocFileService mFileServer;
-		private final ConfigurationService mConfigurationService;
 
 		/**
 		 * @param pContext
@@ -357,12 +543,10 @@ public class CoinsImporter implements Importer {
 		 * @param pConfigurationService
 		 */
 		public ReferenceUpdater(URI pContext, SparqlService pSparqlService,
-				ICoinsDocFileService pFileServer,
-				ConfigurationService pConfigurationService) {
+				ICoinsDocFileService pFileServer) {
 			mSparqlService = pSparqlService;
 			mContext = pContext;
 			mFileServer = pFileServer;
-			mConfigurationService = pConfigurationService;
 		}
 
 		protected abstract CoinsPrefix getPrefix();
@@ -411,7 +595,7 @@ public class CoinsImporter implements Importer {
 								+ CbimAttributeKey.DOCUMENT_URI + " " + oldUri
 								+ " } \nINSERT { ?object "
 								+ CbimAttributeKey.DOCUMENT_URI + " <"
-								+ composeUrl(fileName, mContext)
+								+ mFileServer.composeUrl(fileName, mContext)
 								+ "> } \nWHERE\n { ?object a "
 								+ CbimObjectKey.EXPLICIT3D_REPRESENTATION
 								+ " .\n ?object "
@@ -429,22 +613,6 @@ public class CoinsImporter implements Importer {
 			} catch (MarmottaException e) {
 				e.printStackTrace();
 			}
-		}
-
-		private String composeUrl(String fileName, URI pContext) {
-			try {
-				fileName = (new File(fileName)).getName();
-				fileName = (new File(fileName)).toURI().toURL().getFile();
-				fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-				String path = mConfigurationService.getBaseUri()
-						+ CoinsApiWebService.PATH
-						+ CoinsApiWebService.PATH_DOCUMENT_REFERENCE + "/"
-						+ mFileServer.getContextPart(pContext) + fileName;
-				return path;
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-			return "error";
 		}
 
 	}
@@ -487,5 +655,4 @@ public class CoinsImporter implements Importer {
 			super.close();
 		}
 	}
-
 }

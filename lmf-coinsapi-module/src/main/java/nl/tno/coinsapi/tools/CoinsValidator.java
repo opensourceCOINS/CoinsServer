@@ -187,6 +187,7 @@ public abstract class CoinsValidator {
 			result.add(new ResourceRelation(CbimfsAttributeKey.VERIFICATION_REQUIREMENT, CbimfsObjectKey.NON_FUNCTIONAL_REQUIREMENT));
 			result.add(new ResourceRelation(CbimAttributeKey.VERIFICATION_REQUIREMENT, CbimObjectKey.REQUIREMENT));
 			result.add(new ResourceRelation(CbimAttributeKey.VERIFICATION_PERFORMER, CbimObjectKey.PERSON_OR_ORGANISATION));
+			result.add(new ResourceRelation(CbimAttributeKey.DOCUMENT, CbimObjectKey.DOCUMENT));
 			result.add(new ResourceRelation(CbimfsAttributeKey.VERIFICATION_AUTHORIZED_BY, CbimObjectKey.PERSON_OR_ORGANISATION));
 			result.add(new ResourceRelation(CbimfsAttributeKey.VERIFICATION_PLANNED_PERFORMER, CbimObjectKey.PERSON_OR_ORGANISATION));
 			result.add(new ResourceRelation(CbimAttributeKey.VERIFICATION_FUNCTION_FULFILLER, CbimObjectKey.FUNCTION_FULFILLER));

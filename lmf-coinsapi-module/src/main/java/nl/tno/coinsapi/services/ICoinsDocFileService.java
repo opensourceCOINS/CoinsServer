@@ -2,6 +2,7 @@ package nl.tno.coinsapi.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import org.openrdf.model.URI;
@@ -43,5 +44,22 @@ public interface ICoinsDocFileService {
 	 * @return the local file
 	 */
 	public File getLocalFile(String pUri);
+
+	/**
+	 * @param inputStream
+	 * @param fileName
+	 * @param context
+	 * @return document URI
+	 * @throws IOException 
+	 */
+	public String importStream(InputStream inputStream, String fileName,
+			String context) throws IOException;
+
+	/**
+	 * @param fileName
+	 * @param mContext
+	 * @return URL
+	 */
+	public String composeUrl(String fileName, URI mContext);
 
 }

@@ -3,12 +3,12 @@ package nl.tno.coinsapi.services;
 import static com.jayway.restassured.RestAssured.given;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
 
+import nl.tno.coinsapi.util.TestUtil;
 import nl.tno.coinsapi.webservices.CoinsApiWebService;
 
 import org.apache.marmotta.platform.core.test.base.JettyMarmotta;
@@ -62,7 +62,7 @@ public class TestCoinsImporter {
 				+ "src/test/resources" + File.separator + "D.ccr");
 		Assert.assertTrue(file.exists());
 
-		given().content(createByteArray(file)).given()
+		given().content(TestUtil.createByteArray(file))
 				.header("Content-Type", "application/ccr")
 				.queryParam("context", pContext).expect().statusCode(OK).when()
 				.post("import/upload");
@@ -93,7 +93,7 @@ public class TestCoinsImporter {
 				+ "src/test/resources" + File.separator + "D.ccr");
 		Assert.assertTrue(file.exists());
 
-		given().content(createByteArray(file)).given()
+		given().content(TestUtil.createByteArray(file)).given()
 				.header("Content-Type", "application/ccr")
 				.queryParam("context", pContext).expect().statusCode(OK).when()
 				.post("import/upload");
@@ -142,19 +142,4 @@ public class TestCoinsImporter {
 		Assert.assertTrue(ifcFileContents.endsWith("END-ISO-10303-21;"));
 	}
 	
-	private byte[] createByteArray(File pFile) throws IOException {
-		FileInputStream stream = new FileInputStream(pFile);
-		int size = 0;
-		while (stream.read() != -1) {
-			size++;
-		}
-		stream.close();
-
-		byte[] result = new byte[size];
-		stream = new FileInputStream(pFile);
-		stream.read(result);
-		stream.close();
-
-		return result;
-	}
 }

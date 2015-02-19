@@ -1,5 +1,8 @@
 package nl.tno.coinsapi.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -86,5 +89,26 @@ public class TestUtil {
 			System.out.println(sb.toString());
 		}
 	}
+	
+	/**
+	 * @param pFile
+	 * @return byte[] containing the file as a blob
+	 * @throws IOException
+	 */
+	public static byte[] createByteArray(File pFile) throws IOException {
+		FileInputStream stream = new FileInputStream(pFile);
+		int size = 0;
+		while (stream.read() != -1) {
+			size++;
+		}
+		stream.close();
 
+		byte[] result = new byte[size];
+		stream = new FileInputStream(pFile);
+		stream.read(result);
+		stream.close();
+
+		return result;
+	}
+	
 }

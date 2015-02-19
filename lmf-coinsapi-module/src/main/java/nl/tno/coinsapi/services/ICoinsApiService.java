@@ -165,6 +165,22 @@ public interface ICoinsApiService {
 	 * @return true if success
 	 */
 	public boolean deleteDocument(String context, String id);
+	
+	/**
+	 * @param context
+	 * @param document
+	 * @param fileName
+	 * @param modifier
+	 * @param documentURI (http://localhost:8080/resource?uri=http%3A%2F%2Flocalhost%3A8080%2Fcoinsapi%2Fdoc%2FD%2FEen%2520zeer%2520eenvoudige%2520casus.ifc)
+	 * @throws MarmottaException
+	 * @throws InvalidArgumentException
+	 * @throws MalformedQueryException
+	 * @throws UpdateExecutionException
+	 */
+	public void addDocumentReferences(String context, String document,
+			String fileName, String modifier, String documentURI)
+			throws MarmottaException, InvalidArgumentException,
+			MalformedQueryException, UpdateExecutionException;
 
 	/**
 	 * @param context
@@ -1516,5 +1532,11 @@ public interface ICoinsApiService {
 			String functionFulfiller, String[] terminal, String modifier)
 			throws InvalidArgumentException, MalformedQueryException,
 			UpdateExecutionException, MarmottaException;
+
+	/**
+	 * @param context
+	 * @return String represenation of URI
+	 */
+	public String getContextURI(String context);
 
 }

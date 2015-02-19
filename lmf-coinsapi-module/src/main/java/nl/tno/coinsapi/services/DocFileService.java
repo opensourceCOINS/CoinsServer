@@ -2,7 +2,9 @@ package nl.tno.coinsapi.services;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -115,6 +117,40 @@ public class DocFileService implements ICoinsDocFileService {
 			e.printStackTrace();
 		}
 		return new File(fileName);
+	}
+
+	@Override
+	public String importStream(InputStream pInputStream, String pFileName,
+			String pContext) throws IOException {
+		URI uri = new URIImpl(pContext + "/" + pFileName);
+		String folderName = getDocsPath(new URIImpl(uri.getNamespace())) + File.separator + pContext.substring(pContext.lastIndexOf('/')+1);
+		new File(folderName).mkdirs();
+		File f = new File(folderName + "/" + pFileName);
+		FileOutputStream os = new FileOutputStream(f);
+		int b = pInputStream.read();
+		while (b != -1) {
+			os.write(b);
+			b = pInputStream.read();
+		}
+		os.close();
+		return composeUrl(f.getPath(), new URIImpl(pContext));
+	}
+
+	@Override
+	public String composeUrl(String fileName, URI pContext) {
+		try {
+			fileName = (new File(fileName)).getName();
+			fileName = (new File(fileName)).toURI().toURL().getFile();
+			fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+			String path = mConfigurationService.getBaseUri()
+					+ CoinsApiWebService.PATH
+					+ CoinsApiWebService.PATH_DOCUMENT_REFERENCE + "/"
+					+ getContextPart(pContext) + fileName;
+			return path;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return "error";
 	}
 
 }

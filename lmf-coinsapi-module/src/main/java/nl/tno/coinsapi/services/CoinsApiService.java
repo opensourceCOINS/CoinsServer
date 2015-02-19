@@ -1696,4 +1696,35 @@ public class CoinsApiService implements ICoinsApiService {
 		mSparqlService.update(QueryLanguage.SPARQL, builder.build());		
 	}
 
+	@Override
+	public void addDocumentReferences(String context, String document,
+			String fileName, String modifier, String documentURI) throws MarmottaException,
+			InvalidArgumentException, MalformedQueryException,
+			UpdateExecutionException {
+		QueryBuilder builder = new InsertQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsPrefix.CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(document);		
+		builder.addAttributeString(CbimAttributeKey.DOCUMENT_ALIAS_FILE_PATH, fileName);
+		builder.addAttributeString(CbimAttributeKey.DOCUMENT_TYPE, fileName.substring(fileName.lastIndexOf('.') + 1));
+		builder.addAttributeResource(CbimAttributeKey.DOCUMENT_URI, documentURI);
+		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());
+		// The previous query might have caused two modificationDates/modifiers
+		// so...
+		builder = new UpdateQueryBuilder(mDateConversion);
+		builder.addPrefix(CoinsPrefix.CBIM);
+		builder.addGraph(getFullContext(context));
+		builder.setId(document);
+		builder.addAttributeDate(CbimAttributeKey.MODIFICATION_DATE, new Date());
+		builder.addAttributeResource(CbimAttributeKey.MODIFIER, modifier);
+		mSparqlService.update(QueryLanguage.SPARQL, builder.build());				
+	}
+
+	@Override
+	public String getContextURI(String context) {
+		return getFullContext(context);
+	}
+
 }

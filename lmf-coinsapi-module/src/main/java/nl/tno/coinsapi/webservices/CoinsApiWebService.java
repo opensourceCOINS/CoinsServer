@@ -150,7 +150,12 @@ public class CoinsApiWebService {
 	 * Link a Baseline to a CbimObject
 	 */
 	public static final String PATH_LINK_BASELINE_TO_CBIM_OBJECT = PATH_CBIM_OBJECT + "/baseline";
-	
+
+	/**
+	 * Link a Document to a CbimObject
+	 */
+	public static final String PATH_LINK_DOCUMENT_TO_CBIM_OBJECT = PATH_CBIM_OBJECT + "/document";
+
 	/**
 	 * Edit physical parent relation
 	 */
@@ -172,10 +177,17 @@ public class CoinsApiWebService {
 	 * Document
 	 */
 	public static final String PATH_DOCUMENT = "/document";
+	
+	/**
+	 * Upload a document
+	 */
+	public static final String PATH_DOCUMENT_UPLOAD = "/document/upload";
+	
 	/**
 	 * Vector
-	 */
+	 */	
 	public static final String PATH_VECTOR = "/vector";
+	
 	/**
 	 * Locator
 	 */
@@ -701,7 +713,7 @@ public class CoinsApiWebService {
 	@Path(PATH_VERSION)
 	@GET
 	public Response getVersion() {
-		return Response.ok().entity("v0.3").build();
+		return Response.ok().entity("v0.4").build();
 	}
 
 	/**
@@ -2020,6 +2032,41 @@ public class CoinsApiWebService {
 	}
 
 	/**
+	 * Upload a document (file) to Coins
+	 * 
+	 * @param context
+	 * @param identifier
+	 *            The identifier of the existing cbim:Document object
+	 * @param fileName
+	 *            The name of the file
+	 * @param request
+	 *            The binary file
+	 * @param modifier
+	 *            Identifier of the <B>PersonOrOrganisation</B> that updated the
+	 *            document
+	 * @return OK if successful
+	 */
+	@POST
+	@Path(PATH_DOCUMENT_UPLOAD)
+	public Response uploadDocument(@QueryParam(CONTEXT) String context,
+			@QueryParam(ID) String identifier,
+			@QueryParam(FILENAME) String fileName,
+			@Context HttpServletRequest request,
+			@QueryParam(MODIFIER) String modifier) {
+		try {			
+			String documentURI = mFileServer.importStream(request.getInputStream(), fileName, mCoinsService.getContextURI(context));
+			mCoinsService.addDocumentReferences(context, identifier,
+					fileName, modifier, documentURI);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException | IOException e) {
+			e.printStackTrace();
+			return Response.serverError()
+					.entity("Uploading document to server failed").build();
+		}
+		return Response.ok().build();
+	}
+	
+	/**
 	 * Get a <B>Document</B>
 	 * 
 	 * @param context
@@ -3033,6 +3080,43 @@ public class CoinsApiWebService {
 		return Response.ok().build();
 	}
 
+	/**
+	 * Link <B>Document</B>(s) to a <B>CbimObject</B> 
+	 * 
+	 * @param context
+	 *            context or graph
+	 * @param cbimObject
+	 *            Identifier of the <B>CbimObject</B>
+	 * @param document
+	 *            Identifier of the <B>Document</B>(s)
+	 * @param modifier
+	 *            Identifier of <B>PersonOrOrganisation</B> that modifies the
+	 *            object
+	 * @return OK if success
+	 */
+	@POST
+	@Path(PATH_LINK_DOCUMENT_TO_CBIM_OBJECT)
+	@Consumes(MIME_TYPE)
+	public Response linkDocumentToCbimObject(
+			@QueryParam(CONTEXT) String context,
+			@QueryParam(CBIM_OBJECT) String cbimObject,
+			@QueryParam(BASELINE) String[] document,
+			@QueryParam(MODIFIER) String modifier) {
+		try {
+			mCoinsService.linkDocument(context, cbimObject,
+					document, modifier);
+		} catch (InvalidArgumentException | MalformedQueryException
+				| UpdateExecutionException | MarmottaException e) {
+			e.printStackTrace();
+			return Response
+					.serverError()
+					.entity("Linking CbimObject <"
+							+ cbimObject + "> to Document <" + document
+							+ "> failed").build();
+		}
+		return Response.ok().build();
+	}
+	
 	/**
 	 * Link a <B>CbimObject</B> to the <B>Baseline</B> 
 	 * 
